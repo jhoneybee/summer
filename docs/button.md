@@ -9,25 +9,45 @@ slug: /
 
 提供了五种按钮。
 
-- 主按钮：用于主行动点，一个操作区域只能有一个主按钮。
-- 默认按钮：用于没有主次之分的一组行动点。
-- 虚线按钮：常用于添加操作。
-- 文本按钮：用于最次级的行动点。
-- 链接按钮：用于作为外链的行动点。
+| 按钮类型 | 描述
+|----     |---------
+|primary  | 主按钮,用于主行动点，一个操作区域只能有一个主按钮。
+|default  | 默认按钮,用于没有主次之分的一组行动点
+|dashed   | 虚线按钮,常用于添加操作
+|text     | 文本按钮,用于最次级的行动点
+|link     | 链接按钮,用于作为外链的行动点
+
 
 以及四种状态属性与上面配合使用。
 
 - 危险：删除/移动/修改权限等危险操作，一般需要二次确认。
 - 幽灵：用于背景色比较复杂的地方，常用在首页/产品页等展示场景。
 - 禁用：行动点不可用的时候，一般需要文案解释。
-- 加载中：用于异步操作执行时间较长的任务.
 
 ## 演示
 
 ```jsx live
 function simple() {
     return (
-        <Button> 这是一个简单的按钮 </Button>
+        <>
+            <Button type="primary"> 这是一个基础按钮 </Button>
+            <Button href="https://www.google.com/"> href 属性的按钮 </Button>
+            <Button danger> 这是一个危险操作按钮 </Button>
+            <br />
+            <Button
+                onClick={() => {
+                    return new Promise((rev) => {
+                        // 模拟网络延迟的超长时间任务, 执行的时间为3s
+                        setTimeout(() => {
+                            rev();
+                        }, 3000)
+                    })
+                }}
+            >
+                执行超长任务的按钮
+            </Button>
+            <Button block type="primary"> 和父元素同宽 </Button>
+        </>
     )
 }
 ```
@@ -37,6 +57,7 @@ function simple() {
 
 |属性               |说明                |类型                                                                  |默认值
 |-------            |------             |------                                                               |------------
+|block              |将按钮宽度调整为其父宽度的选项 |`boolean`                                                     | `false`
 |danger             |设置危险按钮         |`boolean`                                                            | `false`
 |disabled	          |按钮失效状态         |`boolean`                                                            | `false`
 |ghost              |幽灵属性，使按钮背景透明|`boolean`                                                           | `false`
@@ -51,7 +72,8 @@ function simple() {
 ### 如何设置按钮的`href`属性的打开方式?
 
 
-href 和原生的href 有些少许的区别, 例如如果要在新的标签页中打开,那么 `href` 的值为 <u>`_blank->www.google.com`</u> 如果直接填写网址,那么就采用`_self`方式打开.
+`href` 和原生的 `href` 有些少许的区别, 例如如果要在新的标签页中打开
+那么 `href` 的值为 `_blank->www.google.com` 如果直接填写网址,那么就采用`_self`方式打开.
 
 
 打开方式如下
