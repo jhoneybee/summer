@@ -62,12 +62,17 @@ const StyledButton = styled.button.attrs((props) => {
         return '0px 1px 4px rgba(0, 0, 0, 0.15)';
     }};
     :hover{
-        box-shadow: 0px 1px 8px rgba(0,0,0,.2);
+        box-shadow: ${props => {
+            if (props.btype === 'default' && !props.danger) {
+                return '0px 2px 6px rgba(0,0,0, .1)';
+            }
+            return '0px 2px 6px rgba(0,0,0, .4)';
+        }};
         text-decoration: none;
         color: ${color};
     }
     :active {
-        box-shadow: 0px 4px 12px rgba(0,0,0,.4);
+        box-shadow: 0px 4px 10px rgba(0,0,0, .6);
         ::before {
             display: inline;
             transform:  scale(5);
