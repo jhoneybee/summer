@@ -1,0 +1,137 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`test block 1`] = `
+<button
+  class="sc-bdfBwQ gLkOas"
+  role="button"
+>
+  测试按钮
+</button>
+`;
+
+exports[`test danger 1`] = `
+<button
+  class="sc-bdfBwQ jemraX"
+  role="button"
+>
+  测试按钮
+</button>
+`;
+
+exports[`test danger type[text] 1`] = `
+<a
+  class="sc-bdfBwQ lgXYmG"
+  role="button"
+>
+  测试按钮
+</a>
+`;
+
+exports[`test disabled 1`] = `
+<button
+  class="sc-bdfBwQ iwcedJ"
+  disabled=""
+  role="button"
+>
+  测试按钮
+</button>
+`;
+
+exports[`test href[_blank] 1`] = `
+<a
+  class="sc-bdfBwQ dlbZId"
+  href="https://www.google.com"
+  role="button"
+  target="_blank"
+>
+  测试按钮
+</a>
+`;
+
+exports[`test href[_parent] 1`] = `
+<a
+  class="sc-bdfBwQ dlbZId"
+  href="https://www.google.com"
+  role="button"
+  target="_blank"
+>
+  测试按钮
+</a>
+`;
+
+exports[`test href[_self] 1`] = `
+<a
+  class="sc-bdfBwQ dlbZId"
+  href="https://www.google.com"
+  role="button"
+  target="_self"
+>
+  测试按钮
+</a>
+`;
+
+exports[`test href[_top] 1`] = `
+<a
+  class="sc-bdfBwQ dlbZId"
+  href="https://www.google.com"
+  role="button"
+  target="_blank"
+>
+  测试按钮
+</a>
+`;
+
+exports[`test onClick 1`] = `
+<a
+  class="sc-bdfBwQ lgXYmG"
+  role="button"
+>
+  改变的按钮
+</a>
+`;
+
+exports[`test onClick async 1`] = `
+<a
+  class="sc-bdfBwQ jImbRQ"
+  disabled=""
+  role="button"
+>
+  改变的按钮
+</a>
+`;
+
+exports[`test onClick none 1`] = `
+<a
+  class="sc-bdfBwQ lgXYmG"
+  role="button"
+>
+  按钮信息
+</a>
+`;
+
+exports[`test type[primary] 1`] = `
+<button
+  class="sc-bdfBwQ trsXt"
+  role="button"
+>
+  测试按钮
+</button>
+`;
+
+exports[`test type[text] 1`] = `
+<a
+  class="sc-bdfBwQ gKLLHS"
+  role="button"
+>
+  测试按钮
+</a>
+`;
+
+exports[`test type[text] 2`] = `
+<a
+  class="sc-bdfBwQ gKLLHS"
+  role="button"
+>
+  测试按钮
+</a>
+`;

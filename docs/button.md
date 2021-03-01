@@ -7,33 +7,34 @@ slug: /
 
 按钮,用来点击或则执行一个操作. 按钮自带防止多次点击.
 
-提供了五种按钮。
+提供了三种按钮。
 
 | 按钮类型 | 描述
 |----     |---------
 |primary  | 主按钮,用于主行动点，一个操作区域只能有一个主按钮。
 |default  | 默认按钮,用于没有主次之分的一组行动点
-|dashed   | 虚线按钮,常用于添加操作
 |text     | 文本按钮,用于最次级的行动点
-|link     | 链接按钮,用于作为外链的行动点
 
 
-以及四种状态属性与上面配合使用。
+以及两种状态属性与上面配合使用。
 
 - 危险：删除/移动/修改权限等危险操作，一般需要二次确认。
-- 幽灵：用于背景色比较复杂的地方，常用在首页/产品页等展示场景。
 - 禁用：行动点不可用的时候，一般需要文案解释。
 
 ## 演示
+
+### 一个基础的按钮
 
 ```jsx live
 function simple() {
     return (
         <>
             <Button type="primary"> 这是一个基础按钮 </Button>
-            <Button href="https://www.google.com/"> href 属性的按钮 </Button>
             <Button danger> 这是一个危险操作按钮 </Button>
+            <Button type="text"> type 类型为 text </Button>
+            <Button danger type="text"> 危险的text按钮 </Button>
             <br />
+            <Button href="https://www.google.com/"> href 属性的按钮 </Button>
             <Button
                 onClick={() => {
                     return new Promise((rev) => {
@@ -60,10 +61,8 @@ function simple() {
 |block              |将按钮宽度调整为其父宽度的选项 |`boolean`                                                     | `false`
 |danger             |设置危险按钮         |`boolean`                                                            | `false`
 |disabled	          |按钮失效状态         |`boolean`                                                            | `false`
-|ghost              |幽灵属性，使按钮背景透明|`boolean`                                                           | `false`
 |href               |点击跳转的地址，指定此属性 button 的行为和 a 链接一致| `string`                                 | -
-|type               |设置按钮类型         |`primary` \| `ghost` \| `dashed` \| `link` \| `text` \| `default`    | `default` 
-|icon               |设置按钮的图标组件    |`ReactNode`                                                          | -
+|type               |设置按钮类型         |`primary` \| `text` \| `default`                                     | `default` 
 |onClick            |点击按钮时的回调      |`(event) => void`                                                    |
 
 

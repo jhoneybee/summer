@@ -6,22 +6,21 @@
  *  - [-] danger 属性,将按钮设置为危险标识
  *      - [x] primary
  *      - [x] default
- *      - [ ] dashed
- *      - [ ] link
- *      - [ ] text
- *  - [ ] ghost 设置幽灵按钮
+ *      - [x] text
  *  - [x] href 设置跳转的地址
  *  - [-] type 设置按钮类型
-*       - [x] primary
+ *      - [x] primary
  *      - [x] default
- *      - [ ] dashed
- *      - [ ] link
- *      - [ ] text
+ *      - [x] text
  *  - [x] onClick 按钮的可点击
  */
 
 import React, { HTMLAttributes, useState } from 'react';
 import styled from 'styled-components';
+
+
+const ohterTypes = ['text'];
+const mappingType: Array<'a'> = ['a'];
 
 // 按钮的背景色
 const buttonBackgroundColor = props => {
@@ -29,10 +28,12 @@ const buttonBackgroundColor = props => {
     if (props.disabled) {
         return 'rgba(0, 0, 0, 0.12)';
     }
+
     // 危险的背景颜色
-    if (props.danger) {
+    if (props.danger && props.btype !== 'text') {
         return '#ff4d4f';
     }
+
     // 主要按钮的背景颜色
     if (props.btype === 'primary') {
         return '#6002ee';
@@ -46,15 +47,29 @@ const buttonColor = (props) => {
     if (props.disabled) {
         return 'rgba(0, 0, 0, 0.26)';
     }
+
     if (props.btype === 'default' && !props.danger) {
-        return 'rgba(0,0,0,.85)'
+        return 'rgba(0,0,0,.85)';
     }
+
+    if (props.danger && props.btype === 'text') {
+        return '#ff4d4f';
+    }
+
+    if (props.btype === 'text') {
+        return 'rgba(0,0,0,.85)';
+    }
+
     return  'rgba(255,255,255,.85)';
 }
 
 // 按钮的阴影
 const boxShadow = (props) => {
     if (props.disabled) {
+        return 'none';
+    }
+
+    if (props.btype === 'text') {
         return 'none';
     }
 
@@ -66,10 +81,22 @@ const boxShadow = (props) => {
 
 // 鼠标移动到按钮上的阴影效果
 const hoveBoxShadow = (props) => {
+    if (ohterTypes.includes(props.btype)) {
+        return 'none';
+    }
+
     if (props.btype === 'default' && !props.danger) {
         return '0px 2px 6px rgba(0,0,0, .1)';
     }
     return '0px 2px 6px rgba(0,0,0, .4)';
+}
+
+// 设置点击的阴影
+const activeBoxShadow = (props) => {
+    if (ohterTypes.includes(props.btype)) {
+        return 'none';
+    }
+    return '0px 4px 10px rgba(0,0,0, .6)';
 }
 
 // 鼠标点击后, 按钮上会覆盖一层渐变色的效果
@@ -118,7 +145,7 @@ const StyledButton = styled.button.attrs((props) => {
         text-decoration: none;
     }
     :active {
-        box-shadow: 0px 4px 10px rgba(0,0,0, .6);
+        box-shadow: ${activeBoxShadow};
         ::before {
             display: inline;
             transform:  scale(5);
@@ -142,26 +169,23 @@ export interface ButtonProps extends Omit<
     'onClick' | 'inputMode'
 > {
     // 设置为和父元素同宽
-    block: boolean
+    block?: boolean
     // 设置为危险按钮
-    danger: boolean
+    danger?: boolean
     // 设置按钮是否失效
-    disabled: boolean
-    // 设置为幽灵按钮
-    ghost: boolean
+    disabled?: boolean
     // 要跳转的地址
-    href: string
+    href?: string
     // 按钮类型
-    type: 'primary'| 'dashed' | 'link' | 'text' | 'default';
+    type?: 'primary' | 'text' | 'default';
     // 点击事件
-    onClick: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void | Promise<void>
+    onClick?: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void | Promise<void>
 }
 
 export default function Button ({
     block = false,
     danger = false,
     disabled = false,
-    ghost = false,
     href,
     type = 'default',
     onClick,
@@ -169,6 +193,7 @@ export default function Button ({
     ...restProps
 }: ButtonProps) {
     const [isDisabled, setDisabled] = useState(disabled);
+    const otherIndex = ohterTypes.indexOf(type);
     if (href) {
         let realHref = href;
         let target = '_self';
@@ -193,6 +218,7 @@ export default function Button ({
     return (
         <StyledButton
             {...restProps}
+            as={mappingType[otherIndex]}
             block={block}
             btype={type}
             disabled={isDisabled}
@@ -200,7 +226,7 @@ export default function Button ({
             onClick={(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
                 setDisabled(true);
                 const result = onClick?.(e);
-                if (result) {
+                if (result && result.then) {
                     result.then(() => {
                         setDisabled(false);
                     })
