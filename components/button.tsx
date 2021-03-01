@@ -15,7 +15,7 @@
  *  - [x] onClick 按钮的可点击
  */
 
-import React, { HTMLAttributes, useState } from 'react';
+import React, { forwardRef, HTMLAttributes, useState } from 'react';
 import styled from 'styled-components';
 
 
@@ -182,7 +182,7 @@ export interface ButtonProps extends Omit<
     onClick?: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void | Promise<void>
 }
 
-export default function Button ({
+const Button  = forwardRef(({
     block = false,
     danger = false,
     disabled = false,
@@ -191,7 +191,7 @@ export default function Button ({
     onClick,
     children,
     ...restProps
-}: ButtonProps) {
+}: ButtonProps, ref) => {
     const [isDisabled, setDisabled] = useState(disabled);
     const otherIndex = ohterTypes.indexOf(type);
     if (href) {
@@ -204,6 +204,7 @@ export default function Button ({
         return (
             <StyledButton
                 {...restProps}
+                ref={ref}
                 as="a"
                 block={block}
                 btype={type}
@@ -218,6 +219,7 @@ export default function Button ({
     return (
         <StyledButton
             {...restProps}
+            ref={ref}
             as={mappingType[otherIndex]}
             block={block}
             btype={type}
@@ -238,4 +240,6 @@ export default function Button ({
             {children}
         </StyledButton>
     );
-}
+})
+
+export default Button;

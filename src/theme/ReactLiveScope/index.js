@@ -7,12 +7,14 @@
 
 import React from 'react';
 import Button from '../../../components/button'
+import DropDown from '../../../components/dropdown';
 
 // Add react-live imports you need here
 const ReactLiveScope = {
   React,
   ...React,
-  Button
+  Button,
+  DropDown
 };
 
 export default ReactLiveScope;

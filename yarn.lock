@@ -1477,18 +1477,6 @@
     "@docusaurus/plugin-content-pages" "2.0.0-alpha.70"
     "@docusaurus/types" "2.0.0-alpha.70"
 
-"@docusaurus/theme-live-codeblock@^2.0.0-alpha.70":
-  version "2.0.0-alpha.70"
-  resolved "https://registry.yarnpkg.com/@docusaurus/theme-live-codeblock/-/theme-live-codeblock-2.0.0-alpha.70.tgz#a27b5f61f7ba37a6f2a00929c7e0e0f95f9f3635"
-  integrity sha512-9fFC6MeazqmfzbnKgUFDiKmF1Zs5rG4CXCsxDcNbu/XZMd2xMrI5UlQfo+yfNAKX2aWvjaqThLfxRkJzI2guIA==
-  dependencies:
-    "@docusaurus/core" "2.0.0-alpha.70"
-    "@philpl/buble" "^0.19.7"
-    clsx "^1.1.1"
-    parse-numeric-range "^1.2.0"
-    prism-react-renderer "^1.1.1"
-    react-live "^2.2.3"
-
 "@docusaurus/theme-search-algolia@2.0.0-alpha.70":
   version "2.0.0-alpha.70"
   resolved "https://registry.yarnpkg.com/@docusaurus/theme-search-algolia/-/theme-search-algolia-2.0.0-alpha.70.tgz#7f41241e0d22e89438817a3d4a27d880116c06c1"
@@ -2197,6 +2185,13 @@
   version "1.5.4"
   resolved "https://registry.yarnpkg.com/@types/q/-/q-1.5.4.tgz#15925414e0ad2cd765bfef58842f7e26a7accb24"
   integrity sha512-1HcDas8SEj4z1Wc696tH56G8OlRaH/sqZOynNNB+HF0WOeXPaxTtbYzJY2oEfiUxjSKjhCKr+MvR7dCHcEelug==
+
+"@types/react-dom@^17.0.1":
+  version "17.0.1"
+  resolved "https://registry.yarnpkg.com/@types/react-dom/-/react-dom-17.0.1.tgz#d92d77d020bfb083e07cc8e0ac9f933599a4d56a"
+  integrity sha512-yIVyopxQb8IDZ7SOHeTovurFq+fXiPICa+GV3gp0Xedsl+MwQlMLKmvrnEjFbQxjliH5YVAEWFh975eVNmKj7Q==
+  dependencies:
+    "@types/react" "*"
 
 "@types/react-helmet@^6.1.0":
   version "6.1.0"
@@ -4655,6 +4650,18 @@ dns-txt@^2.0.2:
   integrity sha1-uR2Ab10nGI5Ks+fRB9iBocxGQrY=
   dependencies:
     buffer-indexof "^1.0.0"
+
+docusaurus-theme-live-codeblock@^2.0.0-alpha.70.1:
+  version "2.0.0-alpha.70.1"
+  resolved "https://registry.yarnpkg.com/docusaurus-theme-live-codeblock/-/docusaurus-theme-live-codeblock-2.0.0-alpha.70.1.tgz#75fea57db373de6bfb42ce5a27a601c5f7165002"
+  integrity sha512-2vRQtP4/3jdrkpFzqWozOlKv36vhE/bdO/ZmsILj0ODuouME+2130MgAFk5rm+3DxRcOncSJz+uaDCD+tbESrQ==
+  dependencies:
+    "@docusaurus/core" "2.0.0-alpha.70"
+    "@philpl/buble" "^0.19.7"
+    clsx "^1.1.1"
+    parse-numeric-range "^1.2.0"
+    prism-react-renderer "^1.1.1"
+    react-live "^2.2.3"
 
 dom-accessibility-api@^0.5.4:
   version "0.5.4"

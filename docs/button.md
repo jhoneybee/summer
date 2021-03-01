@@ -23,31 +23,43 @@ slug: /
 
 ## 演示
 
-### 一个基础的按钮
-
 ```jsx live
+/**
+ * title: 基础按钮
+ * desc: 用来展现按钮的三种类型
+ **/
 function simple() {
     return (
         <>
-            <Button type="primary"> 这是一个基础按钮 </Button>
-            <Button danger> 这是一个危险操作按钮 </Button>
-            <Button type="text"> type 类型为 text </Button>
-            <Button danger type="text"> 危险的text按钮 </Button>
-            <br />
-            <Button href="https://www.google.com/"> href 属性的按钮 </Button>
+            <Button type="primary"> primary 类型 </Button>
+            <Button type="default"> default 类型 </Button>
+            <Button type="text"> text 类型 </Button>
+        </>
+    )
+}
+```
+
+```jsx live
+/**
+ * title: 长任务
+ * desc: 当按钮执行很长的任务的时候,会自动变灰,等待任务执行完成后,才可以执行下一次的请求
+ **/
+function simple() {
+    return (
+        <>
             <Button
+                type="primary"
                 onClick={() => {
-                    return new Promise((rev) => {
-                        // 模拟网络延迟的超长时间任务, 执行的时间为3s
+                    return new Promise(re => {
+                        // 模拟网络延迟
                         setTimeout(() => {
-                            rev();
-                        }, 3000)
+                            re();
+                        },3000)
                     })
                 }}
             >
-                执行超长任务的按钮
+                点击执行任务
             </Button>
-            <Button block type="primary"> 和父元素同宽 </Button>
         </>
     )
 }
