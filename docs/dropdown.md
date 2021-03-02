@@ -21,11 +21,14 @@ slug: /dropdown
 ```jsx live
 function simple () {
     return (
-        <DropDown
-            overlay={<a> 查看人员信息 </a>}
-        >
-            <Button> 测试查看 </Button>
-        </DropDown>
+        <div style={{height: 200, overflow: 'auto'}}>
+            <DropDown
+                overlay={<a> 查看人员信息 </a>}
+            >
+                <Button> 测试查看 </Button>
+            </DropDown>
+            <div style={{height: 2000}}/>
+        </div>
     )
 }
 ```
