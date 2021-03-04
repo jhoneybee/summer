@@ -14,6 +14,34 @@ slug: /dropdown
 
 ## 演示
 
+```jsx live
+/**
+ * title: 点击触发
+ * desc: 默认为鼠标移动上去即可触发,也可以设置为点击触发
+ **/
+function simple () {
+    return (
+        <DropDown
+            trigger="click"
+            overlay={(
+                <DropDownMenu>
+                    <DropDownMenuItem key="0" disabled>
+                        跳转到Google
+                    </DropDownMenuItem>
+                    <DropDownMenuItem key="1">
+                        跳转到百度
+                    </DropDownMenuItem>
+                    <DropDownMenuItem key="2">
+                        跳转到首页
+                    </DropDownMenuItem>
+                </DropDownMenu>
+            )}
+        >
+            <Button type="text"> 点击显示... </Button>
+        </DropDown>
+    )
+}
+```
 
 ```jsx live
 /**

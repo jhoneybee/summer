@@ -2,7 +2,8 @@ module.exports = {
   someSidebar: {
     '基础组件': [
       'button',
-      'dropdown'
+      'dropdown',
+      'input'
     ],
     '布局组件': [],
     '导航': [],

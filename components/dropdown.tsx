@@ -1,9 +1,10 @@
 import React, { cloneElement, HTMLAttributes, ReactNode, useEffect, useRef, useState } from 'react';
-import styled, { keyframes } from 'styled-components';
+import styled from 'styled-components';
 
 export interface DropDownProps {
     children?: JSX.Element,
     overlay?: ReactNode,
+    trigger?: 'click' | 'hover',
     placement?: 'bottom' | 'top'
 }
 
@@ -55,7 +56,8 @@ const DropDownStyled = styled.div.attrs((props) => {
 export default function DropDown ({
     children,
     overlay,
-    placement = 'bottom'
+    placement = 'bottom',
+    trigger='hover'
 }: DropDownProps) {
     const [show, setShow] = useState<boolean>(false);
     const [rect, setRect] = useState<DOMRect>(null);
@@ -64,7 +66,7 @@ export default function DropDown ({
     const ref = useRef<HTMLElement>(null);
     const dropdownRef = useRef<HTMLElement>(null);
 
-    const { onMouseOver, onMouseOut, ...restProps } = children.props;
+    const { onMouseOver, onMouseOut, onClick, ...restProps } = children.props;
 
     useEffect(() => {
         const setRectState = () => {
@@ -101,8 +103,16 @@ export default function DropDown ({
     const dom = cloneElement(children, {
         ...restProps,
         ref: ref,
+        onClick: (event) => {
+            if (trigger === 'click') {
+                setShow(true);
+            }
+            onClick?.(event)
+        },
         onMouseOver: (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-            setShow(true);
+            if (trigger === 'hover') {
+                setShow(true);
+            }
             onMouseOver?.(event);
         }
     })
