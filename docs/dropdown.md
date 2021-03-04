@@ -83,3 +83,4 @@ function simple () {
 |-----      |------     |------                 |------------
 |overlay    |菜单        |`ReactNode`            | -
 |placement  |菜单弹出位置 | `bottom`  \| `top`     | `bottom`
+|visible    |是否可见     | `boolean`              | -

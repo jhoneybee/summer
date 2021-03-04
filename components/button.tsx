@@ -96,7 +96,7 @@ const activeBoxShadow = (props) => {
     if (ohterTypes.includes(props.btype)) {
         return 'none';
     }
-    return '0px 4px 10px rgba(0,0,0, .6)';
+    return '0px 4px 6px rgba(0,0,0, .6)';
 }
 
 // 鼠标点击后, 按钮上会覆盖一层渐变色的效果

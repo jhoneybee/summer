@@ -3,7 +3,8 @@ module.exports = {
     '基础组件': [
       'button',
       'dropdown',
-      'input'
+      'input',
+      'select'
     ],
     '布局组件': [],
     '导航': [],

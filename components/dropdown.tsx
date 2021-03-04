@@ -1,11 +1,21 @@
-import React, { cloneElement, HTMLAttributes, ReactNode, useEffect, useRef, useState } from 'react';
+import React, {
+    cloneElement,
+    HTMLAttributes,
+    ReactNode,
+    MutableRefObject,
+    useEffect,
+    useRef,
+    useState,
+} from 'react';
+
 import styled from 'styled-components';
 
-export interface DropDownProps {
+export interface DropDownProps extends HTMLAttributes<HTMLDivElement> {
     children?: JSX.Element,
     overlay?: ReactNode,
     trigger?: 'click' | 'hover',
-    placement?: 'bottom' | 'top'
+    placement?: 'bottom' | 'top',
+    visible?: boolean,
 }
 
 const MenuStyled = styled.ul`
@@ -47,6 +57,7 @@ const DropDownStyled = styled.div.attrs((props) => {
     position: fixed;
     left: ${props => `${props.x || 0}px`};
     top: ${props => `${(props.y || 0)}px`};
+    width: ${props => props.width ? `${props.width}px` : 'unset'};
     visibility: ${props => props.dropdownHeight ? 'visible': 'hidden'};
     background-color: #fff;
     padding: 0px;
@@ -57,7 +68,10 @@ export default function DropDown ({
     children,
     overlay,
     placement = 'bottom',
-    trigger='hover'
+    trigger='hover',
+    visible,
+    onBlur,
+    ...restPropsDropDown
 }: DropDownProps) {
     const [show, setShow] = useState<boolean>(false);
     const [rect, setRect] = useState<DOMRect>(null);
@@ -65,6 +79,7 @@ export default function DropDown ({
 
     const ref = useRef<HTMLElement>(null);
     const dropdownRef = useRef<HTMLElement>(null);
+    const isHover = useRef<boolean>(false);
 
     const { onMouseOver, onMouseOut, onClick, ...restProps } = children.props;
 
@@ -90,10 +105,20 @@ export default function DropDown ({
     }, [])
 
     useEffect(() => {
-        setTimeout(() => {
-            dropdownRef.current?.focus();
-        }, 200);
+        if (visible === undefined) {
+            setTimeout(() => {
+                dropdownRef.current?.focus();
+            }, 200);
+        }
     }, [show])
+
+    useEffect(() => {
+        if (visible === undefined) {
+            setTimeout(() => {
+                dropdownRef.current?.focus();
+            }, 200);
+        }
+    }, [visible])
 
 
     useEffect(() => {
@@ -102,15 +127,23 @@ export default function DropDown ({
 
     const dom = cloneElement(children, {
         ...restProps,
-        ref: ref,
+        ref: (refDom: HTMLElement) => {
+            ref.current = refDom;
+
+            if (restProps.ref instanceof Function) {
+                restProps.ref?.(ref.current);
+            }else {
+                restProps.ref = ref;
+            }
+        },
         onClick: (event) => {
-            if (trigger === 'click') {
+            if (trigger === 'click' && visible === undefined) {
                 setShow(true);
             }
             onClick?.(event)
         },
         onMouseOver: (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-            if (trigger === 'hover') {
+            if (trigger === 'hover' && visible === undefined) {
                 setShow(true);
             }
             onMouseOver?.(event);
@@ -127,18 +160,35 @@ export default function DropDown ({
         y -=  dropdownHeight + 2;
     }
 
+    let visibleDom = visible || show;
+    
+    if (isHover.current) {
+        visibleDom = true;
+    }
+
     return (
         <>
             {
-                show ? (
+                visibleDom ? (
                     <DropDownStyled
+                        {...restPropsDropDown}
                         tabIndex="0"
                         ref={dropdownRef}
+                        width={visible === undefined ? undefined : rect?.width}
                         x={rect?.x}
                         y={y}
                         dropdownHeight={dropdownHeight}
-                        onBlur={() => {
-                            setShow(false);
+                        onMouseOver={(event) => {
+                            isHover.current = true;
+                        }}
+                        onMouseOut={(event) => {
+                            isHover.current = false;
+                        }}
+                        onBlur={(event) => {
+                            if (visible === undefined) {
+                                setShow(false);
+                            }
+                            onBlur?.(event);
                         }}
                     >
                         {overlay}

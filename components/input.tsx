@@ -1,4 +1,4 @@
-import React, { HTMLAttributes } from 'react';
+import React, { forwardRef, HTMLAttributes } from 'react';
 import styled from 'styled-components';
 
 const InputStyled = styled.input.attrs(props => { 
@@ -21,6 +21,8 @@ const InputStyled = styled.input.attrs(props => {
     }
 `
 
-export default function Input(props: HTMLAttributes<HTMLInputElement>) {
-    return <InputStyled {...props} />
-}
+const Input = forwardRef<HTMLInputElement, HTMLAttributes<HTMLInputElement>>((props, ref) => {
+    return <InputStyled {...props} ref={ref} />
+})
+
+export default Input;
