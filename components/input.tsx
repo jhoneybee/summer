@@ -1,6 +1,8 @@
 import React, { forwardRef, InputHTMLAttributes } from 'react';
 import styled from 'styled-components';
 
+import { primaryColor, fontColor, disabledColor } from './styles/global'
+
 const InputStyled = styled.input.attrs(props => { 
 })`
     outline: none;
@@ -10,15 +12,15 @@ const InputStyled = styled.input.attrs(props => {
     padding: 4px 11px;
     cursor: ${props => props.readOnly ? 'pointer': 'auto'};
     transition: border 600ms;
-    color: ${props => props.disabled ? 'rgba(0, 0, 0, 0.26)' : 'rgba(0,0,0,.85)'};
+    color: ${props => props.disabled ? disabledColor(props) : fontColor(props)};
     ::placeholder {
         opacity: .5;
     }
     :focus {
-        border: ${props => props.disabled ? '1px solid #d9d9d9' : '1px solid #6002ee'}
+        border: ${props => props.disabled ? '1px solid #d9d9d9' : `1px solid ${primaryColor(props)}`}
     }
     :hover {
-        border: ${props => props.disabled ? '1px solid #d9d9d9' : '1px solid #6002ee'}
+        border: ${props => props.disabled ? '1px solid #d9d9d9' : `1px solid ${primaryColor(props)}`}
     }
 `
 

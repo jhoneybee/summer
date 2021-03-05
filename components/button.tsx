@@ -1,23 +1,12 @@
-/**
- *  TODO 任务完成进度
- * 
- *  - [x] block 属性,和父元素同宽
- *  - [x] disabled 属性,按钮失效
- *  - [-] danger 属性,将按钮设置为危险标识
- *      - [x] primary
- *      - [x] default
- *      - [x] text
- *  - [x] href 设置跳转的地址
- *  - [-] type 设置按钮类型
- *      - [x] primary
- *      - [x] default
- *      - [x] text
- *  - [x] onClick 按钮的可点击
- */
-
 import React, { forwardRef, HTMLAttributes, useState } from 'react';
 import styled from 'styled-components';
-
+import {
+    primaryColor,
+    fontColor,
+    disabledBackgroundColor,
+    fontDeepColor,
+    dangerColor,
+} from './styles/global';
 
 const ohterTypes = ['text'];
 const mappingType: Array<'a'> = ['a'];
@@ -26,17 +15,17 @@ const mappingType: Array<'a'> = ['a'];
 const buttonBackgroundColor = props => {
     // 禁用后按钮的背景颜色
     if (props.disabled) {
-        return 'rgba(0, 0, 0, 0.12)';
+        return disabledBackgroundColor(props);
     }
 
     // 危险的背景颜色
     if (props.danger && props.btype !== 'text') {
-        return '#ff4d4f';
+        return dangerColor(props);
     }
 
     // 主要按钮的背景颜色
     if (props.btype === 'primary') {
-        return '#6002ee';
+        return primaryColor(props);
     }
     // 默认按钮背景颜色
     return '#fff';
@@ -45,22 +34,21 @@ const buttonBackgroundColor = props => {
 // 按钮的字体颜色
 const buttonColor = (props) => {
     if (props.disabled) {
-        return 'rgba(0, 0, 0, 0.26)';
+        return disabledBackgroundColor(props);
     }
 
     if (props.btype === 'default' && !props.danger) {
-        return 'rgba(0,0,0,.85)';
+        return fontColor(props);
     }
 
     if (props.danger && props.btype === 'text') {
-        return '#ff4d4f';
+        return dangerColor(props);
     }
 
     if (props.btype === 'text') {
-        return 'rgba(0,0,0,.85)';
+        return fontColor(props);
     }
-
-    return  'rgba(255,255,255,.85)';
+    return fontDeepColor(props);
 }
 
 // 按钮的阴影
@@ -68,11 +56,9 @@ const boxShadow = (props) => {
     if (props.disabled) {
         return 'none';
     }
-
     if (props.btype === 'text') {
         return 'none';
     }
-
     if (props.btype === 'default' && !props.danger) {
         return '0px 1px 1px rgba(0, 0, 0, 0.05)';
     }
@@ -127,7 +113,7 @@ const StyledButton = styled.button.attrs((props) => {
     display: ${props => props.block ? 'block' : 'inline-block'};
     width: ${props => props.block ? '100%' : 'unset'};
     text-align: center;
-    position:relative;
+    position: relative;
     overflow: hidden;
     text-decoration:none;
     vertical-align: middle;

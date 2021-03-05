@@ -1,11 +1,10 @@
 import React, { cloneElement, InputHTMLAttributes, isValidElement, ReactNode, useContext, useEffect, useState } from 'react'
 import { observer, useLocalObservable } from 'mobx-react-lite'
 import { AiOutlineDown, AiOutlineCloseCircle } from 'react-icons/ai';
+import styled from 'styled-components';
 
 import Input from './input';
 import DropDown, { DropDownMenu ,DropDownMenuItem, DropDownMenuItemProps }  from './dropdown';
-import styled from 'styled-components';
-
 
 export const SelectStoreContext = React.createContext(null);
 
@@ -20,7 +19,6 @@ interface SelectOptionProps extends Omit<DropDownMenuItemProps, 'onClick'> {
     label?: string;
     onClick?: (selectOptionClickType: SelectOptionClickType) => void;
 }
-
 
 // 下拉Icon的样式
 const DownIconStyles = styled.span.attrs(props => {

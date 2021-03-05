@@ -1,12 +1,3 @@
-/**
- *  TODO 任务完成进度
- * 
- *  - [x] test block 属性
- *  - [x] test disabled 属性
- *  - [x] test href 属性
- *  - [ ] test type 属性
- *  - [ ] test onClick 事件
- */
 import React from 'react';
 import { render, screen, fireEvent, act } from '@testing-library/react';
 
