@@ -146,17 +146,20 @@ const Select = observer<SelectProps>(({
    
     const formateChildren = (): ReactNode => {
         if (children instanceof Array) {
-            return children.map((element: React.ReactElement) => {
-                if (element.props.children) {
-                    return element;
-                }
-                return cloneElement(element, {
-                    ...element.props,
-                    key: element.key,
-                    value: element.props.value ? element.props.value : element.key,
-
-                    children: element.props.children ? element.props.children : element.props.label
-                })
+            return children.map((element: ReactNode) => {
+                if (isValidElement(element)) {
+                    if (element.props.children) {
+                        return element;
+                    }
+                    return cloneElement(element, {
+                        ...element.props,
+                        key: element.key,
+                        value: element.props.value ? element.props.value : element.key,
+    
+                        children: element.props.children ? element.props.children : element.props.label
+                    })
+                } 
+                return element;
             })
         } else if (isValidElement(children)) {
             return cloneElement(children, {

@@ -84,11 +84,21 @@ export const DropDownMenu = ({
             {...restProps}
             ref={ref}
             height={height}
-            itemCount={ itemCount}
+            itemCount={itemCount}
             itemSize={30}
             width="100%"
         >
-            {({ index, style }) => cloneElement(children[index], { style })}
+            {({ index, style }) => {
+                if (children instanceof Array) {
+                    let node = children[index];
+                    if (isValidElement(node)) {
+                        return cloneElement(node, { style })
+                    }
+                    return undefined;
+                } else if (isValidElement(children)) {
+                    return cloneElement(children, { style })
+                }
+            }}
         </MenuStyled> 
     )
 }
@@ -121,12 +131,11 @@ const DropDown = ({
     const { onMouseOver, onMouseOut, onClick, ...restProps } = children.props;
 
     useEffect(() => {
-        
         const movePostion = () => {
             let top: string;
             let left: string;
             const rect = ref.current?.getBoundingClientRect();
-            const dropRect = dropdownRef.current.getBoundingClientRect();
+            const dropRect = dropdownRef.current?.getBoundingClientRect();
             if (placement === 'bottom' && rect) {
                 top = `${rect.y + rect.height}px`;
                 left = `${ref.current?.getBoundingClientRect()?.x ||  0}px`;
