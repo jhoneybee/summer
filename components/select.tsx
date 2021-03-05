@@ -229,6 +229,7 @@ const Select = observer<SelectProps>(({
                         }}
                         onBlur={(event) => {
                             store.setVisible(false);
+                            setHover(false);
                             onBlur?.(event);
                         }}
                     />
