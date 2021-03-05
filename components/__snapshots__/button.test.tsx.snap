@@ -2,7 +2,7 @@
 
 exports[`test block 1`] = `
 <button
-  class="sc-bdfBwQ gLkOas"
+  class="sc-bdfBwQ fAsEtl"
   role="button"
 >
   测试按钮
@@ -11,7 +11,7 @@ exports[`test block 1`] = `
 
 exports[`test danger 1`] = `
 <button
-  class="sc-bdfBwQ jemraX"
+  class="sc-bdfBwQ fkRFgS"
   role="button"
 >
   测试按钮
@@ -20,7 +20,7 @@ exports[`test danger 1`] = `
 
 exports[`test danger type[text] 1`] = `
 <a
-  class="sc-bdfBwQ lgXYmG"
+  class="sc-bdfBwQ fVrQWq"
   role="button"
 >
   测试按钮
@@ -29,7 +29,7 @@ exports[`test danger type[text] 1`] = `
 
 exports[`test disabled 1`] = `
 <button
-  class="sc-bdfBwQ iwcedJ"
+  class="sc-bdfBwQ eFNEJo"
   disabled=""
   role="button"
 >
@@ -39,7 +39,7 @@ exports[`test disabled 1`] = `
 
 exports[`test href[_blank] 1`] = `
 <a
-  class="sc-bdfBwQ dlbZId"
+  class="sc-bdfBwQ kXGnJc"
   href="https://www.google.com"
   role="button"
   target="_blank"
@@ -50,7 +50,7 @@ exports[`test href[_blank] 1`] = `
 
 exports[`test href[_parent] 1`] = `
 <a
-  class="sc-bdfBwQ dlbZId"
+  class="sc-bdfBwQ kXGnJc"
   href="https://www.google.com"
   role="button"
   target="_blank"
@@ -61,7 +61,7 @@ exports[`test href[_parent] 1`] = `
 
 exports[`test href[_self] 1`] = `
 <a
-  class="sc-bdfBwQ dlbZId"
+  class="sc-bdfBwQ kXGnJc"
   href="https://www.google.com"
   role="button"
   target="_self"
@@ -72,7 +72,7 @@ exports[`test href[_self] 1`] = `
 
 exports[`test href[_top] 1`] = `
 <a
-  class="sc-bdfBwQ dlbZId"
+  class="sc-bdfBwQ kXGnJc"
   href="https://www.google.com"
   role="button"
   target="_blank"
@@ -83,7 +83,7 @@ exports[`test href[_top] 1`] = `
 
 exports[`test onClick 1`] = `
 <a
-  class="sc-bdfBwQ lgXYmG"
+  class="sc-bdfBwQ fVrQWq"
   role="button"
 >
   改变的按钮
@@ -92,7 +92,7 @@ exports[`test onClick 1`] = `
 
 exports[`test onClick async 1`] = `
 <a
-  class="sc-bdfBwQ jImbRQ"
+  class="sc-bdfBwQ lhwowE"
   disabled=""
   role="button"
 >
@@ -102,7 +102,7 @@ exports[`test onClick async 1`] = `
 
 exports[`test onClick none 1`] = `
 <a
-  class="sc-bdfBwQ lgXYmG"
+  class="sc-bdfBwQ fVrQWq"
   role="button"
 >
   按钮信息
@@ -111,7 +111,7 @@ exports[`test onClick none 1`] = `
 
 exports[`test type[primary] 1`] = `
 <button
-  class="sc-bdfBwQ trsXt"
+  class="sc-bdfBwQ ciVofo"
   role="button"
 >
   测试按钮
@@ -120,7 +120,7 @@ exports[`test type[primary] 1`] = `
 
 exports[`test type[text] 1`] = `
 <a
-  class="sc-bdfBwQ gKLLHS"
+  class="sc-bdfBwQ fSKIzC"
   role="button"
 >
   测试按钮
@@ -129,7 +129,7 @@ exports[`test type[text] 1`] = `
 
 exports[`test type[text] 2`] = `
 <a
-  class="sc-bdfBwQ gKLLHS"
+  class="sc-bdfBwQ fSKIzC"
   role="button"
 >
   测试按钮

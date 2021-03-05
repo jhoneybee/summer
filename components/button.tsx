@@ -54,7 +54,7 @@ const buttonColor = (props) => {
 // 按钮的阴影
 const boxShadow = (props) => {
     if (props.disabled) {
-        return 'none';
+        return  'none'
     }
     if (props.btype === 'text') {
         return 'none';
@@ -72,9 +72,9 @@ const hoveBoxShadow = (props) => {
     }
 
     if (props.btype === 'default' && !props.danger) {
-        return '0px 2px 6px rgba(0,0,0, .1)';
+        return '0px 1px 4px rgba(0,0,0, .1)';
     }
-    return '0px 2px 6px rgba(0,0,0, .4)';
+    return '0px 1px 4px rgba(0,0,0, .4)';
 }
 
 // 设置点击的阴影
@@ -82,7 +82,7 @@ const activeBoxShadow = (props) => {
     if (ohterTypes.includes(props.btype)) {
         return 'none';
     }
-    return '0px 4px 6px rgba(0,0,0, .6)';
+    return 'none';
 }
 
 // 鼠标点击后, 按钮上会覆盖一层渐变色的效果
@@ -120,7 +120,7 @@ const StyledButton = styled.button.attrs((props) => {
     padding: 4px 15px;
     height: 32px;
     margin: 4px;
-    transition: box-shadow 400ms, color 400ms;
+    transition: box-shadow 200ms, color 200ms;
     pointer-events: ${props => props.disabled ? 'none' : 'auto'};
     font-weight: 500;
     font-size: .875rem;

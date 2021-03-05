@@ -4,8 +4,7 @@ import React, {
     isValidElement,
     ReactNode,
     useEffect,
-    useRef,
-    useState,
+    useRef
 } from 'react';
 import { FixedSizeList as List, ListOnScrollProps } from 'react-window';
 import styled from 'styled-components';
@@ -73,12 +72,19 @@ export const DropDownMenu = ({
         }
     }, [])
 
+    let height = 150;
+    if (isValidElement(children)) {
+        height = 30 + 10;
+    } else if (children instanceof Array && children.length * 30 < 150){
+        height = children.length * 30 + 10;
+    }
+
     return (
         <MenuStyled
             {...restProps}
             ref={ref}
-            height={150}
-            itemCount={itemCount}
+            height={height}
+            itemCount={ itemCount}
             itemSize={30}
             width="100%"
         >
@@ -93,10 +99,8 @@ const DropDownStyled = styled.div.attrs((props) => {
     z-index: 1000;
     min-width: 90px;
     position: fixed;
-    left: ${props => `${props.x || 0}px`};
-    top: ${props => `${(props.y || 0)}px`};
     width: ${props => props.width ? `${props.width}px` : 'unset'};
-    visibility: ${props => props.dropdownHeight ? 'visible': 'hidden'};
+    visibility: ${props => props.visible ? 'visible': 'hidden'};
     background-color: #fff;
     padding: 0px;
     box-shadow: 0 3px 6px -4px rgb(0 0 0 / 12%), 0 6px 16px 0 rgb(0 0 0 / 8%), 0 9px 28px 8px rgb(0 0 0 / 5%);
@@ -112,55 +116,43 @@ const DropDown = ({
     onBlur,
     ...restPropsDropDown
 }: DropDownProps) => {
-    const [show, setShow] = useState<boolean>(false);
-    const [rect, setRect] = useState<DOMRect>(null);
-
     const ref = useRef<HTMLElement>(null);
     const dropdownRef = useRef<HTMLElement>(null);
-
     const { onMouseOver, onMouseOut, onClick, ...restProps } = children.props;
 
     useEffect(() => {
-        const setRectState = () => {
-            setRect(ref.current?.getBoundingClientRect());
-        }
-
-        const rectInterval = setInterval(() => {
-            if (ref.current?.getBoundingClientRect().y !== NaN) {
-                setRectState();
+        
+        const movePostion = () => {
+            let top: string;
+            let left: string;
+            const rect = ref.current?.getBoundingClientRect();
+            const dropRect = dropdownRef.current.getBoundingClientRect();
+            if (placement === 'bottom' && rect) {
+                top = `${rect.y + rect.height}px`;
+                left = `${ref.current?.getBoundingClientRect()?.x ||  0}px`;
+                dropdownRef.current?.style?.setProperty('top', top);
+                dropdownRef.current?.style?.setProperty('left', left);
+            } else if (placement === 'top' && dropRect && rect) {
+                top = `${rect.y - dropRect.height}px`;
+                left = `${rect.x}px`;
+                dropdownRef.current?.style?.setProperty('top', top);
+                dropdownRef.current?.style?.setProperty('left', left);
             }
-        }, 1)
-
+        }
+        
+        // 执行一次，初始化滚动位置
+        movePostion();
+        window.addEventListener('scroll', movePostion, true);
         const observer = new IntersectionObserver(() => {
             dropdownRef.current?.blur();
         });
+        
         observer.observe(ref.current);
         return () => {
-            clearInterval(rectInterval);
+            window.removeEventListener('scroll', movePostion);
             observer.disconnect();
         }
     }, [])
-
-    useEffect(() => {
-        if (visible === undefined) {
-            setTimeout(() => {
-                dropdownRef.current?.focus();
-            }, 200);
-        }
-    }, [show])
-
-    useEffect(() => {
-        if (visible === undefined) {
-            setTimeout(() => {
-                dropdownRef.current?.focus();
-            }, 200);
-        }
-    }, [visible])
-
-
-    useEffect(() => {
-        setRect(ref.current?.getBoundingClientRect());
-    }, [ref.current])
 
     const dom = cloneElement(children, {
         ...restProps,
@@ -172,57 +164,27 @@ const DropDown = ({
             }else {
                 restProps.ref = ref;
             }
-        },
-        onClick: (event) => {
-            if (trigger === 'click' && visible === undefined) {
-                setShow(true);
-            }
-            onClick?.(event)
-        },
-        onMouseOver: (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-            if (trigger === 'hover' && visible === undefined) {
-                setShow(true);
-            }
-            onMouseOver?.(event);
         }
     })
 
-    let y = rect?.y || 0;
-    if (placement === 'bottom' && y) {
-        y += rect?.height + 2;
-    }
-
-    const dropdownHeight = dropdownRef.current?.getBoundingClientRect().height;
-    if (placement === 'top' && y && dropdownHeight) {
-        y -=  dropdownHeight + 2;
-    }
-
-    let visibleDom = visible || show;
 
     return (
         <>
-            {
-                visibleDom ? (
-                    <DropDownStyled
-                        {...restPropsDropDown}
-                        tabIndex="0"
-                        ref={dropdownRef}
-                        width={width === 'auto' ? rect?.width : width }
-                        x={rect?.x}
-                        y={y}
-                        dropdownHeight={dropdownHeight}
-                        onMouseDown={(event) => {
-                            event.preventDefault();
-                        }}
-                        onBlur={(event) => {
-                            setShow(false);
-                            onBlur?.(event);
-                        }}
-                    >
-                        {overlay}
-                    </DropDownStyled>
-                ) : undefined
-            }
+            <DropDownStyled
+                    {...restPropsDropDown}
+                    tabIndex="0"
+                    ref={dropdownRef}
+                    width={width === 'auto' ? ref.current?.getBoundingClientRect()?.width : width }
+                    visible={visible}
+                    onMouseDown={(event) => {
+                        event.preventDefault();
+                    }}
+                    onBlur={(event) => {
+                        onBlur?.(event);
+                    }}
+                >
+                    {overlay}
+            </DropDownStyled>
             {dom}
         </>
     )   
