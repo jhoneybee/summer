@@ -23,9 +23,13 @@ function simple () {
     return (
         <DropDown
             trigger="click"
+            width={120}
             overlay={(
                 <DropDownMenu>
-                    <DropDownMenuItem key="0" disabled>
+                    <DropDownMenuItem
+                        key="0"
+                        disabled
+                    >
                         跳转到Google
                     </DropDownMenuItem>
                     <DropDownMenuItem key="1">
@@ -53,6 +57,7 @@ function simple () {
         <div style={{height: 200, overflow: 'auto'}}>
             <div style={{height: 150}}/>
             <DropDown
+                width={120}
                 overlay={(
                     <DropDownMenu>
                         <DropDownMenuItem key="0" disabled>
@@ -85,3 +90,5 @@ function simple () {
 |placement  |菜单弹出位置 | `bottom`  \| `top`     | `bottom`
 |visible    |是否可见     | `boolean`              | -
 |width      |宽度 `auto` 表示自动宽度,和子组件对其       | `number` \| `auto`     | `auto` 
+
+> 默认情况下,高度和子组件对其

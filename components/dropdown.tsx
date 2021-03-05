@@ -117,7 +117,6 @@ const DropDown = ({
 
     const ref = useRef<HTMLElement>(null);
     const dropdownRef = useRef<HTMLElement>(null);
-    const isHover = useRef<boolean>(false);
 
     const { onMouseOver, onMouseOut, onClick, ...restProps } = children.props;
 
@@ -130,7 +129,7 @@ const DropDown = ({
             if (ref.current?.getBoundingClientRect().y !== NaN) {
                 setRectState();
             }
-        }, 20)
+        }, 1)
 
         const observer = new IntersectionObserver(() => {
             dropdownRef.current?.blur();
@@ -212,19 +211,11 @@ const DropDown = ({
                         x={rect?.x}
                         y={y}
                         dropdownHeight={dropdownHeight}
-                        onMouseOver={() => {
-                            isHover.current = true;
-                        }}
-                        onMouseOut={() => {
-                            isHover.current = false;
-                        }}
                         onMouseDown={(event) => {
                             event.preventDefault();
                         }}
                         onBlur={(event) => {
-                            if (!isHover) {
-                                setShow(false);
-                            }
+                            setShow(false);
                             onBlur?.(event);
                         }}
                     >

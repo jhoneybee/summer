@@ -1,11 +1,13 @@
 import React, { cloneElement, InputHTMLAttributes, isValidElement, ReactNode, useContext, useEffect, useState } from 'react'
 import { observer, useLocalObservable } from 'mobx-react-lite'
+import { AiOutlineDown } from 'react-icons/ai';
 
 import Input from './input';
 import DropDown, { DropDownMenu ,DropDownMenuItem, DropDownMenuItemProps }  from './dropdown';
+import styled from 'styled-components';
 
 
-const SelectStoreContext = React.createContext(null);
+export const SelectStoreContext = React.createContext(null);
 
 interface SelectOptionClickType {
     value: string | number;
@@ -18,6 +20,18 @@ interface SelectOptionProps extends Omit<DropDownMenuItemProps, 'onClick'> {
     label?: string;
     onClick?: (selectOptionClickType: SelectOptionClickType) => void;
 }
+
+
+// 下拉Icon的样式
+const DownIconStyles = styled.span`
+    position: absolute;
+    pointer-events: none;
+    right: 14px;
+    top:  20%;
+    width: 12px;
+    height: 12px;
+    color: rgba(0,0,0,.25);
+`
 
 export const SelectOption = ({
     value,
@@ -59,6 +73,8 @@ interface SelectProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'onCha
     onChange:  (selectOptionClickType: SelectOptionClickType) => void;
 }
 
+
+
 const Select = observer<SelectProps>(({
     value,
     onBlur,
@@ -67,6 +83,7 @@ const Select = observer<SelectProps>(({
     children,
     onChange,
     readOnly = true,
+    style = {},
     ...restProps
 }) => {
     const store = useLocalObservable(() => ({
@@ -154,46 +171,57 @@ const Select = observer<SelectProps>(({
 
     return (
         <SelectStoreContext.Provider value={store}>
-            <DropDown
-                visible={store.visible}
-                overlay={(
-                    <DropDownMenu
-                        scrollTop={store.scrollOffset}
-                        onScroll={({ scrollOffset}) => {
-                            store.setScrollOffset(scrollOffset);
-                        }}
-                    >
-                        {dropItems}
-                    </DropDownMenu>
-                )}
+            <div
+                style={{
+                    ...style,
+                    position: 'relative',
+                    display: 'inline-block',
+                }}
             >
-                <Input
-                    {...restProps}
-                    data-value={findItemByValue(value)?.value || store.select.value}
-                    value={findItemByValue(value)?.label || store.select.children}
-                    readOnly={readOnly}
-                    onChange={(event) => {
-                        store.setSelect({
-                            value: event.target.value,
-                            children: event.target.value,
-                            event: undefined,
-                        });
-                        onChange?.(store.select);
-                    }}
-                    onClick={(event) => {
-                        store.setVisible(true);
-                        onClick?.(event);
-                    }}
-                    onFocus={(event) => {
-                        store.setVisible(true);
-                        onFocus?.(event);
-                    }}
-                    onBlur={(event) => {
-                        store.setVisible(false);
-                        onBlur?.(event);
-                    }}
-                />
-            </DropDown>
+                <DropDown
+                    visible={store.visible}
+                    overlay={(
+                        <DropDownMenu
+                            scrollTop={store.scrollOffset}
+                            onScroll={({ scrollOffset}) => {
+                                store.setScrollOffset(scrollOffset);
+                            }}
+                        >
+                            {dropItems}
+                        </DropDownMenu>
+                    )}
+                >
+                    <Input
+                        {...restProps}
+                        data-value={findItemByValue(value)?.value || store.select.value}
+                        value={findItemByValue(value)?.label || store.select.children}
+                        readOnly={readOnly}
+                        onChange={(event) => {
+                            store.setSelect({
+                                value: event.target.value,
+                                children: event.target.value,
+                                event: undefined,
+                            });
+                            onChange?.(store.select);
+                        }}
+                        onClick={(event) => {
+                            store.setVisible(true);
+                            onClick?.(event);
+                        }}
+                        onFocus={(event) => {
+                            store.setVisible(true);
+                            onFocus?.(event);
+                        }}
+                        onBlur={(event) => {
+                            store.setVisible(false);
+                            onBlur?.(event);
+                        }}
+                    />
+                </DropDown>
+                <DownIconStyles>
+                    <AiOutlineDown />
+                </DownIconStyles>
+            </div>
         </SelectStoreContext.Provider>
     )
 })

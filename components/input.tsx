@@ -15,10 +15,10 @@ const InputStyled = styled.input.attrs(props => {
         opacity: .5;
     }
     :focus {
-        border: ${props => props.disabled ? '1px solid #d9d9d9' : '1px solid #6002ee;'}
+        border: ${props => props.disabled ? '1px solid #d9d9d9' : '1px solid #6002ee'}
     }
     :hover {
-        border: ${props => props.disabled ? '1px solid #d9d9d9' : '1px solid #6002ee;'}
+        border: ${props => props.disabled ? '1px solid #d9d9d9' : '1px solid #6002ee'}
     }
 `
 
