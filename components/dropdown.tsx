@@ -1,32 +1,14 @@
 import React, {
     cloneElement,
     HTMLAttributes,
+    isValidElement,
     ReactNode,
-    MutableRefObject,
     useEffect,
     useRef,
     useState,
 } from 'react';
-
+import { FixedSizeList as List, ListOnScrollProps } from 'react-window';
 import styled from 'styled-components';
-
-export interface DropDownProps extends HTMLAttributes<HTMLDivElement> {
-    children?: JSX.Element,
-    overlay?: ReactNode,
-    trigger?: 'click' | 'hover',
-    placement?: 'bottom' | 'top',
-    visible?: boolean,
-}
-
-const MenuStyled = styled.ul`
-    list-style: none;
-    padding: 4px 0;
-    margin: 0px;
-`
-
-export const DropDownMenu = (props: HTMLAttributes<HTMLUListElement>) => {
-    return <MenuStyled {...props} />
-}
 
 const MenuItemStyled = styled.li.attrs(props => {
 })`
@@ -50,6 +32,62 @@ export const DropDownMenuItem = (props: DropDownMenuItemProps) => {
     return <MenuItemStyled {...props} />
 }
 
+export interface DropDownProps extends HTMLAttributes<HTMLDivElement> {
+    children?: JSX.Element,
+    overlay?: ReactNode,
+    trigger?: 'click' | 'hover',
+    width?: number | 'auto';
+    placement?: 'bottom' | 'top',
+    visible?: boolean,
+}
+
+const MenuStyled = styled(List)`
+    list-style: none;
+    padding: 4px 0;
+    margin: 0px;
+`
+
+
+interface DropDownMenuProps extends Omit<HTMLAttributes<HTMLUListElement>, 'onScroll'> {
+    scrollTop?: number;
+    onScroll?: (props: ListOnScrollProps) => any;
+}
+
+export const DropDownMenu = ({
+    scrollTop,
+    children,
+    ...restProps
+}: DropDownMenuProps) => {
+    let itemCount = 0;
+    if (children instanceof Array) {
+        itemCount = children.length;
+    } else if (isValidElement(children)) {
+        itemCount = 1;
+    }
+
+    const ref = useRef<List>(null)
+
+    useEffect(() => {
+        if (scrollTop) {
+            ref.current.scrollTo(scrollTop);
+        }
+    }, [])
+
+    return (
+        <MenuStyled
+            {...restProps}
+            ref={ref}
+            height={150}
+            itemCount={itemCount}
+            itemSize={30}
+            width="100%"
+        >
+            {({ index, style }) => cloneElement(children[index], { style })}
+        </MenuStyled> 
+    )
+}
+
+
 const DropDownStyled = styled.div.attrs((props) => {
 })`
     z-index: 1000;
@@ -64,18 +102,18 @@ const DropDownStyled = styled.div.attrs((props) => {
     box-shadow: 0 3px 6px -4px rgb(0 0 0 / 12%), 0 6px 16px 0 rgb(0 0 0 / 8%), 0 9px 28px 8px rgb(0 0 0 / 5%);
 `;
 
-export default function DropDown ({
+const DropDown = ({
     children,
     overlay,
     placement = 'bottom',
-    trigger='hover',
+    trigger = 'hover',
     visible,
+    width = 'auto',
     onBlur,
     ...restPropsDropDown
-}: DropDownProps) {
+}: DropDownProps) => {
     const [show, setShow] = useState<boolean>(false);
     const [rect, setRect] = useState<DOMRect>(null);
-
 
     const ref = useRef<HTMLElement>(null);
     const dropdownRef = useRef<HTMLElement>(null);
@@ -161,10 +199,6 @@ export default function DropDown ({
     }
 
     let visibleDom = visible || show;
-    
-    if (isHover.current) {
-        visibleDom = true;
-    }
 
     return (
         <>
@@ -174,18 +208,21 @@ export default function DropDown ({
                         {...restPropsDropDown}
                         tabIndex="0"
                         ref={dropdownRef}
-                        width={visible === undefined ? undefined : rect?.width}
+                        width={width === 'auto' ? rect?.width : width }
                         x={rect?.x}
                         y={y}
                         dropdownHeight={dropdownHeight}
-                        onMouseOver={(event) => {
+                        onMouseOver={() => {
                             isHover.current = true;
                         }}
-                        onMouseOut={(event) => {
+                        onMouseOut={() => {
                             isHover.current = false;
                         }}
+                        onMouseDown={(event) => {
+                            event.preventDefault();
+                        }}
                         onBlur={(event) => {
-                            if (visible === undefined) {
+                            if (!isHover) {
                                 setShow(false);
                             }
                             onBlur?.(event);
@@ -197,6 +234,7 @@ export default function DropDown ({
             }
             {dom}
         </>
-    ) 
-    
+    )   
 }
+
+export default DropDown;

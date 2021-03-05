@@ -1,4 +1,4 @@
-import React, { forwardRef, HTMLAttributes } from 'react';
+import React, { forwardRef, InputHTMLAttributes } from 'react';
 import styled from 'styled-components';
 
 const InputStyled = styled.input.attrs(props => { 
@@ -8,6 +8,7 @@ const InputStyled = styled.input.attrs(props => {
     line-height: 1.5715;
     border: 1px solid #d9d9d9;
     padding: 4px 11px;
+    cursor: ${props => props.readOnly ? 'pointer': 'auto'};
     transition: border 600ms;
     color: ${props => props.disabled ? 'rgba(0, 0, 0, 0.26)' : 'rgba(0,0,0,.85)'};
     ::placeholder {
@@ -21,7 +22,10 @@ const InputStyled = styled.input.attrs(props => {
     }
 `
 
-const Input = forwardRef<HTMLInputElement, HTMLAttributes<HTMLInputElement>>((props, ref) => {
+interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
+}
+
+const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
     return <InputStyled {...props} ref={ref} />
 })
 

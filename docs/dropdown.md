@@ -84,3 +84,4 @@ function simple () {
 |overlay    |菜单        |`ReactNode`            | -
 |placement  |菜单弹出位置 | `bottom`  \| `top`     | `bottom`
 |visible    |是否可见     | `boolean`              | -
+|width      |宽度 `auto` 表示自动宽度,和子组件对其       | `number` \| `auto`     | `auto` 

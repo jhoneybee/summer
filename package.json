@@ -13,8 +13,11 @@
     "test": "jest --coverage"
   },
   "dependencies": {
+    "mobx": "^6.1.8",
+    "mobx-react-lite": "^3.2.0",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
+    "react-window": "^1.8.6",
     "styled-components": "^5.2.1"
   },
   "devDependencies": {
@@ -29,6 +32,7 @@
     "@types/react-dom": "^17.0.1",
     "@types/react-helmet": "^6.1.0",
     "@types/react-router-dom": "^5.1.7",
+    "@types/react-window": "^1.8.2",
     "@types/styled-components": "^5.1.7",
     "clsx": "^1.1.1",
     "docusaurus-theme-live-codeblock": "^2.0.0-alpha.70.1",
