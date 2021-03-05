@@ -23,8 +23,9 @@ interface SelectOptionProps extends Omit<DropDownMenuItemProps, 'onClick'> {
 // 下拉Icon的样式
 const DownIconStyles = styled.span.attrs(props => {
 })`
+    z-index: 1;
     position: absolute;
-    pointer-events: ${props => props.closeCircle ? 'auto': 'none'};
+    // pointer-events: ${props => props.closeCircle ? 'unset': 'none'};
     right: 14px;
     top:  20%;
     width: 12px;
@@ -234,12 +235,14 @@ const Select = observer<SelectProps>(({
                 </DropDown>
                 <DownIconStyles
                     closeCircle={isCloseCircle}
-                    onClick={() => {
-                        store.setSelect({
-                            value: '',
-                            label: '',
-                            event: null,
-                        })
+                    onMouseDown={(event) => {
+                        if (event.button === 0) {
+                            store.setSelect({
+                                value: '',
+                                label: '',
+                                event: null,
+                            })
+                        }
                     }}
                 >
                     {
