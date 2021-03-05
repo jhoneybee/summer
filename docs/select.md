@@ -89,8 +89,9 @@ function simple () {
 
 | 属性       | 说明                     | 类型                   | 默认值
 |-----      |------                   |------                 |------------
-|value      |当前选中的值               | `string` \| `number`  | `''`
+|value      |当前选中的值               | `string` \| `number`  |  `''`
 |readOnly   |设置为只读属性              | `boolean`             | `true`
+|allowClear |是否支持清除                | `boolean`             | `true`
 |onChange   |用户选中数据的时候触发的事件  | `(selectOptionClickType: SelectOptionClickType) => void` | -
 
 ### SelectOptionClickType 类型说明

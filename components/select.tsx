@@ -1,6 +1,6 @@
 import React, { cloneElement, InputHTMLAttributes, isValidElement, ReactNode, useContext, useEffect, useState } from 'react'
 import { observer, useLocalObservable } from 'mobx-react-lite'
-import { AiOutlineDown } from 'react-icons/ai';
+import { AiOutlineDown, AiOutlineCloseCircle } from 'react-icons/ai';
 
 import Input from './input';
 import DropDown, { DropDownMenu ,DropDownMenuItem, DropDownMenuItemProps }  from './dropdown';
@@ -11,7 +11,7 @@ export const SelectStoreContext = React.createContext(null);
 
 interface SelectOptionClickType {
     value: string | number;
-    children: ReactNode;
+    label: string;
     event: React.MouseEvent<HTMLLIElement, MouseEvent>
 }
 
@@ -23,14 +23,19 @@ interface SelectOptionProps extends Omit<DropDownMenuItemProps, 'onClick'> {
 
 
 // 下拉Icon的样式
-const DownIconStyles = styled.span`
+const DownIconStyles = styled.span.attrs(props => {
+})`
     position: absolute;
-    pointer-events: none;
+    pointer-events: ${props => props.closeCircle ? 'auto': 'none'};
     right: 14px;
     top:  20%;
     width: 12px;
     height: 12px;
     color: rgba(0,0,0,.25);
+    :hover {
+        cursor: pointer;
+        color: rgba(0,0,0,.85);
+    }
 `
 
 export const SelectOption = ({
@@ -49,13 +54,13 @@ export const SelectOption = ({
                     const value =  event.currentTarget.getAttribute('data-value');  
                     onClick?.({
                         value,
-                        children,
+                        label: label || event.currentTarget.textContent,
                         event
                     })
                     store.setVisible(false);
                     store.setSelect({
                         value,
-                        children: event.currentTarget.textContent,
+                        label: label || event.currentTarget.textContent,
                         event
                     })
                 }
@@ -70,10 +75,9 @@ export const SelectOption = ({
 
 interface SelectProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'value'> {
     value: string | number;
+    allowClear: boolean;
     onChange:  (selectOptionClickType: SelectOptionClickType) => void;
 }
-
-
 
 const Select = observer<SelectProps>(({
     value,
@@ -83,13 +87,14 @@ const Select = observer<SelectProps>(({
     children,
     onChange,
     readOnly = true,
+    allowClear = true,
     style = {},
     ...restProps
 }) => {
     const store = useLocalObservable(() => ({
         select: {
             value: value || '',
-            children: '',
+            label: '',
             event: null,
         },
         scrollOffset: null,
@@ -169,6 +174,10 @@ const Select = observer<SelectProps>(({
         setDropItems(formateChildren())
     }, [children])
 
+    const [hover, setHover] = useState<boolean>(false);
+
+    const isCloseCircle = hover && allowClear && store.select.value !== '';
+
     return (
         <SelectStoreContext.Provider value={store}>
             <div
@@ -176,6 +185,12 @@ const Select = observer<SelectProps>(({
                     ...style,
                     position: 'relative',
                     display: 'inline-block',
+                }}
+                onMouseEnter={() => {
+                    setHover(true);
+                }}
+                onMouseLeave={() => {
+                    setHover(false)
                 }}
             >
                 <DropDown
@@ -194,12 +209,12 @@ const Select = observer<SelectProps>(({
                     <Input
                         {...restProps}
                         data-value={findItemByValue(value)?.value || store.select.value}
-                        value={findItemByValue(value)?.label || store.select.children}
+                        value={findItemByValue(value)?.label || store.select.label}
                         readOnly={readOnly}
                         onChange={(event) => {
                             store.setSelect({
                                 value: event.target.value,
-                                children: event.target.value,
+                                label: event.target.value,
                                 event: undefined,
                             });
                             onChange?.(store.select);
@@ -218,8 +233,19 @@ const Select = observer<SelectProps>(({
                         }}
                     />
                 </DropDown>
-                <DownIconStyles>
-                    <AiOutlineDown />
+                <DownIconStyles
+                    closeCircle={isCloseCircle}
+                    onClick={() => {
+                        store.setSelect({
+                            value: '',
+                            label: '',
+                            event: null,
+                        })
+                    }}
+                >
+                    {
+                        isCloseCircle ? <AiOutlineCloseCircle /> : <AiOutlineDown />
+                    }
                 </DownIconStyles>
             </div>
         </SelectStoreContext.Provider>
