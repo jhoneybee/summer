@@ -46,7 +46,6 @@ const MenuStyled = styled(List)`
     margin: 0px;
 `
 
-
 interface DropDownMenuProps extends Omit<HTMLAttributes<HTMLUListElement>, 'onScroll'> {
     scrollTop?: number;
     onScroll?: (props: ListOnScrollProps) => any;
@@ -106,7 +105,7 @@ export const DropDownMenu = ({
 
 const DropDownStyled = styled.div.attrs((props) => {
 })`
-    z-index: 1000;
+    z-index: 10;
     min-width: 90px;
     position: fixed;
     width: ${props => props.width ? `${props.width}px` : 'unset'};
@@ -176,12 +175,11 @@ const DropDown = ({
         }
     })
 
-
     return (
         <>
             <DropDownStyled
                     {...restPropsDropDown}
-                    tabIndex="0"
+                    tabIndex="-1"
                     ref={dropdownRef}
                     width={width === 'auto' ? ref.current?.getBoundingClientRect()?.width : width }
                     visible={visible}
