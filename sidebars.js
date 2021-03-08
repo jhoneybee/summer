@@ -6,7 +6,8 @@ module.exports = {
       'input',
       'select',
       'password',
-      'message'
+      'message',
+      'checkbox'
     ],
     '布局组件': [],
     '导航': [],

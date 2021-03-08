@@ -70,6 +70,7 @@ const Select = observer<SelectProps>(({
     readOnly = true,
     allowClear = true,
     style = {},
+    className,
     ...restProps
 }) => {
     const store = useLocalObservable(() => ({
@@ -165,6 +166,7 @@ const Select = observer<SelectProps>(({
     return (
         <SelectStoreContext.Provider value={store}>
             <div
+                className={className}
                 style={{
                     ...style,
                     position: 'relative',
