@@ -3,6 +3,21 @@ import styled from 'styled-components';
 
 import { primaryColor, fontColor, disabledColor } from './styles/global'
 
+export const IconStyles = styled.span.attrs(props => {
+})`
+    z-index: 1;
+    position: absolute;
+    right: 14px;
+    top:  20%;
+    width: 12px;
+    height: 12px;
+    color: rgba(0,0,0,.25);
+    :hover {
+        cursor: pointer;
+        color: rgba(0,0,0,.85);
+    }
+`
+
 const InputStyled = styled.input.attrs(props => { 
 })`
     outline: none;
@@ -24,7 +39,7 @@ const InputStyled = styled.input.attrs(props => {
     }
 `
 
-interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
+export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
 }
 
 const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {

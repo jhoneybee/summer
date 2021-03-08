@@ -1,9 +1,8 @@
 import React, { cloneElement, InputHTMLAttributes, isValidElement, ReactNode, useContext, useEffect, useState } from 'react'
 import { observer, useLocalObservable } from 'mobx-react-lite'
 import { AiOutlineDown, AiOutlineCloseCircle } from 'react-icons/ai';
-import styled from 'styled-components';
 
-import Input from './input';
+import Input, { IconStyles } from './input';
 import DropDown, { DropDownMenu ,DropDownMenuItem, DropDownMenuItemProps }  from './dropdown';
 
 export const SelectStoreContext = React.createContext(null);
@@ -19,23 +18,6 @@ interface SelectOptionProps extends Omit<DropDownMenuItemProps, 'onClick'> {
     label?: string;
     onClick?: (selectOptionClickType: SelectOptionClickType) => void;
 }
-
-// 下拉Icon的样式
-const DownIconStyles = styled.span.attrs(props => {
-})`
-    z-index: 1;
-    position: absolute;
-    // pointer-events: ${props => props.closeCircle ? 'unset': 'none'};
-    right: 14px;
-    top:  20%;
-    width: 12px;
-    height: 12px;
-    color: rgba(0,0,0,.25);
-    :hover {
-        cursor: pointer;
-        color: rgba(0,0,0,.85);
-    }
-`
 
 export const SelectOption = ({
     value,
@@ -99,7 +81,7 @@ const Select = observer<SelectProps>(({
         scrollOffset: null,
         visible: false,
 
-        setVisible(newVisible){
+        setVisible(newVisible: boolean){
             this.visible = newVisible;
         },
         setSelect(newSelect){
@@ -236,7 +218,7 @@ const Select = observer<SelectProps>(({
                         }}
                     />
                 </DropDown>
-                <DownIconStyles
+                <IconStyles
                     closeCircle={isCloseCircle}
                     onMouseDown={(event) => {
                         if (event.button === 0) {
@@ -251,7 +233,7 @@ const Select = observer<SelectProps>(({
                     {
                         isCloseCircle ? <AiOutlineCloseCircle /> : <AiOutlineDown />
                     }
-                </DownIconStyles>
+                </IconStyles>
             </div>
         </SelectStoreContext.Provider>
     )

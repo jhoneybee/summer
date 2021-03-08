@@ -8,8 +8,9 @@
 import React from 'react';
 import Button from '../../../components/button'
 import DropDown, { DropDownMenu, DropDownMenuItem } from '../../../components/dropdown';
-import Input from '../../../components/input'
-import Select, { SelectOption } from '../../../components/select'
+import Input from '../../../components/input';
+import Select, { SelectOption } from '../../../components/select';
+import Password from '../../../components/password'
 
 // Add react-live imports you need here
 const ReactLiveScope = {
@@ -21,7 +22,8 @@ const ReactLiveScope = {
   DropDownMenuItem,
   Input,
   Select,
-  SelectOption
+  SelectOption,
+  Password
 };
 
 export default ReactLiveScope;
