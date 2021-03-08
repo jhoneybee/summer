@@ -5,7 +5,8 @@ module.exports = {
       'dropdown',
       'input',
       'select',
-      'password'
+      'password',
+      'message'
     ],
     '布局组件': [],
     '导航': [],
