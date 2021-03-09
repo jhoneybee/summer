@@ -1,17 +1,78 @@
-import React, { cloneElement, InputHTMLAttributes, isValidElement, ReactNode, useContext, useEffect, useState } from 'react'
-import { observer, useLocalObservable } from 'mobx-react-lite'
+import React, { 
+    cloneElement,
+    InputHTMLAttributes,
+    isValidElement,
+    ReactNode,
+    useContext,
+    useEffect,
+    useReducer,
+    createContext,
+    useState,
+    Dispatch
+ } from 'react'
 import { AiOutlineDown, AiOutlineCloseCircle } from 'react-icons/ai';
 
 import Input from './input';
 import DropDown, { DropDownMenu ,DropDownMenuItem, DropDownMenuItemProps }  from './dropdown';
 
-export const SelectStoreContext = React.createContext(null);
 
 interface SelectOptionClickType {
     value: string | number;
     label: string;
     event: React.MouseEvent<HTMLLIElement, MouseEvent>
 }
+
+
+type Action =
+| { type: 'setVisible', payload: boolean }
+| { type: 'setSelect', payload: SelectOptionClickType }
+| { type: 'setScrollOffset', payload: number }
+| { type: 'setVisibleAndSelect', payload: { select: SelectOptionClickType, visible: boolean } };
+
+
+interface State {
+    select?: SelectOptionClickType,
+    scrollOffset?: number,
+    visible?: boolean
+}
+
+const Context = createContext<{
+    state: State;
+    dispatch: Dispatch<Action>;
+  }>({
+    state: {},
+    dispatch: () => null
+  });
+
+
+function selectReducer(state: State, action: Action): State {
+    const type = action.payload;
+    switch (action.type) {
+        case 'setVisible':
+            return {
+                ...state,
+                visible: action.payload
+            };
+        case 'setSelect':
+            return {
+                ...state,
+                select: action.payload
+            };
+        case 'setScrollOffset':
+            return {
+                ...state,
+                scrollOffset: action.payload
+            };
+        case 'setVisibleAndSelect':
+            return {
+                ...state,
+                ...action.payload,
+            };
+        default:
+            throw Error(`Unknown type [${type}]`);
+    }
+}
+
 
 interface SelectOptionProps extends Omit<DropDownMenuItemProps, 'onClick'> {
     value?: string;
@@ -26,24 +87,29 @@ export const SelectOption = ({
     label,
     ...restProps
 }: SelectOptionProps) => {
-    const store = useContext(SelectStoreContext);
+    const { dispatch } = useContext(Context);
     return (
         <DropDownMenuItem
             data-value={value}
             onMouseDown={(event) => {
                 if (event.button === 0) {
-                    const value =  event.currentTarget.getAttribute('data-value');  
+                    const value = event.currentTarget.getAttribute('data-value');  
                     onClick?.({
                         value,
                         label: label || event.currentTarget.textContent,
                         event
                     })
-                    store.setVisible(false);
-                    store.setSelect({
-                        value,
-                        label: label || event.currentTarget.textContent,
-                        event
-                    })
+                    dispatch({
+                        type: 'setVisibleAndSelect',
+                        payload: {
+                            select: {
+                                value,
+                                label: label || event.currentTarget.textContent,
+                                event
+                            },
+                            visible: false
+                        },
+                    });
                 }
                 event.preventDefault();
             }}
@@ -60,7 +126,7 @@ interface SelectProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'onCha
     onChange:  (selectOptionClickType: SelectOptionClickType) => void;
 }
 
-const Select = observer<SelectProps>(({
+const Select = ({
     value,
     onBlur,
     onFocus,
@@ -72,27 +138,18 @@ const Select = observer<SelectProps>(({
     style = {},
     className,
     ...restProps
-}) => {
-    const store = useLocalObservable(() => ({
+}: SelectProps) => {
+
+    const [state, dispatch] = useReducer(selectReducer, {
         select: {
             value: value || '',
             label: '',
             event: null,
         },
-        scrollOffset: null,
-        visible: false,
-
-        setVisible(newVisible: boolean){
-            this.visible = newVisible;
-        },
-        setSelect(newSelect){
-            this.select = newSelect;
-        },
-        setScrollOffset(newScrollOffset: number) {
-            this.scrollOffset = newScrollOffset;
-        }
-    }))
-
+        scrollOffset: 0,
+        visible: false
+    });
+    
     const findItemByValue = (
         value: string | number | undefined
     ): { value: string | number, label: string } | undefined => {
@@ -122,8 +179,8 @@ const Select = observer<SelectProps>(({
     }
     
     useEffect(() => {
-        onChange?.(store.select);
-    }, [store.select])
+        onChange?.(state.select);
+    }, [state.select])
 
     const [dropItems, setDropItems] = useState<ReactNode>([]);
    
@@ -162,18 +219,25 @@ const Select = observer<SelectProps>(({
 
     const [hover, setHover] = useState<boolean>(false);
 
-    const isCloseCircle = hover && allowClear && store.select.value !== '';
-
+    const isCloseCircle = hover && allowClear && state.select.value !== '';
     const Icon = isCloseCircle ? AiOutlineCloseCircle : AiOutlineDown;
     return (
-        <SelectStoreContext.Provider value={store}>
+        <Context.Provider
+            value={{
+                state,
+                dispatch
+            }}
+        >
             <DropDown
-                visible={store.visible}
+                visible={state.visible}
                 overlay={(
                     <DropDownMenu
-                        scrollTop={store.scrollOffset}
+                        scrollTop={state.scrollOffset}
                         onScroll={({ scrollOffset}) => {
-                            store.setScrollOffset(scrollOffset);
+                            dispatch({
+                                type: 'setScrollOffset',
+                                payload: scrollOffset
+                            })
                         }}
                     >
                         {dropItems}
@@ -182,40 +246,56 @@ const Select = observer<SelectProps>(({
             >
                 <Input
                     {...restProps}
-                    data-value={findItemByValue(value)?.value || store.select.value}
-                    value={findItemByValue(value)?.label || store.select.label}
+                    data-value={findItemByValue(value)?.value || state.select.value}
+                    value={findItemByValue(value)?.label || state.select.label}
                     readOnly={readOnly}
                     suffix={
                         <Icon
                             onMouseDown={(event) => {
                                 if (event.button === 0) {
-                                    store.setSelect({
-                                        value: '',
-                                        label: '',
-                                        event: null,
+                                    dispatch({
+                                        type: 'setSelect',
+                                        payload: {
+                                            value: '',
+                                            label: '',
+                                            event: null,
+                                        }
                                     })
                                 }
                             }}
                         />
                     }
                     onChange={(event) => {
-                        store.setSelect({
+                        const changeSelect = {
                             value: event.target.value,
                             label: event.target.value,
                             event: undefined,
-                        });
-                        onChange?.(store.select);
+                        }
+                        dispatch({
+                            type: 'setSelect',
+                            payload: changeSelect
+                        })
+                        onChange?.(changeSelect);
                     }}
                     onClick={(event) => {
-                        store.setVisible(true);
+                        dispatch({
+                            type: 'setVisible',
+                            payload: true
+                        })
                         onClick?.(event);
                     }}
                     onFocus={(event) => {
-                        store.setVisible(true);
+                        dispatch({
+                            type: 'setVisible',
+                            payload: true
+                        })
                         onFocus?.(event);
                     }}
                     onBlur={(event) => {
-                        store.setVisible(false);
+                        dispatch({
+                            type: 'setVisible',
+                            payload: false
+                        })
                         onBlur?.(event);
                     }}
                     onMouseEnter={() => {
@@ -226,8 +306,8 @@ const Select = observer<SelectProps>(({
                     }}
                 />
             </DropDown>
-        </SelectStoreContext.Provider>
+        </Context.Provider>
     )
-})
+}
 
 export default Select;
