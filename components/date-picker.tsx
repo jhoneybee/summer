@@ -197,7 +197,6 @@ const DatePickerBody = ({
     const [days, setDays] = useState<Array<ReactNode>>();
     useEffect(() => {
 
-
         const cellClick = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
             const datetime = event.currentTarget.getAttribute('data-time') as unknown as Date
             onChange?.(datetime);
@@ -207,23 +206,24 @@ const DatePickerBody = ({
         const endDateTime = addDays(startDateTime, getDaysInMonth(value) - 1);
         const firstDateTime = addDays(startDateTime, -toNumberWeek(getDay(startDateTime)));
 
-        console.log('startDateTime', format(startDateTime, 'yyyy-MM-dd'));
-        console.log('endDateTime', format(endDateTime, 'yyyy-MM-dd'))
-        console.log('firstDateTime', format(firstDateTime, 'yyyy-MM-dd'))
         const newDays: Array<ReactNode> = [];
-
-        for (let currentTime = firstDateTime; currentTime.getTime() <= endDateTime.getTime(); currentTime = addDays(currentTime, 1)) {
+        let currentTime = firstDateTime;
+        let currentIndex = 0;
+        while (currentTime.getTime() <= addDays(endDateTime, 6 - toNumberWeek(getDay(endDateTime))).getTime() || currentIndex <= 41) {
+            currentIndex += 1;
+            currentTime = addDays(currentTime, 1)
             newDays.push(
                 <BodyCellStyled
                     title={format(currentTime, 'yyyy-MM-dd') }
                     data-time={currentTime}
                     isCurrentMonth={getMonth(currentTime) === getMonth(startDateTime)}
                     key={currentTime.getTime()}
-                    onClick={(event) => cellClick(event)}
+                    onClick={(event: React.MouseEvent<HTMLDivElement, MouseEvent>) => cellClick(event)}
                 >
                     {getDate(currentTime) }
                 </BodyCellStyled>
             )
+
         }
         setDays(newDays);
     }, [value])
@@ -243,7 +243,7 @@ const DatePickerBody = ({
 
 const DatePickerPanelStyled = styled.div`
     width: 280px;
-    height: 300px;
+    height: 310px;
     background-color: #fff;
     border-radius: 2px;
     box-shadow: 0px 0px 4px rgba(0,0,0, .1);
