@@ -2,7 +2,7 @@ import React, { cloneElement, InputHTMLAttributes, isValidElement, ReactNode, us
 import { observer, useLocalObservable } from 'mobx-react-lite'
 import { AiOutlineDown, AiOutlineCloseCircle } from 'react-icons/ai';
 
-import Input, { IconStyles } from './input';
+import Input from './input';
 import DropDown, { DropDownMenu ,DropDownMenuItem, DropDownMenuItemProps }  from './dropdown';
 
 export const SelectStoreContext = React.createContext(null);
@@ -159,84 +159,73 @@ const Select = observer<SelectProps>(({
         setDropItems(formateChildren())
     }, [children])
 
+
     const [hover, setHover] = useState<boolean>(false);
 
     const isCloseCircle = hover && allowClear && store.select.value !== '';
 
+    const Icon = isCloseCircle ? AiOutlineCloseCircle : AiOutlineDown;
     return (
         <SelectStoreContext.Provider value={store}>
-            <div
-                className={className}
-                style={{
-                    ...style,
-                    position: 'relative',
-                    display: 'inline-block',
-                }}
-                onMouseEnter={() => {
-                    setHover(true);
-                }}
-                onMouseLeave={() => {
-                    setHover(false)
-                }}
+            <DropDown
+                visible={store.visible}
+                overlay={(
+                    <DropDownMenu
+                        scrollTop={store.scrollOffset}
+                        onScroll={({ scrollOffset}) => {
+                            store.setScrollOffset(scrollOffset);
+                        }}
+                    >
+                        {dropItems}
+                    </DropDownMenu>
+                )}
             >
-                <DropDown
-                    visible={store.visible}
-                    overlay={(
-                        <DropDownMenu
-                            scrollTop={store.scrollOffset}
-                            onScroll={({ scrollOffset}) => {
-                                store.setScrollOffset(scrollOffset);
+                <Input
+                    {...restProps}
+                    data-value={findItemByValue(value)?.value || store.select.value}
+                    value={findItemByValue(value)?.label || store.select.label}
+                    readOnly={readOnly}
+                    suffix={
+                        <Icon
+                            onMouseDown={(event) => {
+                                if (event.button === 0) {
+                                    store.setSelect({
+                                        value: '',
+                                        label: '',
+                                        event: null,
+                                    })
+                                }
                             }}
-                        >
-                            {dropItems}
-                        </DropDownMenu>
-                    )}
-                >
-                    <Input
-                        {...restProps}
-                        data-value={findItemByValue(value)?.value || store.select.value}
-                        value={findItemByValue(value)?.label || store.select.label}
-                        readOnly={readOnly}
-                        onChange={(event) => {
-                            store.setSelect({
-                                value: event.target.value,
-                                label: event.target.value,
-                                event: undefined,
-                            });
-                            onChange?.(store.select);
-                        }}
-                        onClick={(event) => {
-                            store.setVisible(true);
-                            onClick?.(event);
-                        }}
-                        onFocus={(event) => {
-                            store.setVisible(true);
-                            onFocus?.(event);
-                        }}
-                        onBlur={(event) => {
-                            store.setVisible(false);
-                            setHover(false);
-                            onBlur?.(event);
-                        }}
-                    />
-                </DropDown>
-                <IconStyles
-                    closeCircle={isCloseCircle}
-                    onMouseDown={(event) => {
-                        if (event.button === 0) {
-                            store.setSelect({
-                                value: '',
-                                label: '',
-                                event: null,
-                            })
-                        }
-                    }}
-                >
-                    {
-                        isCloseCircle ? <AiOutlineCloseCircle /> : <AiOutlineDown />
+                        />
                     }
-                </IconStyles>
-            </div>
+                    onChange={(event) => {
+                        store.setSelect({
+                            value: event.target.value,
+                            label: event.target.value,
+                            event: undefined,
+                        });
+                        onChange?.(store.select);
+                    }}
+                    onClick={(event) => {
+                        store.setVisible(true);
+                        onClick?.(event);
+                    }}
+                    onFocus={(event) => {
+                        store.setVisible(true);
+                        onFocus?.(event);
+                    }}
+                    onBlur={(event) => {
+                        store.setVisible(false);
+                        onBlur?.(event);
+                    }}
+                    onMouseEnter={() => {
+                        setHover(true);
+                    }}
+                    onMouseLeave={() => {
+                        setHover(false)
+                    }}
+                />
+            </DropDown>
         </SelectStoreContext.Provider>
     )
 })

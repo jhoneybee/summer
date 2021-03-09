@@ -1,11 +1,9 @@
 import React, { useState } from 'react';
 import { AiOutlineEyeInvisible, AiOutlineEye } from 'react-icons/ai';
 
-import Input, { IconStyles, InputProps } from './input';
-
+import Input, { InputProps } from './input';
 
 export interface PasswordProps extends InputProps{
-
 }
 
 export default function Password ({
@@ -13,22 +11,19 @@ export default function Password ({
     ...restProps
 }: PasswordProps) {
     const [hideValue, setHideValue] = useState<boolean>(true);
+    const Icon = hideValue ? AiOutlineEyeInvisible : AiOutlineEye;
     return (
-        <div
-            style={{
-                ...style,
-                position: 'relative',
-                display: 'inline-block',
-            }}
-        >
-            <Input type={hideValue ? 'password' : 'text'} {...restProps} />
-            <IconStyles
-                onClick={() => {
-                    setHideValue(!hideValue);
-                }}
-            >
-                { hideValue ? <AiOutlineEyeInvisible /> : <AiOutlineEye /> } 
-            </IconStyles>
-        </div>
+
+            <Input
+                {...restProps}
+                type={hideValue ? 'password' : 'text'}
+                suffix={
+                    <Icon
+                        onClick={() => {
+                            setHideValue(!hideValue);
+                        }}
+                    />
+                }
+            />
     );
 }

@@ -6,6 +6,8 @@
  */
 
 import React from 'react';
+import { AiOutlineUser } from "react-icons/ai";
+
 import Button from '../../../components/button'
 import DropDown, { DropDownMenu, DropDownMenuItem } from '../../../components/dropdown';
 import Input from '../../../components/input';
@@ -30,7 +32,8 @@ const ReactLiveScope = {
   Message,
   info,
   error,
-  Checkbox
+  Checkbox,
+  AiOutlineUser
 };
 
 export default ReactLiveScope;

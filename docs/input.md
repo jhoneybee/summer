@@ -18,7 +18,7 @@ slug: /input
 function simple () {
     return (
         <>
-            <Input/>
+            <Input prefix={<AiOutlineUser />}/>
             <br/>
             <br/>
             <Input
@@ -41,3 +41,5 @@ function simple () {
 |-----      |------                   |------                 |------------
 |disabled   |是否禁用状态               |`boolean`              |`false`
 |placeholder|空白内容的时候显示的文本信息  |`string`               | - 
+|prefix     |带有前缀图标的 input        |`ReactNode`            | -
+|suffix     |带有后缀图标的 input        |`ReactNode`            | -
