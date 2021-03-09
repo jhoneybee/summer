@@ -7,7 +7,8 @@ module.exports = {
       'select',
       'password',
       'message',
-      'checkbox'
+      'checkbox',
+      'date-picker'
     ],
     '布局组件': [],
     '导航': [],

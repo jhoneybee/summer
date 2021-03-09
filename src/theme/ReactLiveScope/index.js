@@ -15,7 +15,7 @@ import Select, { SelectOption } from '../../../components/select';
 import Password from '../../../components/password';
 import Message, { info, error} from '../../../components/message';
 import Checkbox from '../../../components/checkbox';
-
+import DatePicker, { DatePickerPanel } from '../../../components/date-picker';
 
 // Add react-live imports you need here
 const ReactLiveScope = {
@@ -33,7 +33,9 @@ const ReactLiveScope = {
   info,
   error,
   Checkbox,
-  AiOutlineUser
+  AiOutlineUser,
+  DatePicker,
+  DatePickerPanel
 };
 
 export default ReactLiveScope;
