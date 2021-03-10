@@ -1,4 +1,4 @@
-import React, { InputHTMLAttributes, createContext, Dispatch, useReducer, useContext } from 'react';
+import React, { InputHTMLAttributes, createContext, Dispatch, useReducer, useContext, useEffect, useRef, useMemo } from 'react';
 import styled from 'styled-components';
 
 import { borderDefaultStyle, primaryColor } from './styles/global';
@@ -83,11 +83,12 @@ export const RadioItem = ({
                 type='radio'
                 select={value === state.value && state.value }
                 onClick={() => {
-                    console.log(value)
-                    dispatch({
-                        type: 'setValue',
-                        payload: value
-                    })
+                    if (value !== state.value) {
+                        dispatch({
+                            type: 'setValue',
+                            payload: value
+                        });
+                    }
                 }}
             />
             {children}
@@ -95,18 +96,25 @@ export const RadioItem = ({
     )
 }
 
-interface RadioProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'value'> {
-    value: string | number
+interface RadioProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'value' | 'onChange'> {
+    value?: string | number
+    onChange?: (changeValue: string | number) => void
 }
 
 export default function Radio ({
     value,
     children,
+    onChange,
     ...restProps
 }: RadioProps) {
     const [state, dispatch] = useReducer(reducer, {
         value,
-    })
+    });
+
+    useEffect(() => {
+        onChange?.(state.value);
+    }, [state.value]);
+
     return (
         <Context.Provider
             value={{
