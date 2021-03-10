@@ -19,7 +19,7 @@ function simple () {
         <>
             <Button
                 onClick={() => {
-                    info('这是一个info信息');
+                    info('这是一个info信息', 10 * 1000);
                 }}
             >
                 点击显示Info信息

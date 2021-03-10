@@ -31,9 +31,10 @@ const ContentStyled = styled.div.attrs((props) => {
 })`
     display: flex;
     align-items: center;
+    position: relative;
     box-shadow: 0 3px 6px -4px rgb(0 0 0 / 12%), 0 6px 16px 0 rgb(0 0 0 / 8%), 0 9px 28px 8px rgb(0 0 0 / 5%);
     background: #fff;
-    padding: 8px 14px;
+    padding: 8px 25px 8px 20px;
     font-size: 14px;
     line-height: 1.5715;
 `;
@@ -51,24 +52,32 @@ const getIconColor = (type: string) => {
     return 'unset';
 }
 
-const IconStyled = styled.i.attrs(props => {
-})`
+const IconStyled = css`
     display: flex;
     align-items: center;
     padding-right: .5em;
     > svg {
         height: 16px;
         width: 16px;
-        color: ${props => getIconColor(props.type)};
-        animation: ${rotate} ${(props) => props.type === 'loading' ? '.9s' : '0s' } linear infinite;
+        color: ${(props: any) => getIconColor(props.type)};
+        animation: ${rotate} ${(props: any) => props.type === 'loading' ? '.9s' : '0s' } linear infinite;
     }
+`;
+const StateIconStyled = styled.i.attrs(props => {
+})`
+    ${IconStyled}
 `
 
 // 关闭的icon信息
-const CloseIconStyled = styled(AiOutlineClose)`
+const CloseIconStyled = styled.i.attrs(props => {
+})`
+    ${IconStyled}
     cursor: pointer;
     margin-left: 1em;
     opacity: .5;
+    position: absolute;
+    right: 0px;
+    visibility: ${props => props.isHover ? 'visible' : 'hidden'};
 `;
 
 export interface MessageProps extends HTMLAttributes<HTMLDivElement> {
@@ -84,8 +93,7 @@ const Message = ({
     onClose,
     ...restProps
 }: MessageProps) => {
-    const [close, setClose] = useState<boolean>(false)
-
+    const [hover, setHover] = useState<boolean>(false)
 
     let icon = <AiFillInfoCircle />;
 
@@ -103,31 +111,32 @@ const Message = ({
         <ContainerStyled animation={animation} {...restProps}  >
             <ContentStyled
                 onMouseEnter={() => {
-                    setClose(true);
+                    setHover(true);
                 }}
                 onMouseLeave={() => {
-                    setClose(false);
+                    setHover(false);
                 }}
             >
-                <IconStyled
+                <StateIconStyled
                     type={type}
                 >
                     {icon}
-                </IconStyled>    
+                </StateIconStyled>    
                 {children}
-                {close ? (
-                    <CloseIconStyled
-                        onClick={() => {
-                            onClose?.();
-                        }}
-                        onMouseEnter={() => {
-                            setClose(true);
-                        }}
-                        onMouseLeave={() => {
-                            setClose(false);
-                        }}
-                    />
-                ) : undefined}
+                <CloseIconStyled
+                    isHover={hover}
+                    onClick={() => {
+                        onClose?.();
+                    }}
+                    onMouseEnter={() => {
+                        setHover(true);
+                    }}
+                    onMouseLeave={() => {
+                        setHover(false);
+                    }}
+                >
+                    <AiOutlineClose />
+                </CloseIconStyled>
                 
             </ContentStyled>
         </ContainerStyled>
@@ -153,27 +162,27 @@ export const show = (
         document.body.appendChild(div);
     }
 
+    const closeMessage = (() => {
+        ReactDOM.render(
+            <Message
+                type={type}
+                animation='close'
+            >
+                {content}
+            </Message>
+        , div);
+        time = null;
+        setTimeout(() => {
+            ReactDOM.unmountComponentAtNode(div);
+        }, 250)
+    })
     if (duration > 0) {
         if (time) {
             clearTimeout(time);
         }
 
-        const close = (() => {
-            ReactDOM.render(
-                <Message
-                    type={type}
-                    animation='close'
-                >
-                    {content}
-                </Message>
-            , div);
-            time = null;
-            setTimeout(() => {
-                ReactDOM.unmountComponentAtNode(div);
-            }, 250)
-        })
         time = setTimeout(() => {
-            close();
+            closeMessage();
             onClose?.();
         }, duration * 1000)
     }
@@ -183,7 +192,7 @@ export const show = (
             type={type}
             animation='show'
             onClose={() => {
-                close();
+                closeMessage();
             }}
         >
             {content}

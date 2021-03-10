@@ -159,7 +159,7 @@ const YearForwardStyles = styled.span`
 const HeaderViewStyles = styled.span`
     flex: 1;
     text-align: center;
-    cursor: pointer;
+    cursor: default;
 `
 
 interface DatePickerHeader {
