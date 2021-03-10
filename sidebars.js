@@ -8,7 +8,8 @@ module.exports = {
       'password',
       'message',
       'checkbox',
-      'date-picker'
+      'date-picker',
+      'radio'
     ],
     '布局组件': [],
     '导航': [],
