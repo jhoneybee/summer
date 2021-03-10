@@ -6,6 +6,7 @@ import {
     disabled,
     fontDeepColor,
     dangerColor,
+    borderRadiusStyle
 } from './styles/global';
 
 const ohterTypes = ['text'];
@@ -98,7 +99,7 @@ const StyledButton = styled.button.attrs((props) => {
         }
         return 'none';
     }};
-    border-radius: 2px;
+    border-radius: ${borderRadiusStyle};
     background-color: ${buttonBackgroundColor};
     color: ${buttonColor};
     cursor: ${props => props.disabled ? 'default': 'pointer'};
@@ -113,7 +114,6 @@ const StyledButton = styled.button.attrs((props) => {
     height: 32px;
     margin: 4px;
     transition: box-shadow 200ms, color 200ms;
-    pointer-events: ${props => props.disabled ? 'none' : 'auto'};
     font-weight: 500;
     font-size: .875rem;
     box-shadow: ${boxShadow};
