@@ -48,15 +48,15 @@ function simple () {
 function simple () {
     return (
         <>
-            <Message type='success'> 这是一个成功信息 </Message>
+            <Message type='success' > 这是一个成功信息 </Message>
             <br />
-            <Message type='info'> 这是一个提示消息 </Message>
+            <Message type='info' > 这是一个提示消息 </Message>
             <br />
-            <Message type='warning'> 这是一个警告信息 </Message>
+            <Message type='warn' > 这是一个警告信息 </Message>
             <br />
-            <Message type='error'> 这是一个错误信息 </Message>
+            <Message type='error' > 这是一个错误信息 </Message>
             <br />
-            <Message type='loading'> 这是一个加载信息 </Message>
+            <Message type='loading' > 这是一个加载信息 </Message>
         </>
     )
 }
@@ -67,3 +67,15 @@ function simple () {
 
 | 属性       | 说明                     | 类型                   | 默认值
 |-----      |------                   |------                 |------------
+|type      | 消息的类型信息             |  `'success'` \| `'error'` \| `'info'` \| `'warn'` \| `'loading'` | - 
+|animation | 动画                      | `Keyframes`           | -
+|onClose   | 消息关闭的时候触发的事件     | `() => void`          | -
+
+组件提供了一些静态方法，使用方式和参数如下：
+
+- message.show(type, content, duration, isShowCloseIcon, onClose)
+- message.success(content, [duration], onClose)
+- message.error(content, [duration], onClose)
+- message.info(content, [duration], onClose)
+- message.warn(content, [duration], onClose)
+- message.loading(content, [duration], onClose)

@@ -16,8 +16,7 @@ const MenuItemStyled = styled.li.attrs(props => {
     font-size: 14px;
     line-height: 22px;
     padding: 5px 12px;
-    pointer-events: ${props => props.disabled ? 'none' : 'auto'};
-    color: ${props => props.disabled ? 'rgba(0, 0, 0, 0.26)' : 'rgba(0,0,0,.85)'};
+    color: rgba(0,0,0,.85);
     :hover {
         background-color: #f5f5f5;
     }

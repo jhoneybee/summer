@@ -1,7 +1,7 @@
 import React, { InputHTMLAttributes, useState } from 'react';
 import styled from 'styled-components';
 
-import { primaryColor, disabledBackgroundColor } from './styles/global'
+import { primaryColor, disabled, borderDefaultStyle } from './styles/global'
 
 export interface CheckboxProps extends  Omit<InputHTMLAttributes<HTMLInputElement>, 'value'> {
     checked: boolean
@@ -14,7 +14,7 @@ const CheckboxStyled = styled.input`
     width: 16px;
     border-radius: 2px;
     outline: none;
-    border: 1px solid #dcdfe6;
+    border: ${borderDefaultStyle};
     cursor: ${props => props.disabled ? 'default': 'pointer' };
     margin-right: 10px;
     ::after {
@@ -30,13 +30,12 @@ const CheckboxStyled = styled.input`
         transform: rotate(45deg);
     }
     background-color: ${props => {
-        if (props.disabled) {
-            return disabledBackgroundColor(props);
-        }
         return props.checked ? primaryColor(props): 'unset';
     }};
     box-shadow: ${props => props.checked ? '2px 2px 8px rgba(0, 0, 0, 0.05)' : 'unset'};
-    pointer-events: ${props => props.disabled ? 'none' : 'auto'};
+    ${props => props.disabled ? disabled : null}
+
+    
 `
 
 const ContentStyled = styled.span`

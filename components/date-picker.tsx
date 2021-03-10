@@ -21,9 +21,10 @@ import {
 } from 'date-fns';
 import { AiOutlineCalendar, AiOutlineCloseCircle } from 'react-icons/ai';
 
-import { disabledColor } from './styles/global'
 import DropDown from './dropdown';
 import Input from './input';
+
+import { borderDefaultStyle, borderRadiusStyle } from './styles/global';
 
 
 type Action = 
@@ -88,8 +89,8 @@ const YearBackStyles = styled.span`
         content: ' ';
         width: 7px;
         height: 7px;
-        border-left: 1px solid #d3d3d3;
-        border-bottom: 1px solid #d3d3d3;
+        border-left: ${borderDefaultStyle};
+        border-bottom: ${borderDefaultStyle};
         transform: rotate(45deg);
     } 
 
@@ -98,8 +99,8 @@ const YearBackStyles = styled.span`
         content: ' ';
         width: 7px;
         height: 7px;
-        border-left: 1px solid #d3d3d3;
-        border-bottom: 1px solid #d3d3d3;
+        border-left: ${borderDefaultStyle};
+        border-bottom: ${borderDefaultStyle};
         transform: rotate(45deg);
     }
 `
@@ -111,8 +112,8 @@ const MonthBackStyles = styled.span`
         content: ' ';
         width: 7px;
         height: 7px;
-        border-left: 1px solid #d3d3d3;
-        border-bottom: 1px solid #d3d3d3;
+        border-left: ${borderDefaultStyle};
+        border-bottom: ${borderDefaultStyle};
         transform: rotate(45deg);
     } 
 `
@@ -124,8 +125,8 @@ const MonthForwardStyles = styled.span`
         content: ' ';
         width: 7px;
         height: 7px;
-        border-top: 1px solid #d3d3d3;
-        border-right: 1px solid #d3d3d3;
+        border-top: ${borderDefaultStyle};
+        border-right: ${borderDefaultStyle};
         transform: rotate(45deg);
     } 
 `
@@ -139,8 +140,8 @@ const YearForwardStyles = styled.span`
         content: ' ';
         width: 7px;
         height: 7px;
-        border-top: 1px solid #d3d3d3;
-        border-right: 1px solid #d3d3d3;
+        border-top: ${borderDefaultStyle};
+        border-right: ${borderDefaultStyle};
         transform: rotate(45deg);
     } 
 
@@ -149,8 +150,8 @@ const YearForwardStyles = styled.span`
         content: ' ';
         width: 7px;
         height: 7px;
-        border-top: 1px solid #d3d3d3;
-        border-right: 1px solid #d3d3d3;
+        border-top: ${borderDefaultStyle};
+        border-right: ${borderDefaultStyle};
         transform: rotate(45deg);
     }
 `
@@ -224,10 +225,10 @@ const BodyCellStyled = styled.div.attrs(() => {
     height: 36px;
     text-align: center;
     line-height: 36px;
-    color: ${props => props.isCurrentMonth ? 'unset': disabledColor(props)};
+    color: ${props => props.isCurrentMonth ? 'unset': 'rgba(0,0,0, .4)'};
     :hover {
         background: #f5f5f5;
-        border-radius: 2px;
+        border-radius: ${borderRadiusStyle};
     }
 `
 
@@ -301,7 +302,7 @@ const DatePickerPanelStyled = styled.div`
     width: 280px;
     height: 310px;
     background-color: #fff;
-    border-radius: 2px;
+    border-radius: ${borderRadiusStyle};
     box-shadow: 0px 0px 4px rgba(0,0,0, .1);
     --header-height: 41px;
 `;

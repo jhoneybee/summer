@@ -1,7 +1,17 @@
 import React, { forwardRef, InputHTMLAttributes, ReactNode } from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
-import { primaryColor, fontColor, disabledColor, disabledBackgroundColor } from './styles/global'
+import { primaryColor, disabled } from './styles/global'
+
+
+
+const color = css`
+    color: rgba(0,0,0,.4);
+`
+
+const hoverColor = css`
+    color: rgba(0,0,0,.85);
+`
 
 const SuffixStyles = styled.i.attrs(props => {
 })`
@@ -11,12 +21,14 @@ const SuffixStyles = styled.i.attrs(props => {
     top:  20%;
     width: 12px;
     height: 12px;
-    color: ${props => props.disabled ? disabledColor(props) : 'rgba(0,0,0,.25)'};
     :hover {
         cursor: pointer;
-        color: rgba(0,0,0,.85);
+        ${hoverColor}
     }
-    pointer-events: ${props => props.disabled ? 'none': 'unset'};
+    ${props => props.disabled ? disabled : null}
+    ${color}
+    background-color: unset;
+
 `
 
 const PrefixStyles = styled.i.attrs(props => {
@@ -25,12 +37,15 @@ const PrefixStyles = styled.i.attrs(props => {
     position: absolute;
     margin-left: 5px;
     margin-top: 3px;
-    color: ${props => props.disabled ? disabledColor(props) : 'rgba(0,0,0,.25)'};
     :hover {
         cursor: pointer;
-        color: ${props => props.disabled ? disabledColor(props) : 'rgba(0,0,0,.85)'};
+        ${hoverColor}
     }
-    pointer-events: ${props => props.disabled ? 'none': 'unset'};
+    ;
+    ${props => props.disabled ? disabled : null}
+    background-color: unset;
+    ${color}
+    color: rgba(0,0,0,.4);
 `;
 
 const ContainerStyles = styled.div.attrs(props => {
@@ -55,26 +70,22 @@ const InputStyled = styled.input.attrs(props => {
     line-height: 1.5715;
     border: unset;
     padding: 4px 11px;
+    transition: border 600ms;
+    padding-left: ${props => props.isHavePrefix ? '25px': '12px'};
+    width: ${props => {
+        return `${props.defaultWidth + 25}px`;
+    }};
     cursor: ${props => {
-        if (props.disabled) {
-            return 'default';
-        }
-
         if (props.readOnly) {
             return props.readOnly ? 'pointer': 'auto'
         }
         return 'unset';
     }};
-    transition: border 600ms;
-    color: ${props => props.disabled ? disabledColor(props) : fontColor(props)};
-    color: ${props => props.disabled ? disabledBackgroundColor(props): 'unset' };
-    padding-left: ${props => props.isHavePrefix ? '25px': '12px'};
-    width: ${props => {
-        return `${props.defaultWidth + 25}px`;
-    }};
+
     ::placeholder {
         opacity: .5;
     }
+    ${props => props.disabled ? disabled : null}
 `
 
 export interface InputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'prefix' | 'suffix'> {

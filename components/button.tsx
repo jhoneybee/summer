@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import {
     primaryColor,
     fontColor,
-    disabledBackgroundColor,
+    disabled,
     fontDeepColor,
     dangerColor,
 } from './styles/global';
@@ -13,10 +13,6 @@ const mappingType: Array<'a'> = ['a'];
 
 // 按钮的背景色
 const buttonBackgroundColor = props => {
-    // 禁用后按钮的背景颜色
-    if (props.disabled) {
-        return disabledBackgroundColor(props);
-    }
 
     // 危险的背景颜色
     if (props.danger && props.btype !== 'text') {
@@ -33,10 +29,6 @@ const buttonBackgroundColor = props => {
 
 // 按钮的字体颜色
 const buttonColor = (props) => {
-    if (props.disabled) {
-        return disabledBackgroundColor(props);
-    }
-
     if (props.btype === 'default' && !props.danger) {
         return fontColor(props);
     }
@@ -125,6 +117,7 @@ const StyledButton = styled.button.attrs((props) => {
     font-weight: 500;
     font-size: .875rem;
     box-shadow: ${boxShadow};
+    ${props => props.disabled ? disabled : null}
     :hover{
         box-shadow: ${hoveBoxShadow};
         color: ${buttonColor};

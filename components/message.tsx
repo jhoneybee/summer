@@ -1,26 +1,33 @@
-import React, { HTMLAttributes, ReactNode } from 'react';
+import React, { HTMLAttributes, ReactNode, useState } from 'react';
 import ReactDOM from 'react-dom';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 import {
     AiFillInfoCircle,
     AiFillCloseCircle,
     AiFillCheckCircle,
-    AiOutlineLoading
+    AiOutlineLoading,
+    AiOutlineClose
 } from 'react-icons/ai';
 
 
 import { rotate, fallMessage, closeMessage } from './animation';
 
-
-const ContainerStyled = styled.div`
+const ContainerStyled = styled.div.attrs(props => {
+})`
     width: 100%;
     display: flex;
     justify-content: center;
+    animation: ${props => {
+        if (props.animation) {
+            return props.animation === 'show' ? css`${fallMessage} .2s`: css`${closeMessage} .2s`
+        }
+        return 'unset';
+    }} ;
+    animation-fill-mode: forwards;
 `;
 
 const ContentStyled = styled.div.attrs((props) => {
-
 })`
     display: flex;
     align-items: center;
@@ -29,15 +36,12 @@ const ContentStyled = styled.div.attrs((props) => {
     padding: 8px 14px;
     font-size: 14px;
     line-height: 1.5715;
-    animation: ${props => props.close ?  closeMessage : fallMessage} .2s;
-    animation-fill-mode:forwards;
-
 `;
 
 const getIconColor = (type: string) => {
     if (type === 'info' || type === 'loading') {
         return '#1890ff';
-    } else if (type === 'warning') {
+    } else if (type === 'warn') {
         return '#faad14';
     } else if (type === 'error') {
         return '#ff4d4f';
@@ -60,20 +64,32 @@ const IconStyled = styled.i.attrs(props => {
     }
 `
 
+// 关闭的icon信息
+const CloseIconStyled = styled(AiOutlineClose)`
+    cursor: pointer;
+    margin-left: 1em;
+    opacity: .5;
+`;
+
 export interface MessageProps extends HTMLAttributes<HTMLDivElement> {
-    type?: 'success' | 'error' | 'info' | 'warning' | 'loading'
-    close?: boolean
+    type?: 'success' | 'error' | 'info' | 'warn' | 'loading'
+    animation?: 'show' | 'close'
+    onClose?: () => void
 }
 
 const Message = ({
     children,
-    close = false,
     type = 'info',
+    animation,
+    onClose,
     ...restProps
 }: MessageProps) => {
+    const [close, setClose] = useState<boolean>(false)
+
+
     let icon = <AiFillInfoCircle />;
 
-    if (type === 'info' || type === 'warning') {
+    if (type === 'info' || type === 'warn') {
         icon = <AiFillInfoCircle />;
     } else if (type === 'error') {
         icon = <AiFillCloseCircle />;
@@ -84,9 +100,14 @@ const Message = ({
     }
 
     return  (
-        <ContainerStyled {...restProps} >
+        <ContainerStyled animation={animation} {...restProps}  >
             <ContentStyled
-                close={close}
+                onMouseEnter={() => {
+                    setClose(true);
+                }}
+                onMouseLeave={() => {
+                    setClose(false);
+                }}
             >
                 <IconStyled
                     type={type}
@@ -94,6 +115,20 @@ const Message = ({
                     {icon}
                 </IconStyled>    
                 {children}
+                {close ? (
+                    <CloseIconStyled
+                        onClick={() => {
+                            onClose?.();
+                        }}
+                        onMouseEnter={() => {
+                            setClose(true);
+                        }}
+                        onMouseLeave={() => {
+                            setClose(false);
+                        }}
+                    />
+                ) : undefined}
+                
             </ContentStyled>
         </ContainerStyled>
     );
@@ -104,7 +139,7 @@ let div = null;
 let time = null;
 
 export const show = (
-    type: 'success' | 'error' | 'info' | 'warning' | 'loading',
+    type: 'success' | 'error' | 'info' | 'warn' | 'loading',
     content: ReactNode,
     duration: number = 3,
     onClose?: () => void
@@ -123,11 +158,11 @@ export const show = (
             clearTimeout(time);
         }
 
-        time = setTimeout(() => {
+        const close = (() => {
             ReactDOM.render(
                 <Message
                     type={type}
-                    close={true}
+                    animation='close'
                 >
                     {content}
                 </Message>
@@ -136,6 +171,9 @@ export const show = (
             setTimeout(() => {
                 ReactDOM.unmountComponentAtNode(div);
             }, 250)
+        })
+        time = setTimeout(() => {
+            close();
             onClose?.();
         }, duration * 1000)
     }
@@ -143,6 +181,10 @@ export const show = (
     ReactDOM.render(
         <Message
             type={type}
+            animation='show'
+            onClose={() => {
+                close();
+            }}
         >
             {content}
         </Message>
@@ -157,8 +199,8 @@ export const error = (content: ReactNode, duration: number = 3, onClose?: () => 
     show('error', content, duration, onClose);
 }
 
-export const warning = (content: ReactNode, duration: number = 3, onClose?: () => void) => {
-    show('warning', content, duration, onClose);
+export const warn = (content: ReactNode, duration: number = 3, onClose?: () => void) => {
+    show('warn', content, duration, onClose);
 }
 
 export const success = (content: ReactNode, duration: number = 3, onClose?: () => void) => {
