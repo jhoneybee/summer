@@ -270,11 +270,11 @@ const DatePickerBody = ({
             currentIndex += 1;
             newDays.push(
                 <BodyCellStyled
-                title={format(currentTime, 'yyyy-MM-dd') }
-                data-time={currentTime.getTime()}
-                isCurrentMonth={getMonth(currentTime) === getMonth(startDateTime)}
-                key={currentTime.getTime()}
-                onClick={(event: React.MouseEvent<HTMLDivElement, MouseEvent>) => cellClick(event)}
+                    title={format(currentTime, 'yyyy-MM-dd') }
+                    data-time={currentTime.getTime()}
+                    isCurrentMonth={getMonth(currentTime) === getMonth(startDateTime)}
+                    key={currentTime.getTime()}
+                    onClick={(event: React.MouseEvent<HTMLDivElement, MouseEvent>) => cellClick(event)}
                 >
                     {getDate(currentTime) }
                 </BodyCellStyled>
