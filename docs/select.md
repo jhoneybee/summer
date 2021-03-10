@@ -17,11 +17,13 @@ slug: /select
 function simple () {
     const [value, setValue] = useState("1");
     const [value1, setValue1] = useState("1");
+    const [value2, setValue2] = useState("1");
     return (
         <>
             <Select
                 style={{ marginRight: 10}}
                 value={value}
+                readOnly={false}
                 onChange={({ value }) => {
                     setValue(value);
                 }}
@@ -32,12 +34,23 @@ function simple () {
             </Select>
             <Select
                 value={value1}
-                readOnly={false}
                 onChange={({ value }) => {
                     setValue1(value);
                 }}
             >
-                <SelectOption key="1" value="1"> 设置为只读属性 </SelectOption>
+                <SelectOption key="1" value="1"> 默认为只读属性 </SelectOption>
+                <SelectOption key="2" value="2"> 选项二 </SelectOption>
+                <SelectOption key="3" value="3"> 选项三 </SelectOption>
+            </Select>
+
+            <Select
+                value={value2}
+                disabled
+                onChange={({ value }) => {
+                    setValue2(value);
+                }}
+            >
+                <SelectOption key="1" value="1"> 设置为禁用属性 </SelectOption>
                 <SelectOption key="2" value="2"> 选项二 </SelectOption>
                 <SelectOption key="3" value="3"> 选项三 </SelectOption>
             </Select>
@@ -92,6 +105,7 @@ function simple () {
 |value      |当前选中的值               | `string` \| `number`  |  `''`
 |readOnly   |设置为只读属性              | `boolean`             | `true`
 |allowClear |是否支持清除                | `boolean`             | `true`
+|disabled   |是否禁用状态               |`boolean`              |`false`
 |onChange   |用户选中数据的时候触发的事件  | `(selectOptionClickType: SelectOptionClickType) => void` | -
 
 ### SelectOptionClickType 类型说明

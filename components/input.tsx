@@ -1,7 +1,7 @@
 import React, { forwardRef, InputHTMLAttributes, ReactNode } from 'react';
 import styled from 'styled-components';
 
-import { primaryColor, fontColor, disabledColor } from './styles/global'
+import { primaryColor, fontColor, disabledColor, disabledBackgroundColor } from './styles/global'
 
 const SuffixStyles = styled.i.attrs(props => {
 })`
@@ -11,24 +11,26 @@ const SuffixStyles = styled.i.attrs(props => {
     top:  20%;
     width: 12px;
     height: 12px;
-    color: rgba(0,0,0,.25);
+    color: ${props => props.disabled ? disabledColor(props) : 'rgba(0,0,0,.25)'};
     :hover {
         cursor: pointer;
         color: rgba(0,0,0,.85);
     }
+    pointer-events: ${props => props.disabled ? 'none': 'unset'};
 `
 
 const PrefixStyles = styled.i.attrs(props => {
 })`
     z-index: 1;
     position: absolute;
-    color: rgba(0,0,0,.25);
     margin-left: 5px;
     margin-top: 3px;
+    color: ${props => props.disabled ? disabledColor(props) : 'rgba(0,0,0,.25)'};
     :hover {
         cursor: pointer;
-        color: rgba(0,0,0,.85);
+        color: ${props => props.disabled ? disabledColor(props) : 'rgba(0,0,0,.85)'};
     }
+    pointer-events: ${props => props.disabled ? 'none': 'unset'};
 `;
 
 const ContainerStyles = styled.div.attrs(props => {
@@ -53,9 +55,19 @@ const InputStyled = styled.input.attrs(props => {
     line-height: 1.5715;
     border: unset;
     padding: 4px 11px;
-    cursor: ${props => props.readOnly ? 'pointer': 'auto'};
+    cursor: ${props => {
+        if (props.disabled) {
+            return 'default';
+        }
+
+        if (props.readOnly) {
+            return props.readOnly ? 'pointer': 'auto'
+        }
+        return 'unset';
+    }};
     transition: border 600ms;
     color: ${props => props.disabled ? disabledColor(props) : fontColor(props)};
+    color: ${props => props.disabled ? disabledBackgroundColor(props): 'unset' };
     padding-left: ${props => props.isHavePrefix ? '25px': '12px'};
     width: ${props => {
         return `${props.defaultWidth + 25}px`;
@@ -74,21 +86,30 @@ const Input = forwardRef<HTMLInputElement, InputProps>(({
     prefix,
     suffix,
     style,
+    disabled,
     ...restProps
 }, ref) => {
 
-    let defaultWidth = style?.width || 214;
+    let defaultWidth = style?.width || 140;
     return (
-        <ContainerStyles ref={ref}>
-            <PrefixStyles>
+        <ContainerStyles
+            ref={ref}
+            disabled={disabled}
+        >
+            <PrefixStyles
+                disabled={disabled}
+            >
                 {prefix}
             </PrefixStyles>
             <InputStyled
                 defaultWidth={defaultWidth}
+                disabled={disabled}
                 isHavePrefix={prefix ? true : false}
                 {...restProps}
             />
-            <SuffixStyles>
+            <SuffixStyles
+                disabled={disabled}
+            >
                 {suffix}
             </SuffixStyles>
         </ContainerStyles>

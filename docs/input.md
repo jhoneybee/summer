@@ -33,6 +33,21 @@ function simple () {
 }
 ```
 
+```jsx live
+/**
+ * title: 禁用
+ * desc: 禁用输入框
+ **/
+function simple () {
+    return (
+        <>
+            <Input prefix={<AiOutlineUser />} disabled />
+        </>
+
+    )
+}
+```
+
 
 
 ## API 

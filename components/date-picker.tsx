@@ -1,8 +1,14 @@
-import React, { HTMLAttributes, ReactNode, useEffect, useState } from 'react';
+import React, {
+    HTMLAttributes,
+    ReactNode,
+    useEffect,
+    useState,
+    createContext,
+    Dispatch,
+    useReducer,
+    InputHTMLAttributes
+} from 'react';
 import styled from 'styled-components';
-
-import { disabledColor } from './styles/global'
-
 import {
     format,
     addDays,
@@ -12,7 +18,57 @@ import {
     addYears,
     addMonths,
     getMonth,
-} from 'date-fns'
+} from 'date-fns';
+import { AiOutlineCalendar, AiOutlineCloseCircle } from 'react-icons/ai';
+
+import { disabledColor } from './styles/global'
+import DropDown from './dropdown';
+import Input from './input';
+
+
+type Action = 
+| { type: 'setVisible', payload: boolean }
+| { type: 'setValue', payload: Date }
+| { type: 'setVisibleAndValue', payload: { visible: boolean, value: Date }}
+;
+
+interface State {
+    visible: boolean
+    value?: Date
+}
+
+const Context = createContext<{
+    state: State;
+    dispatch: Dispatch<Action>;
+  }>({
+    state: {
+        visible: false,
+    },
+    dispatch: () => null
+});
+
+function datePickerReducer(state: State, action: Action): State {
+    const type = action.payload;
+    switch (action.type) {
+        case 'setVisible':
+            return {
+                ...state,
+                visible: action.payload
+            };
+        case 'setValue':
+            return {
+                ...state,
+                value: action.payload
+            };
+        case 'setVisibleAndValue':
+            return {
+                ...state,
+                ...action.payload,
+            }
+        default:
+            throw Error(`Unknown type [${type}]`);
+    }
+}
 
 const DatePickerHeaderStyled = styled.div`
     display: flex;
@@ -198,8 +254,8 @@ const DatePickerBody = ({
     useEffect(() => {
 
         const cellClick = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-            const datetime = event.currentTarget.getAttribute('data-time') as unknown as Date
-            onChange?.(datetime);
+            const datetime = event.currentTarget.getAttribute('data-time')
+            onChange?.(new Date(Number.parseInt(datetime)));
         }
 
         const startDateTime = addDays(value, -getDate(value) + 1); 
@@ -215,7 +271,7 @@ const DatePickerBody = ({
             newDays.push(
                 <BodyCellStyled
                     title={format(currentTime, 'yyyy-MM-dd') }
-                    data-time={currentTime}
+                    data-time={currentTime.getTime()}
                     isCurrentMonth={getMonth(currentTime) === getMonth(startDateTime)}
                     key={currentTime.getTime()}
                     onClick={(event: React.MouseEvent<HTMLDivElement, MouseEvent>) => cellClick(event)}
@@ -250,10 +306,10 @@ const DatePickerPanelStyled = styled.div`
     --header-height: 41px;
 `;
 
-interface DatePickerPanel extends Omit<HTMLAttributes<HTMLDivElement>, 'onChange' > {
+interface DatePickerPanelProps extends Omit<HTMLAttributes<HTMLDivElement>, 'onChange' > {
     // 当期的数据值 
-    value: Date
-    onChange: (changeValue: Date) => void
+    value?: Date
+    onChange?: (changeValue: Date) => void
 }
 
 /**
@@ -262,12 +318,13 @@ interface DatePickerPanel extends Omit<HTMLAttributes<HTMLDivElement>, 'onChange
 export const DatePickerPanel = ({
     value = new Date(),
     onChange,
-}: DatePickerPanel) => {
-
+    ...restProps
+}: DatePickerPanelProps) => {
     const [preValue, setPreValue] = useState<Date>(value);
-
     return (
-        <DatePickerPanelStyled>
+        <DatePickerPanelStyled
+            {...restProps}
+        >
             <DatePickerHeader
                 value={preValue}
                 onChange={(changeValue) => {
@@ -284,9 +341,121 @@ export const DatePickerPanel = ({
     );
 }
 
+export interface DatePickerProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'value' | 'onChange'> {
+    value?: Date
+    format?: string
+    allowClear?: boolean
+    disabled?: boolean
+    onChange?: (changeValue: Date) => void
+}
+
 /**
  * 日期选择框
  */
-export default function DatePicker () {
-    return null;
+export default function DatePicker ({
+    value,
+    format: datePickerFormat = 'yyyy-MM-dd', 
+    readOnly = true,
+    allowClear = true,
+    disabled = false,
+    onFocus,
+    onBlur,
+    onClick,
+    onChange
+}: DatePickerProps) {
+    const [state, dispatch] = useReducer(datePickerReducer, {
+        visible: false,
+        value,
+    })
+
+    useEffect(() => {
+        dispatch({
+            type: 'setValue',
+            payload: value
+        })
+    } , [value])
+
+    const [hover, setHover] = useState<boolean>(false);
+
+    return (
+        <Context.Provider
+            value={{
+                state,
+                dispatch
+            }}
+        >
+            <DropDown
+                overlay={
+                    <DatePickerPanel
+                        value={state.value}
+                        onChange={(changeValue) => {
+                            onChange?.(changeValue);
+                            dispatch({
+                                type: 'setVisibleAndValue',
+                                payload: {
+                                    visible: false,
+                                    value: changeValue
+                                },
+                            })
+                        }}
+                    />
+                }
+                visible={state.visible}
+            >
+                <Input
+                    suffix={
+                        hover && state.value && allowClear ? (
+                            <AiOutlineCloseCircle
+                                onMouseEnter={() => {
+                                    setHover(true);
+                                }}
+                                onMouseLeave={() => {
+                                    setHover(false);
+                                }}
+                                onMouseDown={(event) => {
+                                    if (event.button === 0) {
+                                        dispatch({
+                                            type: 'setValue',
+                                            payload: null
+                                        })
+                                    }
+                                }}
+                            
+                            />
+                        ) : <AiOutlineCalendar />
+                    }
+                    value={state.value ? format(state.value, datePickerFormat) : '' }
+                    readOnly={readOnly}
+                    disabled={disabled}
+                    onFocus={(event) => {
+                        dispatch({
+                            type: 'setVisible',
+                            payload: true
+                        })
+                        onFocus?.(event);
+                    }}
+                    onMouseEnter={() => {
+                        setHover(true);
+                    }}
+                    onMouseLeave={() => {
+                        setHover(false);
+                    }}
+                    onClick={(event) => {
+                        dispatch({
+                            type: 'setVisible',
+                            payload: true
+                        })
+                        onClick?.(event);
+                    }}
+                    onBlur={(event) => {
+                        dispatch({
+                            type: 'setVisible',
+                            payload: false
+                        })
+                        onBlur?.(event);
+                    }}
+                />
+            </DropDown>
+        </Context.Provider>
+    );
 }

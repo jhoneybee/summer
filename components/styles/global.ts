@@ -11,7 +11,7 @@ export const fontColor = (props: any) => 'rgba(0,0,0,.85)';
 export const fontDeepColor = (props: any) => 'rgba(255,255,255,.85)';
 
 // 禁用的背景颜色
-export const disabledBackgroundColor = (props: any) => 'rgba(0, 0, 0, 0.12)';
+export const disabledBackgroundColor = (props: any) => 'rgba(0, 0, 0, 0.4)';
 
 // 禁用的文本颜色
-export const disabledColor = (props: any) => 'rgba(0, 0, 0, 0.26)';
+export const disabledColor = (props: any) => 'rgba(0, 0, 0, 0.4)';

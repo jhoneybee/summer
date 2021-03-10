@@ -251,8 +251,14 @@ const Select = ({
                     readOnly={readOnly}
                     suffix={
                         <Icon
+                            onMouseEnter={() => {
+                                setHover(true);
+                            }}
+                            onMouseLeave={() => {
+                                setHover(false);
+                            }}
                             onMouseDown={(event) => {
-                                if (event.button === 0) {
+                                if (event.button === 0 && isCloseCircle) {
                                     dispatch({
                                         type: 'setSelect',
                                         payload: {
