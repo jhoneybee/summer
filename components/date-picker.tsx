@@ -268,19 +268,18 @@ const DatePickerBody = ({
         let currentIndex = 0;
         while (currentTime.getTime() <= addDays(endDateTime, 6 - toNumberWeek(getDay(endDateTime))).getTime() || currentIndex <= 41) {
             currentIndex += 1;
-            currentTime = addDays(currentTime, 1)
             newDays.push(
                 <BodyCellStyled
-                    title={format(currentTime, 'yyyy-MM-dd') }
-                    data-time={currentTime.getTime()}
-                    isCurrentMonth={getMonth(currentTime) === getMonth(startDateTime)}
-                    key={currentTime.getTime()}
-                    onClick={(event: React.MouseEvent<HTMLDivElement, MouseEvent>) => cellClick(event)}
+                title={format(currentTime, 'yyyy-MM-dd') }
+                data-time={currentTime.getTime()}
+                isCurrentMonth={getMonth(currentTime) === getMonth(startDateTime)}
+                key={currentTime.getTime()}
+                onClick={(event: React.MouseEvent<HTMLDivElement, MouseEvent>) => cellClick(event)}
                 >
                     {getDate(currentTime) }
                 </BodyCellStyled>
             )
-
+            currentTime = addDays(currentTime, 1)
         }
         setDays(newDays);
     }, [value])
