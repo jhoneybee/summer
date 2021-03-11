@@ -69,10 +69,9 @@ function selectReducer(state: State, action: Action): State {
                 ...action.payload,
             };
         default:
-            throw Error(`Unknown type [${type}]`);
+            throw Error(`reducer unknown type [${type}]`);
     }
 }
-
 
 interface SelectOptionProps extends Omit<DropDownMenuItemProps, 'onClick'> {
     value?: string;

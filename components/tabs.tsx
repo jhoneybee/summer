@@ -46,11 +46,9 @@ function reducer(state: State, action: Action): State {
                 ...action.payload
             }
         default:
-            throw Error(`Unknown type [${type}]`);
+            throw Error(`Reducer unknown type [${type}]`);
     }
 }
-
-
 
 const TabsHeaderItemStyled = styled.li.attrs(props => {
 })`
