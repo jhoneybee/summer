@@ -1,4 +1,11 @@
-import React, { InputHTMLAttributes, createContext, Dispatch, useReducer, useContext, useEffect, useRef, useMemo } from 'react';
+import React, {
+    InputHTMLAttributes,
+    createContext,
+    Dispatch,
+    useReducer,
+    useContext,
+    useEffect,
+} from 'react';
 import styled from 'styled-components';
 
 import { borderDefaultStyle, primaryColor } from './styles/global';
@@ -10,7 +17,7 @@ interface State {
     value?: string | number
 }
 
-const Context = createContext<{
+export const Context = createContext<{
     state: State;
     dispatch: Dispatch<Action>;
 }>({
@@ -66,15 +73,15 @@ const ContentStyled = styled.div`
 `
 
 
-interface RadioItemProps extends InputHTMLAttributes<HTMLInputElement> {
+interface RadioProps extends InputHTMLAttributes<HTMLInputElement> {
     value: string | number
 }
 
-export const RadioItem = ({
+export const Radio = ({
     value,
     children,
     ...restProps
-}: RadioItemProps) => {
+}: RadioProps) => {
     const { state, dispatch } = useContext(Context);
     return (
         <>
@@ -96,17 +103,17 @@ export const RadioItem = ({
     )
 }
 
-interface RadioProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'value' | 'onChange'> {
+interface RadioGroupProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'value' | 'onChange'> {
     value?: string | number
     onChange?: (changeValue: string | number) => void
 }
 
-export default function Radio ({
+export default function RadioGroup ({
     value,
     children,
     onChange,
     ...restProps
-}: RadioProps) {
+}: RadioGroupProps) {
     const [state, dispatch] = useReducer(reducer, {
         value,
     });

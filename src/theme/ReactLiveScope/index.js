@@ -16,7 +16,8 @@ import Password from '../../../components/password';
 import Message, { info, error} from '../../../components/message';
 import Checkbox from '../../../components/checkbox';
 import DatePicker, { DatePickerPanel } from '../../../components/date-picker';
-import Radio, { RadioItem } from '../../../components/radio';
+import RadioGroup, { Radio } from '../../../components/radio';
+import Tabs, { TabPane } from '../../../components/tabs';
 
 const ReactLiveScope = {
   React,
@@ -36,8 +37,10 @@ const ReactLiveScope = {
   AiOutlineUser,
   DatePicker,
   DatePickerPanel,
+  RadioGroup,
   Radio,
-  RadioItem
+  Tabs,
+  TabPane
 };
 
 export default ReactLiveScope;

@@ -14,15 +14,15 @@ slug: /radio
 function simple () {
     return (
         <>
-            <Radio
+            <RadioGroup
                 value='woman'
                 onChange={(changeValue) => {
                     console.log(changeValue);
                 }}
             >
-                <RadioItem value='man'>男人</RadioItem>
-                <RadioItem value='woman'>女人</RadioItem>
-            </Radio>
+                <Radio value='man'>男人</Radio>
+                <Radio value='woman'>女人</Radio>
+            </RadioGroup>
         </>
     )
 }

@@ -9,7 +9,8 @@ module.exports = {
       'message',
       'checkbox',
       'date-picker',
-      'radio'
+      'radio',
+      'tabs'
     ],
     '布局组件': [],
     '导航': [],

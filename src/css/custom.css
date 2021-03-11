@@ -16,6 +16,7 @@
   --ifm-color-primary-lightest: rgb(146, 224, 208);
   --ifm-code-font-size: 95%;
   --ifm-container-width: 90%;
+  --ifm-list-item-margin: 0px;
 }
 
 .docusaurus-highlight-code-line {
