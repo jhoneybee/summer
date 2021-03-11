@@ -22,7 +22,6 @@ slug: /dropdown
 function simple () {
     return (
         <DropDown
-            trigger="click"
             width={120}
             overlay={(
                 <DropDownMenu>
@@ -57,6 +56,7 @@ function simple () {
         <div style={{height: 200, overflow: 'auto'}}>
             <div style={{height: 150}}/>
             <DropDown
+                trigger="hover"
                 width={120}
                 overlay={(
                     <DropDownMenu>
@@ -90,5 +90,6 @@ function simple () {
 |placement  |菜单弹出位置 | `bottom`  \| `top`     | `bottom`
 |visible    |是否可见     | `boolean`              | -
 |width      |宽度 `auto` 表示自动宽度,和子组件对其       | `number` \| `auto`     | `auto` 
+|trigger    |触发行为     | `'click'` \| `'hover'` \| `'none'` | `'none'`
 
 > 默认情况下,高度和子组件对其

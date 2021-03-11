@@ -1,13 +1,47 @@
 import React, {
     cloneElement,
+    createContext,
+    Dispatch,
     HTMLAttributes,
     isValidElement,
     ReactNode,
     useEffect,
+    useLayoutEffect,
+    useReducer,
     useRef
 } from 'react';
 import { FixedSizeList as List, ListOnScrollProps } from 'react-window';
 import styled from 'styled-components';
+
+
+type Action = { type: 'setVisible', payload: boolean }
+
+interface State {
+    visible: boolean
+}
+
+export const Context = createContext<{
+    state: State;
+    dispatch: Dispatch<Action>;
+}>({
+    state: {
+        visible: false,
+    },
+    dispatch: () => null
+});
+
+function reducer(state: State, action: Action): State {
+    const type = action.payload;
+    switch (action.type) {
+        case 'setVisible':
+            return {
+                ...state,
+                visible: action.payload
+            };
+        default:
+            throw Error(`reducer unknown type [${type}]`);
+    }
+}
 
 const MenuItemStyled = styled.li.attrs(props => {
 })`
@@ -33,7 +67,7 @@ export const DropDownMenuItem = (props: DropDownMenuItemProps) => {
 export interface DropDownProps extends HTMLAttributes<HTMLDivElement> {
     children?: JSX.Element,
     overlay?: ReactNode,
-    trigger?: 'click' | 'hover',
+    trigger?: 'click' | 'hover' | 'none',
     width?: number | 'auto';
     placement?: 'bottom' | 'top',
     visible?: boolean,
@@ -118,12 +152,19 @@ const DropDown = ({
     children,
     overlay,
     placement = 'bottom',
-    trigger = 'hover',
-    visible,
+    trigger = 'click',
+    visible = false,
     width = 'auto',
     onBlur,
+    onMouseEnter,
+    onMouseLeave,
     ...restPropsDropDown
 }: DropDownProps) => {
+
+    const [state, dispatch] = useReducer(reducer, {
+        visible,
+    });
+
     const ref = useRef<HTMLElement>(null);
     const dropdownRef = useRef<HTMLElement>(null);
     const { onMouseOver, onMouseOut, onClick, ...restProps } = children.props;
@@ -171,28 +212,71 @@ const DropDown = ({
             }else {
                 restProps.ref = ref;
             }
+        },
+        onClick: (event: React.MouseEvent<HTMLElement, MouseEvent>) => {
+            if (trigger === 'click') {
+                dispatch({
+                    type: 'setVisible',
+                    payload: true
+                })
+            }
+            children.props.onClick?.(event);
+        },
+        onMouseEnter: (event: React.MouseEvent<HTMLElement, MouseEvent>) => {
+            if (trigger === 'hover') {
+                dispatch({
+                    type: 'setVisible',
+                    payload: true
+                })
+            }
+            children.props.onMouseEnter?.(event);
         }
     })
 
+
+    useEffect(() => {
+        dispatch({
+            type: 'setVisible',
+            payload: visible
+        });
+    }, [visible])
+
+    useLayoutEffect(() => {
+        if (trigger === 'click' || trigger === 'hover') {
+            dropdownRef.current.focus();
+        }
+    }, [state.visible])
+
     return (
-        <>
+        <Context.Provider
+            value={{
+                state,
+                dispatch
+            }}
+        >
             <DropDownStyled
                     {...restPropsDropDown}
                     tabIndex="-1"
                     ref={dropdownRef}
                     width={width === 'auto' ? ref.current?.getBoundingClientRect()?.width : width }
-                    visible={visible}
+                    visible={state.visible}
                     onMouseDown={(event) => {
                         event.preventDefault();
                     }}
-                    onBlur={(event) => {
+                    onBlur={(event: React.FocusEvent<HTMLDivElement>) => {
+                        if (trigger === 'click' || trigger === 'hover') {
+                            dispatch({
+                                type: 'setVisible',
+                                payload: false
+                            })
+                        }
                         onBlur?.(event);
                     }}
                 >
                     {overlay}
             </DropDownStyled>
             {dom}
-        </>
+        </Context.Provider>
     )   
 }
 

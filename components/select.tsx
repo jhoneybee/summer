@@ -229,6 +229,7 @@ const Select = ({
         >
             <DropDown
                 visible={state.visible}
+                trigger='none'
                 overlay={(
                     <DropDownMenu
                         scrollTop={state.scrollOffset}

@@ -9,7 +9,7 @@ import React, {
 } from 'react';
 import styled from 'styled-components';
 
-import { primaryColor, borderDefaultStyle, disabled } from './styles/global';
+import { primaryColor, borderDefaultStyle } from './styles/global';
 
 type Action = 
 | { type: 'setActive', payload: string | number }
@@ -46,7 +46,7 @@ function reducer(state: State, action: Action): State {
                 ...action.payload
             }
         default:
-            throw Error(`Reducer unknown type [${type}]`);
+            throw Error(`reducer unknown type [${type}]`);
     }
 }
 

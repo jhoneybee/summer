@@ -67,7 +67,7 @@ function datePickerReducer(state: State, action: Action): State {
                 ...action.payload,
             }
         default:
-            throw Error(`Unknown type [${type}]`);
+            throw Error(`reducer unknown type [${type}]`);
     }
 }
 

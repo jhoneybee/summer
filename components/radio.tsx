@@ -34,7 +34,7 @@ function reducer(state: State, action: Action): State {
                 value: action.payload
             };
         default:
-            throw Error(`Unknown type [${type}]`);
+            throw Error(`reducer unknown type [${type}]`);
     }
 }
 
