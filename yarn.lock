@@ -9916,6 +9916,13 @@ react-loadable@^5.5.0:
   dependencies:
     prop-types "^15.5.0"
 
+react-rough-notation@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/react-rough-notation/-/react-rough-notation-1.0.1.tgz#ac0f3e52734c59e2c7659a3f361e4bca5e637885"
+  integrity sha512-UZQZ09XiZgbDRZFFP0qaFmTzs0rMKO929Npa5fHb2TOzLvKNEamaUtjRwjBx79cFzf+xMl/y8Y4HbYvvcKHQGQ==
+  dependencies:
+    rough-notation "^0.4.0"
+
 react-router-config@^5.1.1:
   version "5.1.1"
   resolved "https://registry.yarnpkg.com/react-router-config/-/react-router-config-5.1.1.tgz#0f4263d1a80c6b2dc7b9c1902c9526478194a988"
@@ -10422,6 +10429,11 @@ ripemd160@^2.0.0, ripemd160@^2.0.1:
   dependencies:
     hash-base "^3.0.0"
     inherits "^2.0.1"
+
+rough-notation@^0.4.0:
+  version "0.4.0"
+  resolved "https://registry.yarnpkg.com/rough-notation/-/rough-notation-0.4.0.tgz#6f97324cb50fc91ec8064219253aa2528a69210f"
+  integrity sha512-hDgn9qMIxWnfY+WWjt30aLMtDHR13H8r/NI3EQNdJiEFAzpklH5nKg4eH/thpxCWTYzyg8ueMsKIfz9MzOBQ4Q==
 
 rsvp@^4.8.4:
   version "4.8.5"

@@ -2,7 +2,7 @@ import { css } from 'styled-components';
 
 
 // 主颜色
-export const primaryColor = (props: any) => '#6002ee';
+export const primaryColor = (props?: any) => '#6002ee';
 
 // 危险的颜色
 export const dangerColor = (props: any) => '#ff4d4f';

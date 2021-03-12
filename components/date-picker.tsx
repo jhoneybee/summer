@@ -24,7 +24,7 @@ import { AiOutlineCalendar, AiOutlineCloseCircle } from 'react-icons/ai';
 import DropDown from './dropdown';
 import Input from './input';
 
-import { borderDefaultStyle, borderRadiusStyle } from './styles/global';
+import { borderDefaultStyle, borderRadiusStyle, primaryColor } from './styles/global';
 
 
 type Action = 
@@ -226,9 +226,24 @@ const BodyCellStyled = styled.div.attrs(() => {
     text-align: center;
     line-height: 36px;
     color: ${props => props.isCurrentMonth ? 'unset': 'rgba(0,0,0, .4)'};
+    
+`
+
+const CellTextStyled = styled.span.attrs(props => {
+})`
+    width: 24px;
+    height: 24px;
+    line-height: 24px;
+    border: ${props => {
+        if (props.isToday) {
+            return `1px solid ${primaryColor()}`;
+        }
+        return 'unset';
+    }};
+    padding: 4px;
+    border-radius: ${borderRadiusStyle};
     :hover {
         background: #f5f5f5;
-        border-radius: ${borderRadiusStyle};
     }
 `
 
@@ -248,14 +263,14 @@ const toNumberWeek = (num: 0 | 1 | 2 | 3 | 4 | 5 | 6) => {
  * 日期选择的内容
  */
 const DatePickerBody = ({
+
     value,
     onChange,
 }: DatePickerBodyProps) => {
     const [days, setDays] = useState<Array<ReactNode>>();
     useEffect(() => {
-
         const cellClick = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-            const datetime = event.currentTarget.getAttribute('data-time')
+            const datetime = event.currentTarget?.getAttribute('data-time')
             onChange?.(new Date(Number.parseInt(datetime)));
         }
 
@@ -268,17 +283,24 @@ const DatePickerBody = ({
         let currentIndex = 0;
         while (currentTime.getTime() <= addDays(endDateTime, 6 - toNumberWeek(getDay(endDateTime))).getTime() || currentIndex <= 41) {
             currentIndex += 1;
-            newDays.push(
+            const cellDom = (
                 <BodyCellStyled
-                    title={format(currentTime, 'yyyy-MM-dd') }
+                    title={format(currentTime, 'yyyy-MM-dd')}
                     data-time={currentTime.getTime()}
                     isCurrentMonth={getMonth(currentTime) === getMonth(startDateTime)}
                     key={currentTime.getTime()}
                     onClick={(event: React.MouseEvent<HTMLDivElement, MouseEvent>) => cellClick(event)}
                 >
-                    {getDate(currentTime) }
+                    <CellTextStyled
+                        isToday={format(currentTime, 'yyyy-MM-dd') === format(new Date(), 'yyyy-MM-dd')}
+                    >
+                        {getDate(currentTime)}
+                    </CellTextStyled>
                 </BodyCellStyled>
             )
+
+            newDays.push(cellDom)
+
             currentTime = addDays(currentTime, 1)
         }
         setDays(newDays);
