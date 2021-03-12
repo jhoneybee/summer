@@ -3,8 +3,6 @@ import styled, { css } from 'styled-components';
 
 import { primaryColor, disabled } from './styles/global'
 
-
-
 const color = css`
     color: rgba(0,0,0,.4);
 `

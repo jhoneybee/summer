@@ -1,5 +1,6 @@
 module.exports = {
   someSidebar: {
+    "快速开始": ['index'],
     '基础组件': [
       'button',
       'dropdown',
@@ -10,7 +11,8 @@ module.exports = {
       'checkbox',
       'date-picker',
       'radio',
-      'tabs'
+      'tabs',
+      'tree'
     ],
     '布局组件': [],
     '导航': [],

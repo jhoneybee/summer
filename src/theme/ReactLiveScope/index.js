@@ -18,6 +18,7 @@ import Checkbox from '../../../components/checkbox';
 import DatePicker, { DatePickerPanel } from '../../../components/date-picker';
 import RadioGroup, { Radio } from '../../../components/radio';
 import Tabs, { TabPane } from '../../../components/tabs';
+import Tree, { TreeNode } from '../../../components/tree';
 
 const ReactLiveScope = {
   React,
@@ -40,7 +41,9 @@ const ReactLiveScope = {
   RadioGroup,
   Radio,
   Tabs,
-  TabPane
+  TabPane,
+  Tree,
+  TreeNode
 };
 
 export default ReactLiveScope;
