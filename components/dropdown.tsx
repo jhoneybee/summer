@@ -67,10 +67,15 @@ export const DropDownMenuItem = (props: DropDownMenuItemProps) => {
 export interface DropDownProps extends HTMLAttributes<HTMLDivElement> {
     children?: JSX.Element,
     overlay?: ReactNode,
-    trigger?: 'click' | 'hover' | 'none',
+    trigger?: 'click' | 'contextMenu' | 'hover' | 'none' | 'noneFocus',
     width?: number | 'auto';
     placement?: 'bottom' | 'top',
-    visible?: boolean,
+    visible?: boolean
+    offsetTop?: number
+    offsetLeft?: number
+    // 滚动的时候隐藏
+    scrollHideOverlay?: boolean
+    onChangeVisible?: (visible: boolean) => void 
 }
 
 const MenuStyled = styled(List)`
@@ -135,7 +140,6 @@ export const DropDownMenu = ({
     )
 }
 
-
 const DropDownStyled = styled.div.attrs((props) => {
 })`
     z-index: 10;
@@ -155,9 +159,13 @@ const DropDown = ({
     trigger = 'click',
     visible = false,
     width = 'auto',
+    offsetLeft,
+    offsetTop,
+    scrollHideOverlay,
     onBlur,
     onMouseEnter,
     onMouseLeave,
+    onChangeVisible,
     ...restPropsDropDown
 }: DropDownProps) => {
 
@@ -167,26 +175,36 @@ const DropDown = ({
 
     const ref = useRef<HTMLElement>(null);
     const dropdownRef = useRef<HTMLElement>(null);
+
     const { onMouseOver, onMouseOut, onClick, ...restProps } = children.props;
 
-    useEffect(() => {
-        const movePostion = () => {
-            let top: string;
-            let left: string;
-            const rect = ref.current?.getBoundingClientRect();
-            const dropRect = dropdownRef.current?.getBoundingClientRect();
-            if (placement === 'bottom' && rect) {
-                top = `${rect.y + rect.height}px`;
-                left = `${ref.current?.getBoundingClientRect()?.x ||  0}px`;
-                dropdownRef.current?.style?.setProperty('top', top);
-                dropdownRef.current?.style?.setProperty('left', left);
-            } else if (placement === 'top' && dropRect && rect) {
-                top = `${rect.y - dropRect.height}px`;
-                left = `${rect.x}px`;
-                dropdownRef.current?.style?.setProperty('top', top);
-                dropdownRef.current?.style?.setProperty('left', left);
-            }
+    const movePostion = () => {
+        let topCss: string;
+        let leftCss: string;
+        if (scrollHideOverlay) {
+            dispatch({
+                type: 'setVisible',
+                payload: false
+            })
+            return ;
         }
+        const rect = ref.current?.getBoundingClientRect();
+        const dropRect = dropdownRef.current?.getBoundingClientRect();
+        if (placement === 'bottom') {
+            topCss = `${rect.y + rect.height}px`;
+            leftCss = `${ref.current?.getBoundingClientRect()?.x ||  0}px`;
+            console.log('offsetTop', offsetTop)
+            dropdownRef.current?.style?.setProperty('top', offsetTop ? `${offsetTop}px` : topCss);
+            dropdownRef.current?.style?.setProperty('left', offsetLeft ? `${offsetLeft}px` : leftCss);
+        } else if (placement === 'top') {
+            topCss = `${rect.y - dropRect.height}px`;
+            leftCss = `${rect.x}px`;
+            dropdownRef.current?.style?.setProperty('top', offsetTop ? `${offsetTop}px` : topCss);
+            dropdownRef.current?.style?.setProperty('left', offsetLeft ? `${offsetLeft}px` : leftCss);
+        }
+    }
+
+    useEffect(() => {
         
         // 执行一次，初始化滚动位置
         movePostion();
@@ -202,15 +220,22 @@ const DropDown = ({
         }
     }, [])
 
+
+    useLayoutEffect(() => {
+        movePostion();
+    }, [offsetLeft, offsetTop]);
+
     const dom = cloneElement(children, {
         ...restProps,
+        outerRef: ref,
         ref: (refDom: HTMLElement) => {
-            ref.current = refDom;
-
-            if (restProps.ref instanceof Function) {
-                restProps.ref?.(ref.current);
-            }else {
-                restProps.ref = ref;
+            if (refDom instanceof HTMLElement) {
+                ref.current = refDom;
+                if (restProps.ref instanceof Function) {
+                    restProps.ref?.(ref.current);
+                }else {
+                    restProps.ref = ref;
+                }
             }
         },
         onClick: (event: React.MouseEvent<HTMLElement, MouseEvent>) => {
@@ -221,6 +246,15 @@ const DropDown = ({
                 })
             }
             children.props.onClick?.(event);
+        },
+        onMouseDown: (event: React.MouseEvent<HTMLElement, MouseEvent>) => {
+            if (trigger === 'contextMenu' && event.button === 2 ) {
+                dispatch({
+                    type: 'setVisible',
+                    payload: true
+                })
+            }
+            children.props.onMouseDown?.(event);
         },
         onMouseEnter: (event: React.MouseEvent<HTMLElement, MouseEvent>) => {
             if (trigger === 'hover') {
@@ -233,7 +267,6 @@ const DropDown = ({
         }
     })
 
-
     useEffect(() => {
         dispatch({
             type: 'setVisible',
@@ -242,9 +275,10 @@ const DropDown = ({
     }, [visible])
 
     useLayoutEffect(() => {
-        if (trigger === 'click' || trigger === 'hover') {
+        if (trigger === 'click' || trigger === 'hover' || trigger === 'noneFocus') {
             dropdownRef.current.focus();
         }
+        onChangeVisible?.(state.visible)
     }, [state.visible])
 
     return (
@@ -258,7 +292,7 @@ const DropDown = ({
                     {...restPropsDropDown}
                     tabIndex="-1"
                     ref={dropdownRef}
-                    width={width === 'auto' ? ref.current?.getBoundingClientRect()?.width : width }
+                    width={width === 'auto' ? ref?.current?.getBoundingClientRect()?.width : width }
                     visible={state.visible}
                     onMouseDown={(event) => {
                         event.preventDefault();
