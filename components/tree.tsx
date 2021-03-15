@@ -1,4 +1,5 @@
 import React, {
+    ComponentType,
     createContext,
     Dispatch,
     forwardRef,
@@ -11,7 +12,7 @@ import styled from 'styled-components';
 import { FixedSizeList  as List } from 'react-window';
 import { AiFillCaretRight, AiFillCaretDown } from 'react-icons/ai';
 
-import DropDown, { DropDownMenu, DropDownMenuItem } from './dropdown';
+import DropDown from './dropdown';
 
 
 type Action =
@@ -130,6 +131,7 @@ type ExpandParam = {
 interface TreeProps extends HTMLAttributes<HTMLDivElement> {
     treeData: DataNode[]
     overlay?: ReactNode
+    nodeRender?: ComponentType<TreeNodeProps>;
     loadData?: (nodeData: DataNode) => Promise<Array<DataNode>>
     onExpand?: (expandedKeys: ExpandParam) => void
 }
@@ -137,6 +139,7 @@ interface TreeProps extends HTMLAttributes<HTMLDivElement> {
 export default function Tree({
     treeData = [],
     overlay,
+    nodeRender: NodeRender = TreeNode,
     loadData,
     onExpand,
 }: TreeProps) {
@@ -194,6 +197,7 @@ export default function Tree({
                 offsetTop={state.offsetTop}
                 offsetLeft={state.offsetLeft}
                 overlay={overlay}
+                scrollHideOverlay
                 onBlur={() => {
                     dispatch({
                         type: 'setVisible',
@@ -207,7 +211,6 @@ export default function Tree({
                     })
                 }}
             >
-
                 <List
                     height={400}
                     itemCount={treeDataFlat.length}
@@ -217,7 +220,7 @@ export default function Tree({
                     {({ index, style }) => {
                         const data = treeDataFlat[index];
                         return (
-                            <TreeNode
+                            <NodeRender
                                 style={style}
                                 title={data.title}
                                 level={data.level}

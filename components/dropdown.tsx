@@ -181,13 +181,6 @@ const DropDown = ({
     const movePostion = () => {
         let topCss: string;
         let leftCss: string;
-        if (scrollHideOverlay) {
-            dispatch({
-                type: 'setVisible',
-                payload: false
-            })
-            return ;
-        }
         const rect = ref.current?.getBoundingClientRect();
         const dropRect = dropdownRef.current?.getBoundingClientRect();
         if (placement === 'bottom') {
@@ -208,7 +201,17 @@ const DropDown = ({
         
         // 执行一次，初始化滚动位置
         movePostion();
-        window.addEventListener('scroll', movePostion, true);
+        window.addEventListener('scroll', () => {
+            if (scrollHideOverlay) {
+                dispatch({
+                    type: 'setVisible',
+                    payload: false
+                })
+                return ;
+            } else {
+                movePostion();  
+            }
+        }, true);
         const observer = new IntersectionObserver(() => {
             dropdownRef.current?.blur();
         });

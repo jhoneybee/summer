@@ -71,5 +71,7 @@ function simple () {
 |expandedKeys | 展开指定的树节点                | `string[]`          | `[]`
 |height       | 组件的高度                     | `number`            | -
 |draggable    | 设置节点可拖拽                  | `boolean` \| `(node: DataNode) => boolean` | -
-|overlay      | 右键弹出的信息覆盖的信息          | `ReactNode` | -
+|overlay      | 右键弹出的信息          | `ReactNode` | -
 |loadData | 异步加载数据                       | `(node: NodeData) => Promise<Array<DataNode>>` | -
+|nodeRender | 自定义node节点                   | `ComponentType<TreeNodeProps>` | -
+|onExpand | 节点展开的事件                      | `(expandedKeys: ExpandParam) => void` | - 
