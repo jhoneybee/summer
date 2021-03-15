@@ -11,8 +11,6 @@ import React, {
     Dispatch
  } from 'react'
 import { AiOutlineDown, AiOutlineCloseCircle } from 'react-icons/ai';
-import { FixedSizeList as List } from 'react-window';
-
 
 import Input from './input';
 import DropDown, { DropDownMenu ,DropDownMenuItem, DropDownMenuItemProps }  from './dropdown';
