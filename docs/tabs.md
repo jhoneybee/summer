@@ -14,7 +14,7 @@ slug: /tabs
 function simple () {
     return (
         <>
-            <Tabs activeKey={0} >
+            <Tabs activeKey="0" >
                 <TabPane tab='标签一' key={0}>
                     我是标签一
                 </TabPane>

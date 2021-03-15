@@ -407,6 +407,7 @@ export default function DatePicker ({
             }}
         >
             <DropDown
+                trigger='none'
                 overlay={
                     <DatePickerPanel
                         value={state.value}

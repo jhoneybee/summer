@@ -34,5 +34,5 @@ function simple () {
 | 属性       | 说明                     | 类型                   | 默认值
 |-----      |------                   |------                 |------------
 |disabled   |是否禁用状态               |`boolean`              |`false`
-|value      |值            |`boolean`              |`false`
+|value      |值            |`string` \| `number`              |`false`
 |onChange   |变化时回调函数              |`function(e:Event)`    | -
