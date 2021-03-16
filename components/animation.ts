@@ -1,5 +1,5 @@
-import { keyframes } from 'styled-components';
-
+import styled, { keyframes } from 'styled-components';
+import { AiOutlineLoading } from 'react-icons/ai'
 
 /**
  * 旋转动画
@@ -41,4 +41,12 @@ export const closeMessage = keyframes`
         opacity: .2;
         transform: translateY(-50px);
     }
+`
+
+/**
+ * 旋转的 loading  图标
+ */
+export const Loading = styled(AiOutlineLoading)`
+  display: inline-block;
+  animation: ${rotate} .9s linear infinite;
 `

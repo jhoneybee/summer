@@ -74,7 +74,6 @@ export const DropDownMenuItem = ({
                 try {
                     onClick?.(event);
                 } finally {
-                    console.log(event)
                     if (!event.defaultPrevented) {
                         dispatch({
                             type: 'setVisible',
@@ -210,7 +209,6 @@ const DropDown = ({
         if (placement === 'bottom') {
             topCss = `${rect.y + rect.height}px`;
             leftCss = `${ref.current?.getBoundingClientRect()?.x ||  0}px`;
-            console.log('offsetTop', offsetTop)
             dropdownRef.current?.style?.setProperty('top', offsetTop ? `${offsetTop}px` : topCss);
             dropdownRef.current?.style?.setProperty('left', offsetLeft ? `${offsetLeft}px` : leftCss);
         } else if (placement === 'top') {
