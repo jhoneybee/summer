@@ -117,6 +117,7 @@ const StyledButton = styled.button.attrs((props) => {
     font-weight: 500;
     font-size: .875rem;
     box-shadow: ${boxShadow};
+    user-select: none;
     ${props => props.disabled ? disabled : null}
     :hover{
         box-shadow: ${hoveBoxShadow};

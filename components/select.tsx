@@ -243,6 +243,9 @@ const Select = ({
                         {dropItems}
                     </DropDownMenu>
                 )}
+                onMouseDown={(event) => {
+                    event.preventDefault();
+                }}
             >
                 <Input
                     {...restProps}
