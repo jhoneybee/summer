@@ -73,8 +73,21 @@ function simple () {
                                 key: 'childKey',
                                 children: [],
                             }]);
-                        }, 3000)
+                        }, 1000)
                     });
+                }}
+                titleRender={(node, data) => {
+                    const style = {};
+                    if (data.key === 'childKey') {
+                        style.color = 'red';
+                    }
+                    return cloneElement(node, {
+                        ...node.props,
+                        style: {
+                            ...(node.props.style || {}),
+                            ...style
+                        },
+                    })
                 }}
                 onChange={setTreeData}
             />
@@ -95,7 +108,9 @@ function simple () {
 |draggable    | 设置节点可拖拽                  | `boolean` \| `(node: DataNode) => boolean` | -
 |overlay      | 右键弹出的信息          | `ReactNode` | -
 |loadData | 异步加载数据                       | `(node: NodeData) => Promise<Array<DataNode>>` | -
-|nodeRender | 自定义node节点                   | `ComponentType<TreeNodeProps>` | -
+|nodeRender | 自定义node节点                   | `(node: JSX.Element, data: DataNode) => JSX.Element` | -
+|titleRender | 自定义title 渲染                | `(node: JSX.Element, data: DataNode) => JSX.Element` | -
+|iconRender  | 自定义icon 渲染                 | `(node: JSX.Element, data: DataNode) => JSX.Element` | -
 |onExpand | 节点展开的事件                      | `(expandedKeys: ExpandParam) => void` | - 
 
 
@@ -110,3 +125,6 @@ function simple () {
 |children                | 子节点信息           | `DataNode[]` \| `'lazy'` | -
 |level                   | 层级信息             | `number`                 | -
 |isLeaf                  | 是否是独立的节点信息, 也就是不包含子节点本上不会展开 | `boolean` | -
+
+
+> 可以通过 `findTreeNode` 方法来重新设置节点的信息, 以及添加删除和更新节点

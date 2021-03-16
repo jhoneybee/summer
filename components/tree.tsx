@@ -93,14 +93,20 @@ interface TreeNodeProps extends Omit<HTMLAttributes<HTMLDivElement>, 'title'>  {
     level: number;
     isLeaf: boolean;
     expanded?: boolean;
+    data?: DataNode;
     loadState?: LoadStateType;
+    titleRender?: (node: JSX.Element, data: DataNode) => JSX.Element;
+    iconRender?: (node: JSX.Element, data: DataNode) => JSX.Element;
 }
 
 export const TreeNode = forwardRef(({
     title,
     isLeaf = true,
+    data,
     loadState,
     expanded,
+    titleRender,
+    iconRender,
     ...restProps
 }: TreeNodeProps, ref) => {
     let icon = <AiFillCaretRight />
@@ -111,6 +117,18 @@ export const TreeNode = forwardRef(({
     if (loadState === 'await') {
         icon = <Loading />
     }
+
+
+    let dom = <span>{title}</span>;
+
+    if (titleRender) {
+        dom = titleRender(dom, data);
+    }
+
+    if (iconRender) {
+        icon = iconRender(icon, data);
+    }
+
     return (
         <TreeNodeStyled
             ref={ref}
@@ -119,7 +137,7 @@ export const TreeNode = forwardRef(({
             <IconStyled>
                 {isLeaf ? undefined : icon}
             </IconStyled>
-            {title}
+            {dom}
         </TreeNodeStyled>
     )
 })
@@ -137,6 +155,8 @@ export type DataNode = {
     level?: number
     /** 判断是否是子节点信息 */
     isLeaf?: boolean
+    /** 是否展开节点信息 */
+    expanded?: boolean
 }
 
 type ExpandParam = {
@@ -148,19 +168,27 @@ type ExpandParam = {
 interface TreeProps extends ListProps {
     treeData: DataNode[]
     overlay?: ReactNode
-    nodeRender?: ComponentType<TreeNodeProps>;
+    nodeRender?: (node: JSX.Element, data: DataNode) => JSX.Element;
+    titleRender?: (node: JSX.Element, data: DataNode) => JSX.Element;
+    iconRender?: (node: JSX.Element, data: DataNode) => JSX.Element;
     loadData?: (nodeData: DataNode) => Promise<Array<DataNode>>
     onExpand?: (expandedKeys: ExpandParam) => void
     onChange?: (treeData: DataNode[]) => void
 }
 
-const recursion = (dataNodes: DataNode[], callback: (node: DataNode) => boolean) => {
+
+/**
+ * 查看到具体的节点信息
+ * @param dataNodes 当期要查找的节点集合
+ * @param callback 查找节点的判断条件, 返回 true 表示是, false 表示不是这个数据
+ */
+export const findTreeNode = (dataNodes: DataNode[], callback: (node: DataNode) => boolean) => {
     dataNodes.some((data) => {
         if (callback(data)) {
             return true;
         }
         if (data.children instanceof Array && data.children.length > 0) {
-            recursion(data.children, callback);
+            findTreeNode(data.children, callback);
         } else {
             return false;
         }
@@ -170,7 +198,8 @@ const recursion = (dataNodes: DataNode[], callback: (node: DataNode) => boolean)
 export default function Tree({
     treeData = [],
     overlay,
-    nodeRender: NodeRender = TreeNode,
+    nodeRender,
+    titleRender,
     loadData,
     onChange,
     onExpand,
@@ -223,13 +252,16 @@ export default function Tree({
         >
             {({ index, style }) => {
                 const data = treeDataFlat[index];
-                return (
-                    <NodeRender
+                const treNodeDom = (
+                    <TreeNode
                         style={style}
+                        key={data.key}
                         title={data.title}
                         level={data.level}
                         isLeaf={data.isLeaf}
                         loadState={data.loadState}
+                        titleRender={titleRender}
+                        data={data}
                         expanded={state.expandedKeys.includes(data.key)}
                         onContextMenu={(event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
                             dispatch({
@@ -243,22 +275,22 @@ export default function Tree({
                             event.preventDefault();
                         }}
                         onClick={() => {
-                            const expand = (newData: Array<string | number>) => {
+                            const expand = (newData: Array<string | number>, expanded: boolean) => {
                                 dispatch({
                                     type: 'setExpandedKeys',
                                     payload: newData,
                                 })
                                 onExpand?.({
                                     expandedKeys: newData,
-                                    expanded: state.expandedKeys.includes(data.key),
+                                    expanded,
                                     nodeData: data,
                                 })
 
-                                if (data.children === 'lazy') {
+                                if (data.children === 'lazy' && expanded) {
                                     // 懒加载数据信息
                                     loadData?.(data).then((lazyData) => {
                                         onChange?.(produce(treeData, changeTreeData => {
-                                            recursion(changeTreeData, changeData => {
+                                            findTreeNode(changeTreeData, changeData => {
                                                 if (changeData.key === data.key) {
                                                     changeData.children = lazyData;
                                                     return true;
@@ -277,7 +309,7 @@ export default function Tree({
                                         newData.push(element)
                                     }
                                 })
-                                expand(newData);
+                                expand(newData, false);
                             } else {
                                 const newData = [...state.expandedKeys];
                                 newData.push(data.key);
@@ -285,11 +317,15 @@ export default function Tree({
                                     type: 'setExpandedKeys',
                                     payload: newData,
                                 })
-                                expand(newData);
+                                expand(newData, true);
                             }
                         }}
                     />
                 )
+                if (nodeRender) {
+                    return nodeRender(treNodeDom, data);
+                }
+                return treNodeDom;
             }}
         </List>
     );
