@@ -66,7 +66,7 @@ function treeReducer(state: State, action: Action): State {
                 ...action.payload
             };
         default:
-            throw Error(`reducer console.logunknown type [${type}]`);
+            throw Error(`reducer unknown type [${type}]`);
     }
 }
 

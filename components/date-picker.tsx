@@ -229,6 +229,7 @@ const CellTextStyled = styled.span.attrs(props => {
         return 'unset';
     }};
     padding: 4px;
+    user-select: none;
     border-radius: ${borderRadiusStyle};
     :hover {
         background: #f5f5f5;
@@ -251,7 +252,6 @@ const toNumberWeek = (num: 0 | 1 | 2 | 3 | 4 | 5 | 6) => {
  * 日期选择的内容
  */
 const DatePickerBody = ({
-
     value,
     onChange,
 }: DatePickerBodyProps) => {
@@ -277,7 +277,11 @@ const DatePickerBody = ({
                     data-time={currentTime.getTime()}
                     isCurrentMonth={getMonth(currentTime) === getMonth(startDateTime)}
                     key={currentTime.getTime()}
-                    onClick={(event: React.MouseEvent<HTMLDivElement, MouseEvent>) => cellClick(event)}
+                    onMouseDown={(event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+                        if (event.button === 0) {
+                            cellClick(event)
+                        }
+                    }}
                 >
                     <CellTextStyled
                         isToday={format(currentTime, 'yyyy-MM-dd') === format(new Date(), 'yyyy-MM-dd')}
@@ -286,7 +290,6 @@ const DatePickerBody = ({
                     </CellTextStyled>
                 </BodyCellStyled>
             )
-
             newDays.push(cellDom)
 
             currentTime = addDays(currentTime, 1)
@@ -307,10 +310,8 @@ const DatePickerBody = ({
     );
 }
 
-
-
 const DatePickerPanelStyled = styled.div`
-    width: 100%;
+    width: 280px;
     height: 310px;
     background-color: #fff;
     border-radius: ${borderRadiusStyle};
@@ -328,11 +329,11 @@ interface DatePickerPanelProps extends Omit<HTMLAttributes<HTMLDivElement>, 'onC
  * 日期选择框的面板
  */
 export const DatePickerPanel = ({
-    value = new Date(),
+    value,
     onChange,
     ...restProps
 }: DatePickerPanelProps) => {
-    const [preValue, setPreValue] = useState<Date>(value);
+    const [preValue, setPreValue] = useState<Date>(value || new Date());
     return (
         <DatePickerPanelStyled
             {...restProps}
@@ -354,7 +355,7 @@ export const DatePickerPanel = ({
 }
 
 export interface DatePickerProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'value' | 'onChange'> {
-    value?: Date
+    value?: Date | null
     format?: string
     allowClear?: boolean
     disabled?: boolean
@@ -375,12 +376,26 @@ export default function DatePicker ({
     onClick,
     onChange
 }: DatePickerProps) {
+
+    const [unValue, setUnValue] = useState(null);
+
     const [state, dispatch] = useReducer(datePickerReducer, {
         visible: false,
     })
-
-
     const [hover, setHover] = useState<boolean>(false);
+
+    const getRealValue = () => {
+        const realValue = value === undefined ? unValue : value;
+        return realValue instanceof Date ? format(realValue, datePickerFormat) : '' 
+    } 
+
+    const changeValue = (changeValue: Date) => {
+        if (value === undefined) {
+            setUnValue(changeValue);
+        } else {
+            onChange?.(changeValue);
+        }
+    }
 
     return (
         <Context.Provider
@@ -395,9 +410,24 @@ export default function DatePicker ({
                 overlay={
                     <DatePickerPanel
                         value={value}
-                        onChange={onChange}
+                        onChange={(cValue: Date) => {
+                            dispatch({
+                                type: 'setVisible',
+                                payload: false
+                            })
+                            changeValue(cValue);
+                        }}
                     />
                 }
+                onChangeVisible={(changeVisible) => {
+                    dispatch({
+                        type: 'setVisible',
+                        payload: changeVisible
+                    })
+                }}
+                onMouseDown={(event) => {
+                    event.preventDefault();
+                }}
                 visible={state.visible}
             >
                 <Input
@@ -410,14 +440,14 @@ export default function DatePicker ({
                                 onMouseLeave={() => {
                                     setHover(false);
                                 }}
-                                onMouseDown={(event) => {
-                                    onChange?.(undefined);
+                                onClick={() => {
+                                    changeValue(undefined);
                                 }}
                             
                             />
                         ) : <AiOutlineCalendar />
                     }
-                    value={value ? format(value, datePickerFormat) : '' }
+                    value={getRealValue()}
                     readOnly={readOnly}
                     disabled={disabled}
                     onFocus={(event) => {
@@ -444,13 +474,10 @@ export default function DatePicker ({
                         onClick?.(event);
                     }}
                     onBlur={(event) => {
-                        if (!hover) {
-                            console.log('----------')
-                            dispatch({
-                                type: 'setVisible',
-                                payload: false
-                            })
-                        }
+                        dispatch({
+                            type: 'setVisible',
+                            payload: false
+                        })
                         onBlur?.(event);
                     }}
                 />

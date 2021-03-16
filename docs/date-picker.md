@@ -12,9 +12,14 @@ slug: /date-picker
  * desc: 日期选择框, 在 input 输入框中
  **/
 function simple () {
+    const [value, setValue] = useState(null)
     return (
         <>
-            <DatePicker />
+            <DatePicker
+                value={value}
+                onChange={(changeValue) => {
+                    setValue(changeValue)
+                }} />
         </>
     )
 }
@@ -36,7 +41,6 @@ function simple () {
 }
 
 ```
-
 
 ```jsx live
 /**
@@ -80,6 +84,7 @@ function simple () {
 |readOnly   |输入框是否只读, 默认情况下不允许手动输入,只能选择 |`boolean`              | `false`
 |allowClear |是否支持清除                | `boolean`             | `true`
 |disabled   |是否禁用状态               |`boolean`              |`false`
+|onChange   |用户改变日期时触发的事件    |`changeValue: Date) => void` | -
 
 ### 格式化日期
 

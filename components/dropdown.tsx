@@ -10,7 +10,8 @@ import React, {
     useReducer,
     useRef,
     MouseEvent,
-    useContext
+    useContext,
+    useMemo
 } from 'react';
 import { FixedSizeList as List, ListOnScrollProps } from 'react-window';
 import styled from 'styled-components';
@@ -60,6 +61,7 @@ const MenuItemStyled = styled.li.attrs(props => {
 
 export interface DropDownMenuItemProps extends HTMLAttributes<HTMLLIElement>{
     disabled: boolean
+    onC
 }
 
 export const DropDownMenuItem = ({
@@ -70,18 +72,6 @@ export const DropDownMenuItem = ({
     const { dispatch } = useContext(Context);
     return (
         <MenuItemStyled
-            onClick={(event) => {
-                try {
-                    onClick?.(event);
-                } finally {
-                    if (!event.defaultPrevented) {
-                        dispatch({
-                            type: 'setVisible',
-                            payload: false
-                        })
-                    }
-                }
-            }}
             {...restProps}
         />
     )
@@ -180,7 +170,7 @@ const DropDown = ({
     overlay,
     placement = 'bottom',
     trigger = 'click',
-    visible = false,
+    visible,
     width = 'auto',
     offsetLeft,
     offsetTop,
@@ -193,8 +183,19 @@ const DropDown = ({
 }: DropDownProps) => {
 
     const [state, dispatch] = useReducer(reducer, {
-        visible,
+        visible: false,
     });
+
+    const changeVisible = (newVisible: boolean) => {
+        if (visible) {
+            dispatch({
+                type: 'setVisible',
+                payload: newVisible
+            })
+        } else {
+            onChangeVisible?.(newVisible);
+        }
+    }
 
     const ref = useRef<HTMLElement>(null);
     const dropdownRef = useRef<HTMLElement>(null);
@@ -225,10 +226,7 @@ const DropDown = ({
         movePostion();
         window.addEventListener('scroll', () => {
             if (scrollHideOverlay) {
-                dispatch({
-                    type: 'setVisible',
-                    payload: false
-                })
+                changeVisible(false);
                 return ;
             } else {
                 movePostion();  
@@ -265,46 +263,60 @@ const DropDown = ({
         },
         onClick: (event: MouseEvent<HTMLElement, MouseEvent>) => {
             if (trigger === 'click') {
-                dispatch({
-                    type: 'setVisible',
-                    payload: true
-                })
+                changeVisible(true);
             }
             children.props.onClick?.(event);
         },
         onMouseDown: (event: MouseEvent<HTMLElement, MouseEvent>) => {
             if (trigger === 'contextMenu' && event.button === 2 ) {
-                dispatch({
-                    type: 'setVisible',
-                    payload: true
-                })
+                changeVisible(true);
             }
             children.props.onMouseDown?.(event);
         },
         onMouseEnter: (event: MouseEvent<HTMLElement, MouseEvent>) => {
             if (trigger === 'hover') {
-                dispatch({
-                    type: 'setVisible',
-                    payload: true
-                })
+                changeVisible(true);
             }
             children.props.onMouseEnter?.(event);
         }
     })
 
-    useEffect(() => {
-        dispatch({
-            type: 'setVisible',
-            payload: visible
-        });
-    }, [visible])
-
     useLayoutEffect(() => {
         if (trigger === 'click' || trigger === 'hover' || trigger === 'noneFocus') {
             dropdownRef.current.focus();
         }
-        onChangeVisible?.(state.visible)
     }, [state.visible])
+
+    const overlayItems = useMemo(() => {
+        const items = []
+
+        const cloneElementItems = (item: JSX.Element) => {
+            return cloneElement(item, {
+                ...item.props,
+                key: item.key,
+                onClick: (event) => {
+                    try {
+                        onClick?.(event);
+                    } finally {
+                        if (!event.defaultPrevented) {
+                            changeVisible(false);
+                        }
+                    }
+                }
+            })
+        }
+    
+        if (overlay instanceof Array) {
+            overlay.forEach((element) => {
+                if (isValidElement(element)) {
+                    items.push(cloneElementItems(element));
+                }
+            })
+        } else if (isValidElement(overlay)) {
+            items.push(cloneElementItems(overlay));
+        }
+        return items;
+    }, [overlay])
 
     return (
         <Context.Provider
@@ -318,18 +330,15 @@ const DropDown = ({
                     tabIndex="-1"
                     ref={dropdownRef}
                     width={width === 'auto' ? ref?.current?.getBoundingClientRect()?.width : width }
-                    visible={state.visible}
+                    visible={visible === undefined ? state.visible : visible}
                     onBlur={(event: React.FocusEvent<HTMLDivElement>) => {
                         if (trigger === 'click' || trigger === 'hover') {
-                            dispatch({
-                                type: 'setVisible',
-                                payload: false
-                            })
+                            changeVisible(false);
                         }
                         onBlur?.(event);
                     }}
                 >
-                    {overlay}
+                    {overlayItems}
             </DropDownStyled>
             {dom}
         </Context.Provider>
