@@ -44,15 +44,12 @@ function simple () {
                     <DropDownMenu>
                         <DropDownMenuItem
                             key="0"
-                            disabled
+                            onClick={() => {
+                                console.log(1)
+                            }}
+
                         >
-                            跳转到Google
-                        </DropDownMenuItem>
-                        <DropDownMenuItem key="1">
-                            跳转到百度
-                        </DropDownMenuItem>
-                        <DropDownMenuItem key="2">
-                            跳转到首页
+                            更新title信息
                         </DropDownMenuItem>
                     </DropDownMenu>
                 }

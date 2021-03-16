@@ -86,13 +86,13 @@ const TreeNodeStyled = styled.div.attrs(props => {
 interface TreeNodeProps extends Omit<HTMLAttributes<HTMLDivElement>, 'title'>  {
     title: ReactNode;
     level: number;
-    isHaveChildren: boolean;
+    isLeaf: boolean;
     expanded?: boolean
 }
 
 export const TreeNode = forwardRef(({
     title,
-    isHaveChildren,
+    isLeaf = true,
     expanded,
     ...restProps
 }: TreeNodeProps, ref) => {
@@ -106,7 +106,7 @@ export const TreeNode = forwardRef(({
             {...restProps}
         >
             <IconStyled>
-                {isHaveChildren ?  icon : undefined}
+                {!isLeaf ?  icon : undefined}
             </IconStyled>
             {title}
         </TreeNodeStyled>
@@ -119,7 +119,7 @@ export type DataNode = {
     children?: DataNode[] | boolean
     /** 内部使用的属性 */
     level?: number
-    isHaveChildren?: boolean
+    isLeaf?: boolean
 }
 
 type ExpandParam = {
@@ -153,15 +153,18 @@ export default function Tree({
             const result = [];
             data.forEach(element => {
                 
-                let isHaveChildren = false;
-                if (element.children === true || (element.children && element.children.length > 0 )) {
-                    isHaveChildren = true;
+                let isLeaf = true;
+                if (!element.isLeaf || 
+                    element.children === true ||
+                    (element.children && element.children.length > 0 )
+                ) {
+                    isLeaf = false;
                 }
 
                 const node = {
                     ...element,
                     level,
-                    isHaveChildren,
+                    isLeaf,
                 }
 
                 result.push(node);
@@ -224,7 +227,7 @@ export default function Tree({
                                 style={style}
                                 title={data.title}
                                 level={data.level}
-                                isHaveChildren={data.isHaveChildren}
+                                isLeaf={data.isLeaf}
                                 expanded={state.expandedKeys.includes(data.key)}
                                 onContextMenu={(event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
                                     dispatch({

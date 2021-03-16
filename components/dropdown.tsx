@@ -8,7 +8,9 @@ import React, {
     useEffect,
     useLayoutEffect,
     useReducer,
-    useRef
+    useRef,
+    MouseEvent,
+    useContext
 } from 'react';
 import { FixedSizeList as List, ListOnScrollProps } from 'react-window';
 import styled from 'styled-components';
@@ -60,8 +62,30 @@ export interface DropDownMenuItemProps extends HTMLAttributes<HTMLLIElement>{
     disabled: boolean
 }
 
-export const DropDownMenuItem = (props: DropDownMenuItemProps) => {
-    return <MenuItemStyled {...props} />
+export const DropDownMenuItem = ({
+    onClick,
+    ...restProps
+}: DropDownMenuItemProps) => {
+
+    const { dispatch } = useContext(Context);
+    return (
+        <MenuItemStyled
+            onClick={(event) => {
+                try {
+                    onClick?.(event);
+                } finally {
+                    console.log(event)
+                    if (!event.defaultPrevented) {
+                        dispatch({
+                            type: 'setVisible',
+                            payload: false
+                        })
+                    }
+                }
+            }}
+            {...restProps}
+        />
+    )
 }
 
 export interface DropDownProps extends HTMLAttributes<HTMLDivElement> {
@@ -241,7 +265,7 @@ const DropDown = ({
                 }
             }
         },
-        onClick: (event: React.MouseEvent<HTMLElement, MouseEvent>) => {
+        onClick: (event: MouseEvent<HTMLElement, MouseEvent>) => {
             if (trigger === 'click') {
                 dispatch({
                     type: 'setVisible',
@@ -250,7 +274,7 @@ const DropDown = ({
             }
             children.props.onClick?.(event);
         },
-        onMouseDown: (event: React.MouseEvent<HTMLElement, MouseEvent>) => {
+        onMouseDown: (event: MouseEvent<HTMLElement, MouseEvent>) => {
             if (trigger === 'contextMenu' && event.button === 2 ) {
                 dispatch({
                     type: 'setVisible',
@@ -259,7 +283,7 @@ const DropDown = ({
             }
             children.props.onMouseDown?.(event);
         },
-        onMouseEnter: (event: React.MouseEvent<HTMLElement, MouseEvent>) => {
+        onMouseEnter: (event: MouseEvent<HTMLElement, MouseEvent>) => {
             if (trigger === 'hover') {
                 dispatch({
                     type: 'setVisible',
@@ -297,9 +321,6 @@ const DropDown = ({
                     ref={dropdownRef}
                     width={width === 'auto' ? ref?.current?.getBoundingClientRect()?.width : width }
                     visible={state.visible}
-                    onMouseDown={(event) => {
-                        event.preventDefault();
-                    }}
                     onBlur={(event: React.FocusEvent<HTMLDivElement>) => {
                         if (trigger === 'click' || trigger === 'hover') {
                             dispatch({
