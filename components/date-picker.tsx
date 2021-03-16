@@ -29,13 +29,10 @@ import { borderDefaultStyle, borderRadiusStyle, primaryColor } from './styles/gl
 
 type Action = 
 | { type: 'setVisible', payload: boolean }
-| { type: 'setValue', payload: Date }
-| { type: 'setVisibleAndValue', payload: { visible: boolean, value: Date }}
 ;
 
 interface State {
     visible: boolean
-    value?: Date
 }
 
 const Context = createContext<{
@@ -48,6 +45,7 @@ const Context = createContext<{
     dispatch: () => null
 });
 
+
 function datePickerReducer(state: State, action: Action): State {
     const type = action.payload;
     switch (action.type) {
@@ -56,16 +54,6 @@ function datePickerReducer(state: State, action: Action): State {
                 ...state,
                 visible: action.payload
             };
-        case 'setValue':
-            return {
-                ...state,
-                value: action.payload
-            };
-        case 'setVisibleAndValue':
-            return {
-                ...state,
-                ...action.payload,
-            }
         default:
             throw Error(`reducer unknown type [${type}]`);
     }
@@ -319,8 +307,10 @@ const DatePickerBody = ({
     );
 }
 
+
+
 const DatePickerPanelStyled = styled.div`
-    width: 280px;
+    width: 100%;
     height: 310px;
     background-color: #fff;
     border-radius: ${borderRadiusStyle};
@@ -387,15 +377,8 @@ export default function DatePicker ({
 }: DatePickerProps) {
     const [state, dispatch] = useReducer(datePickerReducer, {
         visible: false,
-        value,
     })
 
-    useEffect(() => {
-        dispatch({
-            type: 'setValue',
-            payload: value
-        })
-    } , [value])
 
     const [hover, setHover] = useState<boolean>(false);
 
@@ -408,26 +391,18 @@ export default function DatePicker ({
         >
             <DropDown
                 trigger='none'
+                width={280}
                 overlay={
                     <DatePickerPanel
-                        value={state.value}
-                        onChange={(changeValue) => {
-                            onChange?.(changeValue);
-                            dispatch({
-                                type: 'setVisibleAndValue',
-                                payload: {
-                                    visible: false,
-                                    value: changeValue
-                                },
-                            })
-                        }}
+                        value={value}
+                        onChange={onChange}
                     />
                 }
                 visible={state.visible}
             >
                 <Input
                     suffix={
-                        hover && state.value && allowClear ? (
+                        hover && value && allowClear ? (
                             <AiOutlineCloseCircle
                                 onMouseEnter={() => {
                                     setHover(true);
@@ -436,18 +411,13 @@ export default function DatePicker ({
                                     setHover(false);
                                 }}
                                 onMouseDown={(event) => {
-                                    if (event.button === 0) {
-                                        dispatch({
-                                            type: 'setValue',
-                                            payload: null
-                                        })
-                                    }
+                                    onChange?.(undefined);
                                 }}
                             
                             />
                         ) : <AiOutlineCalendar />
                     }
-                    value={state.value ? format(state.value, datePickerFormat) : '' }
+                    value={value ? format(value, datePickerFormat) : '' }
                     readOnly={readOnly}
                     disabled={disabled}
                     onFocus={(event) => {
@@ -457,12 +427,15 @@ export default function DatePicker ({
                         })
                         onFocus?.(event);
                     }}
-                    onMouseEnter={() => {
+
+                    onMouseOver={() => {
                         setHover(true);
                     }}
-                    onMouseLeave={() => {
+
+                    onMouseOut={() => {
                         setHover(false);
                     }}
+
                     onClick={(event) => {
                         dispatch({
                             type: 'setVisible',
@@ -471,10 +444,13 @@ export default function DatePicker ({
                         onClick?.(event);
                     }}
                     onBlur={(event) => {
-                        dispatch({
-                            type: 'setVisible',
-                            payload: false
-                        })
+                        if (!hover) {
+                            console.log('----------')
+                            dispatch({
+                                type: 'setVisible',
+                                payload: false
+                            })
+                        }
                         onBlur?.(event);
                     }}
                 />
