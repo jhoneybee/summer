@@ -64,7 +64,7 @@ export default function Checkbox ({
             <CheckboxStyled
                 {...restProps}
                 type='checkbox'
-                checked={checked ? checked : value}
+                checked={checked !== undefined ? checked : value}
                 onChange={(event) => {
                     setValue(event.target.checked);
                     onChange?.(event);
