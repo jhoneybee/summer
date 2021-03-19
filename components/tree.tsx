@@ -161,12 +161,7 @@ export const TreeNode = ({
             currentY &&
             dragY &&
             itemData && 
-            itemData.key !== data.key &&
-            (
-                isOver ||
-                (isFirst && dragY <= currentY) ||
-                (isLast && dragY >= currentY)
-            )
+            itemData.key !== data.key && isOver
         ) {
             if (dragY >= currentY){
                 return 'bottom';
@@ -315,7 +310,6 @@ export const processDragDropTreeNode = (
         const result: DataNode[] = [];
         nodes.forEach((data) => {
             if (data.key !== source.key) {
-                
                 if (data.key === target.key && dropState === 'top') {
                     result.push(source);
                 }
