@@ -189,7 +189,7 @@ export const TreeNode = ({
             item: monitor.getItem()
         }),
         drop: (dropItem: any) => {
-            onDrop?.(data, dropItem.data as DataNode, getDropState())
+            onDrop?.(dropItem.data as DataNode, data, getDropState())
         }
     })
 
@@ -241,6 +241,8 @@ export type DataNode = {
     isLeaf?: boolean
     /** 是否展开节点信息 */
     expanded?: boolean
+    /** 节点是否可以拖拽 */
+    draggable?: boolean
 }
 
 type ExpandParam = {
@@ -292,6 +294,51 @@ export const findTreeNode = (dataNodes: DataNode[], callback: (node: DataNode) =
     })
 }
 
+
+/**
+ * 处理拖放的数据信息
+ * @param dataNodes 当前的数据集合
+ * @param source    源数据信息
+ * @param target    拖放的目标信息
+ * @param dropState 状态
+ */
+export const processDragDropTreeNode = (
+    dataNodes: DataNode[],
+    source: DataNode,
+    target: DataNode,
+    dropState: DropState
+) => {
+    if (source.key === target.key) {
+        return dataNodes;
+    }
+    const traverseTreeNodes = (nodes: DataNode[]): DataNode[] => {
+        const result: DataNode[] = [];
+        nodes.forEach((data) => {
+            if (data.key !== source.key) {
+                
+                if (data.key === target.key && dropState === 'top') {
+                    result.push(source);
+                }
+
+                if (data.children instanceof Array && data.children.length > 0) {
+                    result.push({
+                        ...data,
+                        children: traverseTreeNodes(data.children)
+                    })
+                } else {
+                    result.push(data)
+                }
+
+                if (data.key === target.key  && dropState === 'bottom') {
+                    result.push(source);
+                }
+            }
+        })
+        return result;
+    }
+    return traverseTreeNodes(dataNodes);
+}
+
 const TreeDnDType = 'TreeDnDType';
 
 export default function Tree({
@@ -334,10 +381,9 @@ export default function Tree({
             data.forEach(element => {
                 
                 let isLeaf = true;
-                if (element.isLeaf === true || (element.children && element.children.length > 0 )) {
+                if (element.isLeaf === false || (element.children && element.children.length > 0 )) {
                     isLeaf = false;
                 }
-
                 const node = {
                     ...element,
                     level,
@@ -380,7 +426,7 @@ export default function Tree({
                         level={data.level}
                         isLeaf={data.isLeaf}
                         loadState={data.loadState}
-                        draggable={draggable}
+                        draggable={data.draggable === undefined ? draggable : data.draggable}
                         isFirst={index === 0}
                         isLast={index == treeDataFlat.length - 1}
                         titleRender={titleRender}

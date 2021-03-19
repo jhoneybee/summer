@@ -100,7 +100,7 @@ function simple () {
 ```jsx live
 /**
  * title: 可拖拽树
- * desc: 对节点进行拖放
+ * desc: 对节点进行拖放, 可通过 processDragDropTreeNode 的方法来进行计算节点的交换
  **/
 function simple () {
 
@@ -112,6 +112,7 @@ function simple () {
             key: 'node-1-1',
         }, {
             title: '子节点二',
+            draggable: false,
             key: 'node-1-2',
         }, {
             title: '子节点三',
@@ -129,7 +130,9 @@ function simple () {
                 treeData={treeData}
                 onChange={setTreeData}
                 onDrop={(source, target, dropState) => {
-                    console.log('source', source, 'target', target, 'dropState', dropState)
+                    const newData = processDragDropTreeNode(treeData, source, target, dropState);
+                    setTreeData(newData);
+                    
                 }}
                 onExpand={({ expandedKeys })=> {
                     console.log(expandedKeys)
@@ -157,7 +160,7 @@ function simple () {
 |titleRender | 自定义title 渲染                | `(node: JSX.Element, data: DataNode) => JSX.Element` | -
 |iconRender  | 自定义icon 渲染                 | `(node: JSX.Element, data: DataNode) => JSX.Element` | -
 |onExpand | 节点展开的事件                      | `(expandedKeys: ExpandParam) => void` | - 
-
+|onDrop   | 节点拖拽事件                        | `(sourceNode: DataNode, targetNode: DataNode, dropState: DropState) => void` | -
 
 ### DataNode
 
@@ -173,3 +176,10 @@ function simple () {
 
 
 > 可以通过 `findTreeNode` 方法来重新设置节点的信息, 以及添加删除和更新节点
+
+
+## FAQ 常用问题 
+
+#### 该如何设置拖拽的时候部分节点可不拖拽? 
+
+初始话数据的时候的时候,可以设置单个节点的 `draggable` 属性.
