@@ -1,20 +1,25 @@
 import React, {
-    ComponentType,
     createContext,
     Dispatch,
     forwardRef,
     HTMLAttributes,
+    MutableRefObject,
     ReactNode,
     useMemo,
-    useReducer
+    useReducer,
+    useRef
 } from 'react';
 import styled from 'styled-components';
 import { FixedSizeList  as List, ListProps } from 'react-window';
 import { AiFillCaretRight, AiFillCaretDown } from 'react-icons/ai';
 import produce from 'immer';
 
+import { DndProvider, useDrag, useDrop } from 'react-dnd';
+import { HTML5Backend } from 'react-dnd-html5-backend'
+
 import DropDown from './dropdown';
 import { Loading } from './animation'
+import { primaryColor } from './styles/global'
 
 
 type Action =
@@ -82,33 +87,52 @@ const TreeNodeStyled = styled.div.attrs(props => {
     cursor: pointer;
     height: 25px;
     align-items: center;
-    padding-left: ${props => `${(props.level * 1) + .2}em`};
+    width: ${props => `calc(100% - ${(props.level * 2) + .2}em)`};
+    margin-left: ${props => `${(props.level * 2) + .2}em`};
+    border-bottom: ${props => props.dropState === 'bottom' ? `1px solid ${primaryColor(props)}` : 'unset'};
+    border-top: ${props => props.dropState === 'top' ? `1px solid ${primaryColor(props)}` : 'unset'};
     :hover {
         background-color: #f5f5f5;
-    }
+    };
 `
 
-interface TreeNodeProps extends Omit<HTMLAttributes<HTMLDivElement>, 'title'>  {
+type DropState = 'none' | 'top' | 'bottom';
+
+interface TreeNodeProps extends Omit<HTMLAttributes<HTMLDivElement>, 'title' | 'onDrop'>  {
     title: ReactNode;
     level: number;
     isLeaf: boolean;
     expanded?: boolean;
     data?: DataNode;
     loadState?: LoadStateType;
+    draggable?: boolean;
+    isFirst?: boolean;
+    isLast?: boolean;
     titleRender?: (node: JSX.Element, data: DataNode) => JSX.Element;
     iconRender?: (node: JSX.Element, data: DataNode) => JSX.Element;
+    onExpand?: () => void;
+    /** 拖拽放下的时候触发的事件 */
+    onDrop?: (sourceNode: DataNode, targetNode: DataNode, dropState: DropState) => void;
 }
 
-export const TreeNode = forwardRef(({
+export const TreeNode = ({
     title,
     isLeaf = true,
     data,
     loadState,
     expanded,
+    draggable = false,
+    isFirst = false,
+    isLast = false,
     titleRender,
     iconRender,
+    onDrop,
+    onExpand,
     ...restProps
-}: TreeNodeProps, ref) => {
+}: TreeNodeProps) => {
+
+    const ref = useRef<HTMLElement>();
+
     let icon = <AiFillCaretRight />
     if (expanded) {
         icon = <AiFillCaretDown />
@@ -118,7 +142,6 @@ export const TreeNode = forwardRef(({
         icon = <Loading />
     }
 
-
     let dom = <span>{title}</span>;
 
     if (titleRender) {
@@ -126,21 +149,82 @@ export const TreeNode = forwardRef(({
     }
 
     if (iconRender) {
-        icon = iconRender(icon, data);
+        icon = iconRender(icon, data);  
     }
+
+    const getDropState = (): DropState => {
+        const rect = ref.current?.getBoundingClientRect();
+        const dragY = sourceClientOffset?.y;
+        const currentY = rect?.y;
+        const itemData = item?.data;
+        if (
+            currentY &&
+            dragY &&
+            itemData && 
+            itemData.key !== data.key &&
+            (
+                isOver ||
+                (isFirst && dragY <= currentY) ||
+                (isLast && dragY >= currentY)
+            )
+        ) {
+            if (dragY >= currentY){
+                return 'bottom';
+            } 
+            
+            if (dragY <=  currentY) {
+                return 'top';
+            }
+            return 'none'
+        } 
+        return 'none';
+    }
+
+    const [{ item, sourceClientOffset, isOver }, drop] = useDrop({
+        accept: TreeDnDType,
+        collect: (monitor) => ({
+            handlerId: monitor.getHandlerId(),
+            isOver: monitor.isOver(),
+            sourceClientOffset: monitor.getSourceClientOffset(),
+            item: monitor.getItem()
+        }),
+        drop: (dropItem: any) => {
+            onDrop?.(data, dropItem.data as DataNode, getDropState())
+        }
+    })
+
+    const [{ isDragging }, drag] = useDrag({
+        type: TreeDnDType,
+        item: () => ({
+            data,
+        }),
+        collect: (monitor) => ({
+            isDragging: monitor.isDragging(),
+        }),
+        canDrag: () => draggable,
+    });
+
+    drag(drop(ref));
 
     return (
         <TreeNodeStyled
             ref={ref}
+            isDragging
+            dropState={getDropState()}
             {...restProps}
         >
-            <IconStyled>
-                {isLeaf ? undefined : icon}
-            </IconStyled>
+         
+            {isLeaf ? undefined : (
+                 <IconStyled
+                    onClick={onExpand}
+                 >
+                    {icon}
+                </IconStyled> 
+            )}
             {dom}
         </TreeNodeStyled>
     )
-})
+}
 
 export type DataNode = {
     /** 显示的节点的标题信息 */
@@ -166,13 +250,26 @@ type ExpandParam = {
 }
 
 interface TreeProps extends ListProps {
+    /** 节点信息 */
     treeData: DataNode[]
+    /** 右键遮挡信息 */
     overlay?: ReactNode
+    expandedKeys?: string[]
+    /** 是否允许节点拖拽 */
+    draggable?: boolean
+    /** 渲染node信息的render */
     nodeRender?: (node: JSX.Element, data: DataNode) => JSX.Element;
+    /** 渲染title的render */
     titleRender?: (node: JSX.Element, data: DataNode) => JSX.Element;
+    /** 渲染icon的render */
     iconRender?: (node: JSX.Element, data: DataNode) => JSX.Element;
+    /** 异步渲染,装载数据 */
     loadData?: (nodeData: DataNode) => Promise<Array<DataNode>>
+    /** 节点展开触发事件 */
     onExpand?: (expandedKeys: ExpandParam) => void
+    /** 拖拽放下的时候触发的事件 */
+    onDrop?: (sourceNode: DataNode, targetNode: DataNode, dropState: DropState) => void;
+    /** 改变 treeData 触发的事件 */
     onChange?: (treeData: DataNode[]) => void
 }
 
@@ -195,20 +292,41 @@ export const findTreeNode = (dataNodes: DataNode[], callback: (node: DataNode) =
     })
 }
 
+const TreeDnDType = 'TreeDnDType';
+
 export default function Tree({
     treeData = [],
     overlay,
+    draggable,
+    expandedKeys,
     nodeRender,
     titleRender,
+    iconRender,
     loadData,
-    onChange,
     onExpand,
+    onChange,
+    onDrop,
     ...restProps
 }: TreeProps) {
+
     const [state, dispatch] = useReducer(treeReducer, {
         expandedKeys: [],
         visible: false,
     });
+
+    const getExpandedKeys = () => {
+        return expandedKeys !== undefined ? expandedKeys: state.expandedKeys;
+    }
+
+    const setExpandedKeys = (param: ExpandParam) => {
+        if (!expandedKeys) {
+            dispatch({
+                type: 'setExpandedKeys',
+                payload: param.expandedKeys,
+            }) 
+        } 
+        onExpand?.(param);
+    }
 
     const treeDataFlat: DataNode[] = useMemo(() => {
         const recursion = (data: DataNode[], level: number) => {
@@ -227,7 +345,7 @@ export default function Tree({
                 }
                 result.push(node);
 
-                if (state.expandedKeys.includes(element.key)) {
+                if (getExpandedKeys().includes(element.key)) {
                     if (element.children instanceof Array) {
                         result.push(...recursion(element.children, level + 1))
                         // 设置状态加载完成
@@ -240,29 +358,35 @@ export default function Tree({
             return result;
         }
         return recursion(treeData, 0);
-    }, [treeData, state.expandedKeys])
+    }, [expandedKeys, state.expandedKeys])
 
-    const dom = (
+    const itemDom = (
         <List
             {...restProps}
             height={400}
             itemCount={treeDataFlat.length}
             itemSize={25}
-            width="100%"
         >
             {({ index, style }) => {
                 const data = treeDataFlat[index];
                 const treNodeDom = (
                     <TreeNode
-                        style={style}
+                        style={{
+                            ...style,
+                            width: undefined
+                        }}
                         key={data.key}
                         title={data.title}
                         level={data.level}
                         isLeaf={data.isLeaf}
                         loadState={data.loadState}
+                        draggable={draggable}
+                        isFirst={index === 0}
+                        isLast={index == treeDataFlat.length - 1}
                         titleRender={titleRender}
+                        iconRender={iconRender}
                         data={data}
-                        expanded={state.expandedKeys.includes(data.key)}
+                        expanded={getExpandedKeys().includes(data.key)}
                         onContextMenu={(event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
                             dispatch({
                                 type: 'setVisibleAndOffset',
@@ -274,13 +398,9 @@ export default function Tree({
                             })
                             event.preventDefault();
                         }}
-                        onClick={() => {
+                        onExpand={() => {
                             const expand = (newData: Array<string | number>, expanded: boolean) => {
-                                dispatch({
-                                    type: 'setExpandedKeys',
-                                    payload: newData,
-                                })
-                                onExpand?.({
+                                setExpandedKeys({
                                     expandedKeys: newData,
                                     expanded,
                                     nodeData: data,
@@ -302,24 +422,20 @@ export default function Tree({
                                 }
                             }
                         
-                            if (state.expandedKeys.includes(data.key)) {
-                                const newData = [];
-                                state.expandedKeys.forEach(element => {
-                                    if (element !== data.key) {
-                                        newData.push(element)
-                                    }
-                                })
+                            const index = getExpandedKeys().indexOf(data.key)
+                            if (index > -1) {
+                                const newData = produce(getExpandedKeys(), changeData => {
+                                    changeData.splice(index, 1)
+                                });
                                 expand(newData, false);
                             } else {
-                                const newData = [...state.expandedKeys];
-                                newData.push(data.key);
-                                dispatch({
-                                    type: 'setExpandedKeys',
-                                    payload: newData,
-                                })
+                                const newData = produce(getExpandedKeys(), changeData => {
+                                    changeData.push(data.key)
+                                });
                                 expand(newData, true);
                             }
                         }}
+                        onDrop={onDrop}
                     />
                 )
                 if (nodeRender) {
@@ -330,6 +446,32 @@ export default function Tree({
         </List>
     );
 
+    const dom = overlay ? (
+        <DropDown
+            visible={state.visible}
+            trigger='noneFocus'
+            width={120}
+            offsetTop={state.offsetTop}
+            offsetLeft={state.offsetLeft}
+            overlay={overlay}
+            scrollHideOverlay
+            onBlur={() => {
+                dispatch({
+                    type: 'setVisible',
+                    payload: false
+                })
+            }}
+            onChangeVisible={(changeVisible: boolean) => {
+                dispatch({
+                    type: 'setVisible',
+                    payload: changeVisible
+                })
+            }}
+        >
+            {itemDom}
+        </DropDown>
+    ): itemDom
+
     return (
         <Context.Provider
             value={{
@@ -337,31 +479,12 @@ export default function Tree({
                 dispatch
             }}
         >
-            {overlay ? (
-                <DropDown
-                    visible={state.visible}
-                    trigger='noneFocus'
-                    width={120}
-                    offsetTop={state.offsetTop}
-                    offsetLeft={state.offsetLeft}
-                    overlay={overlay}
-                    scrollHideOverlay
-                    onBlur={() => {
-                        dispatch({
-                            type: 'setVisible',
-                            payload: false
-                        })
-                    }}
-                    onChangeVisible={(changeVisible: boolean) => {
-                        dispatch({
-                            type: 'setVisible',
-                            payload: changeVisible
-                        })
-                    }}
-                >
-                    {dom}
-                </DropDown>
-            ): dom}
+            <DndProvider
+                backend={HTML5Backend}
+                context={window}
+            >
+                {dom}
+            </DndProvider>
         </Context.Provider>
     )
 }

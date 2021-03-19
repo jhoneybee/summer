@@ -97,6 +97,51 @@ function simple () {
 
 ```
 
+```jsx live
+/**
+ * title: 可拖拽树
+ * desc: 对节点进行拖放
+ **/
+function simple () {
+
+    const [treeData, setTreeData] = useState([{
+        title: '节点一',
+        key: 'node-1',
+        children: [{
+            title: '子节点一',
+            key: 'node-1-1',
+        }, {
+            title: '子节点二',
+            key: 'node-1-2',
+        }, {
+            title: '子节点三',
+            key: 'node-1-3',
+        }],
+    }])
+
+    const [expandedKeys, setExpandedKeys] = useState(['node-1'])
+
+    return (
+        <>
+            <Tree
+                draggable
+                expandedKeys={expandedKeys}
+                treeData={treeData}
+                onChange={setTreeData}
+                onDrop={(source, target, dropState) => {
+                    console.log('source', source, 'target', target, 'dropState', dropState)
+                }}
+                onExpand={({ expandedKeys })=> {
+                    console.log(expandedKeys)
+                    setExpandedKeys(expandedKeys)
+                }}
+            />
+        </>
+    )
+}
+
+```
+
 
 ## API
 

@@ -189,7 +189,6 @@ const DatePickerHeader = ({
     );
 }
 
-
 const DatePickerBodyStyled = styled.div`
     height: calc(100% - var(--header-height));
     margin: 8px 10px;
@@ -290,9 +289,8 @@ const DatePickerBody = ({
                     </CellTextStyled>
                 </BodyCellStyled>
             )
-            newDays.push(cellDom)
-
-            currentTime = addDays(currentTime, 1)
+            newDays.push(cellDom);
+            currentTime = addDays(currentTime, 1);
         }
         setDays(newDays);
     }, [value])
@@ -355,10 +353,15 @@ export const DatePickerPanel = ({
 }
 
 export interface DatePickerProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'value' | 'onChange'> {
+    /** 值 */
     value?: Date | null
+    /** 格式化时间 */
     format?: string
+    /** 是否允许小图标清除 */
     allowClear?: boolean
+    /** 是否禁用*/
     disabled?: boolean
+    /** 值改变时候触发的事件 */
     onChange?: (changeValue: Date) => void
 }
 
@@ -389,13 +392,17 @@ export default function DatePicker ({
         return realValue instanceof Date ? format(realValue, datePickerFormat) : '' 
     } 
 
+    const getRealValueData = () => {
+        return value === undefined ? unValue : value;
+    }
+
     const changeValue = (changeValue: Date) => {
         if (value === undefined) {
             setUnValue(changeValue);
         } else {
             onChange?.(changeValue);
         }
-    }
+    } 
 
     return (
         <Context.Provider
@@ -409,7 +416,7 @@ export default function DatePicker ({
                 width={280}
                 overlay={
                     <DatePickerPanel
-                        value={value}
+                        value={getRealValueData()}
                         onChange={(cValue: Date) => {
                             dispatch({
                                 type: 'setVisible',
@@ -432,7 +439,7 @@ export default function DatePicker ({
             >
                 <Input
                     suffix={
-                        hover && value && allowClear ? (
+                        hover && getRealValue() && allowClear ? (
                             <AiOutlineCloseCircle
                                 onMouseEnter={() => {
                                     setHover(true);
