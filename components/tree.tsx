@@ -358,7 +358,7 @@ export default function Tree({
             return result;
         }
         return recursion(treeData, 0);
-    }, [expandedKeys, state.expandedKeys])
+    }, [treeData, expandedKeys, state.expandedKeys])
 
     const itemDom = (
         <List
