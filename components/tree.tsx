@@ -154,6 +154,7 @@ export const TreeNode = ({
 
     const getDropState = (): DropState => {
         const rect = ref.current?.getBoundingClientRect();
+        const height = ref.current?.getBoundingClientRect().height;
         const dragY = sourceClientOffset?.y;
         const currentY = rect?.y;
         const itemData = item?.data;
@@ -161,15 +162,16 @@ export const TreeNode = ({
             currentY &&
             dragY &&
             itemData && 
-            itemData.key !== data.key && isOver
+            itemData.key !== data.key && 
+            isOver
         ) {
-            if (dragY >= currentY){
+            if (dragY <=  currentY + height && dragY >= currentY) {
                 return 'bottom';
-            } 
-            
-            if (dragY <=  currentY) {
-                return 'top';
             }
+
+            if (dragY + height  <= currentY + height){
+                return 'top';
+            } 
             return 'none'
         } 
         return 'none';

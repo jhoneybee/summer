@@ -131,12 +131,10 @@ function simple () {
                 onChange={setTreeData}
                 onDrop={(source, target, dropState) => {
                     const newData = processDragDropTreeNode(treeData, source, target, dropState);
-                    console.log(newData)
                     setTreeData(newData);
                     
                 }}
                 onExpand={({ expandedKeys })=> {
-                    console.log(expandedKeys)
                     setExpandedKeys(expandedKeys)
                 }}
             />
