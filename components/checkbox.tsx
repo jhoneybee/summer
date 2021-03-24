@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { primaryColor, disabled, borderDefaultStyle, borderRadiusStyle } from './styles/global'
 
 export interface CheckboxProps extends  Omit<InputHTMLAttributes<HTMLInputElement>, 'value'> {
-    checked: boolean
+    checked?: boolean
 }
 
 const CheckboxStyled = styled.input`
@@ -19,6 +19,7 @@ const CheckboxStyled = styled.input`
     margin-right: 10px;
     ::after {
         content: ' ';
+        display: ${props => props.checked ? 'unset': 'none'};
         position: absolute;
         border: 2px solid #fff;
         border-left: 0;
@@ -40,7 +41,6 @@ const ContentStyled = styled.span`
     display: inline-flex;
     position: relative;
     align-items: center;
-    padding-right: 1em;
     cursor: default;
 `
 

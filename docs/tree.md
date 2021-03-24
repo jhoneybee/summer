@@ -121,18 +121,22 @@ function simple () {
     }])
 
     const [expandedKeys, setExpandedKeys] = useState(['node-1'])
-
+    const [checkedKeys, setCheckedKeys] = useState([]);
     return (
         <>
             <Tree
                 draggable
+                checkable
                 expandedKeys={expandedKeys}
                 treeData={treeData}
+                checkedKeys={checkedKeys}
                 onChange={setTreeData}
                 onDrop={(source, target, dropState) => {
                     const newData = processDragDropTreeNode(treeData, source, target, dropState);
                     setTreeData(newData);
-                    
+                }}
+                onCheck={(checks) => {
+                    setCheckedKeys(checks)
                 }}
                 onExpand={({ expandedKeys })=> {
                     setExpandedKeys(expandedKeys)
@@ -153,13 +157,14 @@ function simple () {
 |expandedKeys | 展开指定的树节点                | `string[]`          | `[]`
 |height       | 组件的高度                     | `number`            | -
 |draggable    | 设置节点可拖拽                  | `boolean` \| `(node: DataNode) => boolean` | -
+|checkable    | 节点前添加 Checkbox 复选框       | `boolean`  | `false`
 |overlay      | 右键弹出的信息          | `ReactNode` | -
 |loadData | 异步加载数据                       | `(node: NodeData) => Promise<Array<DataNode>>` | -
 |nodeRender | 自定义node节点                   | `(node: JSX.Element, data: DataNode) => JSX.Element` | -
 |titleRender | 自定义title 渲染                | `(node: JSX.Element, data: DataNode) => JSX.Element` | -
 |iconRender  | 自定义icon 渲染                 | `(node: JSX.Element, data: DataNode) => JSX.Element` | -
 |onExpand | 节点展开的事件                      | `(expandedKeys: ExpandParam) => void` | - 
-|onDrop   | 节点拖拽事件                        | `(sourceNode: DataNode, targetNode: DataNode, dropState: DropState) => void` | -
+|onDrop   | 节点拖拽事件                        | `(sourceNode, targetNode, dropState) => void` | -
 
 ### DataNode
 
@@ -171,6 +176,7 @@ function simple () {
 |loadState               | 加载状态             | `'await'` \| `'finish'` | -
 |children                | 子节点信息           | `DataNode[]` \| `'lazy'` | -
 |level                   | 层级信息             | `number`                 | -
+|checked               | 是否选中             | `boolean`  | `false`
 |isLeaf                  | 是否是独立的节点信息, 也就是不包含子节点本上不会展开 | `boolean` | -
 
 

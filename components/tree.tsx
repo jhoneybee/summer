@@ -1,9 +1,7 @@
 import React, {
     createContext,
     Dispatch,
-    forwardRef,
     HTMLAttributes,
-    MutableRefObject,
     ReactNode,
     useMemo,
     useReducer,
@@ -15,11 +13,12 @@ import { AiFillCaretRight, AiFillCaretDown } from 'react-icons/ai';
 import produce from 'immer';
 
 import { DndProvider, useDrag, useDrop } from 'react-dnd';
-import { HTML5Backend } from 'react-dnd-html5-backend'
+import { HTML5Backend } from 'react-dnd-html5-backend';
 
 import DropDown from './dropdown';
-import { Loading } from './animation'
-import { primaryColor } from './styles/global'
+import { Loading } from './animation';
+import Checkbox from './checkbox';
+import { primaryColor } from './styles/global';
 
 
 type Action =
@@ -49,7 +48,7 @@ const Context = createContext<{
         visible: false
     },
     dispatch: () => null
-  });
+});
 
 
 function treeReducer(state: State, action: Action): State {
@@ -99,20 +98,38 @@ const TreeNodeStyled = styled.div.attrs(props => {
 type DropState = 'none' | 'top' | 'bottom';
 
 interface TreeNodeProps extends Omit<HTMLAttributes<HTMLDivElement>, 'title' | 'onDrop'>  {
+    /** 标题名称 */
     title: ReactNode;
+    /** 当前节点在树上的层级信息 */
     level: number;
+    /** 是否是子节点 */
     isLeaf: boolean;
+    /** 是否展开的 */
     expanded?: boolean;
+    /** 节点绑定的数据信息 */
     data?: DataNode;
+    /** 当期加载的状态,用来作树的懒加载 */
     loadState?: LoadStateType;
+    /** 是否允许拖拽 */
     draggable?: boolean;
+    /** 是否是整颗树的第一个节点 */
     isFirst?: boolean;
+    /** 是否整颗树的最后一个节点 */
     isLast?: boolean;
+    /** 是否选中 */
+    isChecked?: boolean;
+    /** 节点前面是否添加选中框 */
+    checkable?: boolean;
+    /** 在渲染title的时候事件 */
     titleRender?: (node: JSX.Element, data: DataNode) => JSX.Element;
+    /** 渲染icon的时候触发的事件 */
     iconRender?: (node: JSX.Element, data: DataNode) => JSX.Element;
+    /** 在点击展开节点的icon的时候触发的事件 */
     onExpand?: () => void;
     /** 拖拽放下的时候触发的事件 */
     onDrop?: (sourceNode: DataNode, targetNode: DataNode, dropState: DropState) => void;
+    /** 选中复选框触发的事件 */
+    onCheck?: (checked: boolean, data: DataNode) => void
 }
 
 export const TreeNode = ({
@@ -124,10 +141,13 @@ export const TreeNode = ({
     draggable = false,
     isFirst = false,
     isLast = false,
+    isChecked = false,
+    checkable = true,
     titleRender,
     iconRender,
     onDrop,
     onExpand,
+    onCheck,
     ...restProps
 }: TreeNodeProps) => {
 
@@ -218,7 +238,15 @@ export const TreeNode = ({
                     {icon}
                 </IconStyled> 
             )}
-            {dom}
+            {checkable ? (
+                <Checkbox
+                    checked={isChecked}
+                    onChange={(event) => {
+                        const checked = event.target.checked;
+                        onCheck?.(checked, data);
+                    }}
+                />
+            ) : undefined} {dom}
         </TreeNodeStyled>
     )
 }
@@ -240,6 +268,8 @@ export type DataNode = {
     expanded?: boolean
     /** 节点是否可以拖拽 */
     draggable?: boolean
+    /** 节点是否可以选中 */
+    checkable?: boolean
 }
 
 type ExpandParam = {
@@ -247,31 +277,6 @@ type ExpandParam = {
     expanded: boolean,
     nodeData: DataNode,
 }
-
-interface TreeProps extends ListProps {
-    /** 节点信息 */
-    treeData: DataNode[]
-    /** 右键遮挡信息 */
-    overlay?: ReactNode
-    expandedKeys?: string[]
-    /** 是否允许节点拖拽 */
-    draggable?: boolean
-    /** 渲染node信息的render */
-    nodeRender?: (node: JSX.Element, data: DataNode) => JSX.Element;
-    /** 渲染title的render */
-    titleRender?: (node: JSX.Element, data: DataNode) => JSX.Element;
-    /** 渲染icon的render */
-    iconRender?: (node: JSX.Element, data: DataNode) => JSX.Element;
-    /** 异步渲染,装载数据 */
-    loadData?: (nodeData: DataNode) => Promise<Array<DataNode>>
-    /** 节点展开触发事件 */
-    onExpand?: (expandedKeys: ExpandParam) => void
-    /** 拖拽放下的时候触发的事件 */
-    onDrop?: (sourceNode: DataNode, targetNode: DataNode, dropState: DropState) => void;
-    /** 改变 treeData 触发的事件 */
-    onChange?: (treeData: DataNode[]) => void
-}
-
 
 /**
  * 查看到具体的节点信息
@@ -337,18 +342,53 @@ export const processDragDropTreeNode = (
 
 const TreeDnDType = 'TreeDnDType';
 
+type Key = number | string;
+
+interface TreeProps extends ListProps {
+    /** 节点信息 */
+    treeData: DataNode[]
+    /** 右键遮挡信息 */
+    overlay?: ReactNode
+    /** 指定节点展开的key */
+    expandedKeys?: Key[]
+    /** 是否允许节点拖拽 */
+    draggable?: boolean
+    /** 节点上是否添加选中框 */
+    checkable?: boolean
+    /** 当期选中的key信息 */
+    checkedKeys?: Key[]
+    /** 渲染node信息的render */
+    nodeRender?: (node: JSX.Element, data: DataNode) => JSX.Element;
+    /** 渲染title的render */
+    titleRender?: (node: JSX.Element, data: DataNode) => JSX.Element;
+    /** 渲染icon的render */
+    iconRender?: (node: JSX.Element, data: DataNode) => JSX.Element;
+    /** 异步渲染,装载数据 */
+    loadData?: (nodeData: DataNode) => Promise<Array<DataNode>>
+    /** 节点展开触发事件 */
+    onExpand?: (expandedKeys: ExpandParam) => void
+    /** 拖拽放下的时候触发的事件 */
+    onDrop?: (sourceNode: DataNode, targetNode: DataNode, dropState: DropState) => void;
+    /** 节点点击选中框触发的事件 */
+    onCheck?: (changeCheckable: Key[]) => void
+    /** 改变节点状态触发的事件*/
+    onChangeTreeData?: (treeData: DataNode[]) => void
+}
+
 export default function Tree({
     treeData = [],
     overlay,
     draggable,
     expandedKeys,
+    checkedKeys = [],
+    checkable,
     nodeRender,
     titleRender,
     iconRender,
     loadData,
     onExpand,
-    onChange,
     onDrop,
+    onCheck,
     ...restProps
 }: TreeProps) {
 
@@ -386,7 +426,6 @@ export default function Tree({
                     isLeaf,
                 }
                 result.push(node);
-
                 if (getExpandedKeys().includes(element.key)) {
                     if (element.children instanceof Array) {
                         result.push(...recursion(element.children, level + 1))
@@ -401,6 +440,13 @@ export default function Tree({
         }
         return recursion(treeData, 0);
     }, [treeData, expandedKeys, state.expandedKeys])
+
+    const isCheckable = (data: DataNode) => {
+        if (checkable && (data.checkable || data.checkable === undefined)) {
+            return true;
+        }
+        return false;
+    }
 
     const itemDom = (
         <List
@@ -422,6 +468,8 @@ export default function Tree({
                         level={data.level}
                         isLeaf={data.isLeaf}
                         loadState={data.loadState}
+                        checkable={isCheckable(data)}
+                        isChecked={checkedKeys.includes(data.key)}
                         draggable={data.draggable === undefined ? draggable : data.draggable}
                         isFirst={index === 0}
                         isLast={index == treeDataFlat.length - 1}
@@ -440,6 +488,17 @@ export default function Tree({
                             })
                             event.preventDefault();
                         }}
+                        onCheck={(checked, data) => {
+                            const changeCheckedKeys = produce(checkedKeys || [], changeKeys => {
+                                if (checked) {
+                                    changeKeys.push(data.key);
+                                } else {
+                                    changeKeys.splice(changeKeys.indexOf(data.key), 1)
+                                }
+                            });
+                            onCheck?.(changeCheckedKeys);
+                          
+                        }}
                         onExpand={() => {
                             const expand = (newData: Array<string | number>, expanded: boolean) => {
                                 setExpandedKeys({
@@ -451,7 +510,7 @@ export default function Tree({
                                 if (data.children === 'lazy' && expanded) {
                                     // 懒加载数据信息
                                     loadData?.(data).then((lazyData) => {
-                                        onChange?.(produce(treeData, changeTreeData => {
+                                        produce(treeData, changeTreeData => {
                                             findTreeNode(changeTreeData, changeData => {
                                                 if (changeData.key === data.key) {
                                                     changeData.children = lazyData;
@@ -459,7 +518,7 @@ export default function Tree({
                                                 }
                                                 return false;
                                             });
-                                        }));
+                                        });
                                     })
                                 }
                             }
