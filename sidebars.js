@@ -12,7 +12,8 @@ module.exports = {
       'date-picker',
       'radio',
       'tabs',
-      'tree'
+      'tree',
+      'modal'
     ],
     '布局组件': [],
     '导航': [],

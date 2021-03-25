@@ -50,7 +50,6 @@ const ContainerStyles = styled.div.attrs(props => {
 })`
     display: inline-flex;
     position: relative;
-    margin-left: 1em;
     align-items: center;
     border: 1px solid #d9d9d9;
     :focus {

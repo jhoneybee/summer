@@ -13,38 +13,40 @@ import DropDown, { DropDownMenu, DropDownMenuItem } from '../../../components/dr
 import Input from '../../../components/input';
 import Select, { SelectOption } from '../../../components/select';
 import Password from '../../../components/password';
-import Message, { info, error} from '../../../components/message';
+import Message, { info, error } from '../../../components/message';
 import Checkbox from '../../../components/checkbox';
 import DatePicker, { DatePickerPanel } from '../../../components/date-picker';
 import RadioGroup, { Radio } from '../../../components/radio';
 import Tabs, { TabPane } from '../../../components/tabs';
 import Tree, { TreeNode, processDragDropTreeNode } from '../../../components/tree';
+import Modal from '../../../components/modal';
 
 const ReactLiveScope = {
-  React,
-  ...React,
-  Button,
-  DropDown,
-  DropDownMenu,
-  DropDownMenuItem,
-  Input,
-  Select,
-  SelectOption,
-  Password,
-  Message,
-  info,
-  error,
-  Checkbox,
-  AiOutlineUser,
-  DatePicker,
-  DatePickerPanel,
-  RadioGroup,
-  Radio,
-  Tabs,
-  TabPane,
-  Tree,
-  TreeNode,
-  processDragDropTreeNode
+    React,
+    ...React,
+    Button,
+    DropDown,
+    DropDownMenu,
+    DropDownMenuItem,
+    Input,
+    Select,
+    SelectOption,
+    Password,
+    Message,
+    info,
+    error,
+    Checkbox,
+    AiOutlineUser,
+    DatePicker,
+    DatePickerPanel,
+    RadioGroup,
+    Radio,
+    Tabs,
+    TabPane,
+    Tree,
+    TreeNode,
+    processDragDropTreeNode,
+    Modal
 };
 
 export default ReactLiveScope;
