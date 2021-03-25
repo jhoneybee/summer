@@ -68,7 +68,6 @@ function simple () {
                     return new Promise((re) => {
                         // 模拟网络延迟
                         setTimeout(() => {
-                            debugger
                             re([{
                                 title: '子节点',
                                 key: 'childKey',

@@ -19,7 +19,7 @@ function simple () {
     const [value1, setValue1] = useState("1");
     const [value2, setValue2] = useState("1");
     return (
-        <>
+        <Space>
             <Select
                 style={{ marginRight: 10}}
                 value={value}
@@ -54,7 +54,7 @@ function simple () {
                 <SelectOption key="2" value="2"> 选项二 </SelectOption>
                 <SelectOption key="3" value="3"> 选项三 </SelectOption>
             </Select>
-        </>
+        </Space>
 
     )
 }

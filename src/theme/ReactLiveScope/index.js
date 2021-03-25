@@ -20,6 +20,7 @@ import RadioGroup, { Radio } from '../../../components/radio';
 import Tabs, { TabPane } from '../../../components/tabs';
 import Tree, { TreeNode, processDragDropTreeNode } from '../../../components/tree';
 import Modal from '../../../components/modal';
+import Space from '../../../components/space';
 
 const ReactLiveScope = {
     React,
@@ -46,7 +47,8 @@ const ReactLiveScope = {
     Tree,
     TreeNode,
     processDragDropTreeNode,
-    Modal
+    Modal,
+    Space
 };
 
 export default ReactLiveScope;

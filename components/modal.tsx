@@ -5,6 +5,8 @@ import {
     AiOutlineClose
 } from 'react-icons/ai';
 
+import Button from './button';
+import Space from './space';
 
 const RootStyled = styled.div.attrs(props => {
 })`
@@ -40,7 +42,6 @@ const ModalStyled = styled.div.attrs(props => {
     position: relative;
     z-index: 1001;
     width: 520px;
-    min-height: 200px;
     top: 100px;
     margin: 0 auto;
     background-color: #fff;
@@ -67,8 +68,18 @@ const ModalTitle = styled.span`
 /** 弹出框的 body 信息 */
 const ModalBody = styled.div`
     margin: 1em;
+    min-height: 200px;
 `
 
+/** 弹出框的底部信息 */
+const ModalFooter = styled.div`
+    display: flex;
+    justify-content: flex-end;
+    border-top: 1px solid #f0f0f0;
+    padding: .6em;
+`
+
+/** 关闭的按钮图标 */
 const CloseIconStyled = styled(AiOutlineClose)`
     cursor: pointer;
     width: 55px;
@@ -96,7 +107,6 @@ export default function Modal ({
     onChangeVisible
 }: ModalProps) {
     if (desfalsetroyOnClose && !visible) return null;
-
     return (
         <RootStyled
             visible={visible}
@@ -118,13 +128,31 @@ export default function Modal ({
                         </ModalTitle>
                         <CloseIconStyled
                             onClick={() => {
-                                onChangeVisible?.(false) 
+                                onChangeVisible?.(false);
                             }}
                         />
                     </ModalHeader>
                     <ModalBody>
                         {children}
                     </ModalBody>
+                    <ModalFooter>
+                        <Space>
+                            <Button
+                                key='cancel'
+                                onClick={() => {
+                                    onChangeVisible?.(false)
+                                }}
+                            >
+                                取消
+                            </Button>
+                            <Button
+                                key='ok'
+                                type='primary'
+                            >
+                                确定
+                            </Button>
+                        </Space>
+                    </ModalFooter>
                 </ModalStyled>
             </Draggable>
         </RootStyled>
