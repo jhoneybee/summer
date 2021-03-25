@@ -15,11 +15,11 @@ slug: /checkbox
  **/
 function simple () {
     return (
-        <>
+        <Space>
             <Checkbox disabled> 苹果 </Checkbox>
             <Checkbox> 桃子 </Checkbox>
             <Checkbox> 香蕉 </Checkbox>
-        </>
+        </Space>
     )
 }
 

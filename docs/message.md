@@ -16,7 +16,7 @@ slug: /message
 ```jsx live
 function simple () {
     return (
-        <>
+        <Space>
             <Button
                 onClick={() => {
                     info('这是一个info信息', 10 * 1000);
@@ -32,7 +32,7 @@ function simple () {
             >
                 点击显示Error信息
             </Button>
-        </>
+        </Space>
     )
 }
 

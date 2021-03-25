@@ -27,11 +27,11 @@ slug: /button
  **/
 function simple() {
     return (
-        <>
+        <Space>
             <Button type="primary"> primary 类型 </Button>
             <Button type="default"> default 类型 </Button>
             <Button type="text"> text 类型 </Button>
-        </>
+        </Space>
     )
 }
 ```
@@ -43,7 +43,7 @@ function simple() {
  **/
 function simple() {
     return (
-        <>
+        <Space>
             <Button
                 type="primary"
                 onClick={() => {
@@ -57,7 +57,7 @@ function simple() {
             >
                 点击执行任务
             </Button>
-        </>
+        </Space>
     )
 }
 ```

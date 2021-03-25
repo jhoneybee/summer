@@ -13,7 +13,7 @@ slug: /radio
  **/
 function simple () {
     return (
-        <>
+        <Space>
             <RadioGroup
                 value='woman'
                 onChange={(changeValue) => {
@@ -23,7 +23,7 @@ function simple () {
                 <Radio value='man'>男人</Radio>
                 <Radio value='woman'>女人</Radio>
             </RadioGroup>
-        </>
+        </Space>
     )
 }
 
