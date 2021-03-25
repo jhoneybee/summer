@@ -389,6 +389,7 @@ export default function Tree({
     onExpand,
     onDrop,
     onCheck,
+    onChangeTreeData,
     ...restProps
 }: TreeProps) {
 
@@ -510,7 +511,7 @@ export default function Tree({
                                 if (data.children === 'lazy' && expanded) {
                                     // 懒加载数据信息
                                     loadData?.(data).then((lazyData) => {
-                                        produce(treeData, changeTreeData => {
+                                        onChangeTreeData?.(produce(treeData, changeTreeData => {
                                             findTreeNode(changeTreeData, changeData => {
                                                 if (changeData.key === data.key) {
                                                     changeData.children = lazyData;
@@ -518,7 +519,7 @@ export default function Tree({
                                                 }
                                                 return false;
                                             });
-                                        });
+                                        }));
                                     })
                                 }
                             }
