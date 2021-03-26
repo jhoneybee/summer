@@ -13,7 +13,8 @@ module.exports = {
       'radio',
       'tabs',
       'tree',
-      'modal'
+      'modal',
+      'table'
     ],
     '布局组件': [
       'space'
