@@ -452,7 +452,7 @@ export default function Tree({
     const itemDom = (
         <List
             {...restProps}
-            height={400}
+            height={500}
             itemCount={treeDataFlat.length}
             itemSize={25}
         >

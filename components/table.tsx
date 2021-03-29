@@ -1,11 +1,17 @@
-import React, { isValidElement, ReactNode, useMemo, useRef } from 'react';
-import { VariableSizeGrid as Grid, GridProps } from 'react-window';
+import React, { isValidElement, ReactNode, forwardRef, useMemo, useRef, HTMLAttributes, useEffect } from 'react';
+import { VariableSizeGrid as Grid } from 'react-window';
 import styled, { CSSProperties } from 'styled-components';
+
+import AutoSize from './autosize';
+
+type Align = 'left' | 'right' | 'center';
 
 /**
  * 单元格的数据结构
  */
 type DataCell = {
+    /** 单元格的对其方式 */
+    align?: Align
     /** 值信息 */
     value?: string | number | boolean
     /** 表示匹配到 col 的 key*/
@@ -24,14 +30,22 @@ type DataRow = {
     cells: DataCell[]
 }
 
+
+
 /** 单元格样式 */
 const CellStyled = styled.div`
+    padding: 10px;
+    border-bottom: 1px solid #f0f0f0;
 `
 
 /** 列的头部信息 */
 const ColumnHeader = styled.div`
     overflow-x: hidden;
     white-space: nowrap;
+    background: #fafafa;
+    border-bottom: 1px solid #f0f0f0;
+    border-top: 1px solid #f0f0f0;
+    font-weight: 500;
 `
 
 /** 表格的列信息 */
@@ -41,24 +55,38 @@ const ColumnStyled = styled.div.attrs(props => {
     text-align: ${props => props.align};
     width: ${props => props.width};
     background: #fafafa;
+    padding: ${props => props.isGroup ? '0px': '10px'};
     white-space: nowrap;
+    border-top: 1px solid #f0f0f0;
 `
 
-/** 容器信息 */
-const ContainerStyled = styled.div.attrs(props => {
-})`
-`;
 
+
+/** 列的 title 样式 */
 const ColumnTitle = styled.div.attrs(props => {
 })`
     text-align: ${props => props.align};
+    padding: ${props => props.isGroup ? '10px 0px': '10px'};
 `;
+
+/** 分组的表格头部样式 */
+const GroupColumnStyled = styled.div.attrs(props => {
+})`
+    display: inline-block;
+    text-align: ${props => props.align};
+    width: ${props => props.width};
+    background: #fafafa;
+    padding: 0px;
+    white-space: nowrap;
+    border-top: 1px solid #f0f0f0;
+    border-left: 1px solid #f0f0f0;
+`
 
 export interface ColumnProps {
     /** 显示的表格 title 信息 */
     title: string
     /** 设置列的对齐方式 */
-    align?: 'left' | 'right' | 'center'
+    align?: Align
     /** 表格的宽度信息 */
     width?: number
     /** 头下的子节点信息 */
@@ -66,54 +94,49 @@ export interface ColumnProps {
     /** 固定列值为固定列的方向 */
     fixed?: 'left' | 'right'
     /** 自定义渲染单元格 */
-    render?: (text: string, record: Object, index: number) => ReactNode
+    render?:  (cell: DataCell, row: DataRow, rowIndex: number) => ReactNode
 }
 
 /** 表格列的信息 */
 export const Column = ({
     title,
-    align = 'center',
+    align = 'left',
     children,
     width = 120,
     fixed
 }: ColumnProps) => {
-    let widthStr = '0px';
     if (children) {
-        widthStr = "auto";
         return (
-            <ColumnStyled
-                width={widthStr}
-            >
+            <GroupColumnStyled>
                 <ColumnTitle
-                    align={align}
+                    align={align || 'center'}
                 >
                     {title}
                 </ColumnTitle>
                 {children}
-            </ColumnStyled>
+            </GroupColumnStyled>
         )
-    } else {
-        widthStr = `${width}px`;
-        return (
-            <ColumnStyled
-                width={widthStr}
+    } 
+    return (
+        <ColumnStyled
+            width={`${width}px`}
+        >
+            <ColumnTitle
                 align={align}
             >
                 {title}
-            </ColumnStyled>
-        )
-    }
+            </ColumnTitle>
+        </ColumnStyled>
+    )
 }
 
 export interface CellProps {
     style: CSSProperties
-    row: DataRow
     cell: DataCell
 }
 
 /** 当期表格的单元格信息 */
 const Cell = ({
-    row,
     cell,
     style,
 }: CellProps) => {
@@ -128,7 +151,11 @@ const Cell = ({
 
 
 /** 表格的配置信息 */
-export interface TableProps extends Omit<GridProps, 'children'> {
+export interface TableProps {
+    /** 宽度 */
+    width: number;
+    /** 高度 */
+    height: number
     /** 子节点信息 */
     children: ReactNode
     /** 数据源信息 */
@@ -138,80 +165,102 @@ export interface TableProps extends Omit<GridProps, 'children'> {
 type DataColumn = {
     key: string | number
     width?: number
+    render?:  (cell: DataCell, row: DataRow, rowIndex: number) => ReactNode
+    children?: DataColumn[]
+    /** 要合并的列信息 */
+    colSpan?: number
+    /** 要合并的行信息 */
+    rowSpan?: number
 }
+
+
+const useColDataBottom = (children: ReactNode) => {
+    const cols: DataColumn[] = useMemo(() => {
+
+        const getColumnHeaderBottom = (element: JSX.Element[]): DataColumn[] => {
+            const dataCols: DataColumn[] = [];
+            element.forEach(child => {
+                if (child.props.children) {
+                    dataCols.push(...getColumnHeaderBottom(child.props.children))
+                } else {
+                    dataCols.push({
+                        key: child.key,
+                        width: child.props.width || 120,
+                        render: child.props.render
+                    })
+                }
+            })
+            return dataCols;
+        }
+
+        if (children instanceof Array ) {
+            return getColumnHeaderBottom(children as JSX.Element[])
+        }
+        return getColumnHeaderBottom([children] as JSX.Element[]);
+    }, [children])
+    return cols;
+}
+
+interface TableHeaderProps extends HTMLAttributes<HTMLDivElement>{
+    width: number
+}
+
+/** 表格的头部信息 */
+const TableHeader = forwardRef<HTMLDivElement, TableHeaderProps>(({
+    width,
+    children
+}: TableHeaderProps, ref) => {
+    return (
+        <ColumnHeader
+            ref={ref}
+            style={{
+                width,
+            }}
+        >
+            {children}
+        </ColumnHeader>
+    )
+})
+
 
 /** 表格组件 */
 export default function Table({
-    height = 200,
-    width = 500,
     children,
+    width = 1000,
+    height = 400,
     dataSource = []
 }: TableProps) {
 
-    const cols: DataColumn[] = useMemo(() => {
-        const colsTemp: DataColumn[] = [];
-        /** 获得最下列的信息 */
-        const getColumnHeaderBottom = (element: JSX.Element): DataColumn[] => {
-            let bottom: DataColumn[] = [];
-            if (element.props.children === undefined || element.props.children === null) {
-                bottom.push({
-                    key: element.key,
-                    width: element.props.width || 120
-                })
-            } else if (element.props.children instanceof Array) {
-                element.props.children.forEach(child => {
-                    bottom.push(...getColumnHeaderBottom(child));
-                })
-            } else if (isValidElement(element.props.children)) {
-                bottom.push(...getColumnHeaderBottom(element.props.children));
-            }
-            return bottom;
-        }
-        /** 计算出来列的信息 */
-        if (children instanceof Array) {
-            children.forEach((element) => {
-                if (isValidElement(element)) {
-                    colsTemp.push(...getColumnHeaderBottom(element));
-                }
-            })
-        } else if (isValidElement(children)) {
-            colsTemp.push(...getColumnHeaderBottom(children));
-        }
-        return colsTemp;
-    }, [children])
-
     const headerRef = useRef<HTMLDivElement>(null);
+
+    const cols: DataColumn[] = useColDataBottom(children)
+
+    useEffect(() => {
+        console.log('cols',cols)
+    }, [])
 
     let estimatedColumnWidth = 0;
 
     cols.forEach(({
-        width
+        width,
     }) => {
-        estimatedColumnWidth += width;
+        estimatedColumnWidth +=  width;
     })
 
     return (
         <>
-            <ContainerStyled
-                style={{
-                    width,
-                }}
+            <TableHeader
+                ref={headerRef}
+                width={width}
             >
-                <ColumnHeader
-                    ref={headerRef}
-                    style={{
-                        width,
-                    }}
-                >
-                    {children}
-                </ColumnHeader>
-            </ContainerStyled>
+                {children}
+            </TableHeader>
             <Grid
                 width={width}
                 height={height}
                 columnCount={cols.length}
                 columnWidth={(index) => cols[index].width}
-                rowHeight={() => 35}
+                rowHeight={() => 44}
                 estimatedColumnWidth={estimatedColumnWidth / cols.length}
                 rowCount={dataSource.length}
                 onScroll={({
@@ -227,16 +276,26 @@ export default function Table({
                 {({ style, rowIndex, columnIndex }) => {
                     const row = dataSource[rowIndex];
                     const cell = row.cells.find(ele => ele.name === cols[columnIndex].key);
-                    return (
+                    const render = cols[columnIndex].render;
+
+                    const cellElement = (
                         <Cell
                             style={style}
                             key={`row-${rowIndex}col-${columnIndex}`}
-                            row={row}
                             cell={cell}
                         />
                     )
+
+                    if (render) {
+                        return (
+                            <>
+                                {render(cell, row, rowIndex)}
+                            </>
+                        );
+                    }
+                    return cellElement
                 }}
             </Grid>
-        </>
+       </>
     );
 }
