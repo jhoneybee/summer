@@ -21,7 +21,7 @@ import Tabs, { TabPane } from '../../../components/tabs';
 import Tree, { TreeNode, processDragDropTreeNode } from '../../../components/tree';
 import Modal from '../../../components/modal';
 import Space from '../../../components/space';
-import Table, { Column } from '../../../components/table';
+import Table, { Column } from '../../../components/table/table';
 
 const ReactLiveScope = {
     React,
