@@ -1,5 +1,18 @@
-import React, { ReactNode, forwardRef, useMemo, useRef, HTMLAttributes, CSSProperties } from 'react';
-import { VariableSizeGrid as Grid } from 'react-window';
+import React, {
+    ReactNode,
+    forwardRef,
+    useMemo,
+    useRef,
+    HTMLAttributes,
+    CSSProperties,
+    isValidElement,
+    useState,
+    useEffect,
+    useLayoutEffect,
+    MutableRefObject,
+    createRef
+} from 'react';
+import { GridOnScrollProps, VariableSizeGrid as Grid } from 'react-window';
 import styled from 'styled-components';
 
 import { DataCell, DataRow, DataColumn } from './type';
@@ -48,36 +61,6 @@ const useColDataBottom = (children: ReactNode) => {
     return cols;
 }
 
-
-interface FixedTable {
-    /** 节点的 header 信息 */
-    children: ReactNode
-    /** 数据源信息 */
-    dataSource: Array<DataRow>
-}
-
-/** 固定列到左边 */
-const FixedLeftTable = ({
-    children
-}: FixedTable) => {
-    return (
-        <>
-            {children}
-        </>
-    )
-}
-
-/** 固定列到右边 */
-const FixedRightTable = ({
-    children
-}: FixedTable) => {
-    return (
-        <>
-            {children}
-        </>
-    )
-}
-
 const TableHeaderStyled = styled.div`
     overflow-x: hidden;
     white-space: nowrap;
@@ -106,7 +89,7 @@ const TableHeader = forwardRef<HTMLDivElement, TableHeaderProps>(({
 })
 
 /** 表格的配置信息 */
-export interface TableProps extends HTMLAttributes<HTMLDivElement>{
+export interface BaseTableProps extends Omit<HTMLAttributes<HTMLDivElement>, 'onScroll'>{
     /** 宽度 */
     width: number;
     /** 高度 */
@@ -115,27 +98,38 @@ export interface TableProps extends HTMLAttributes<HTMLDivElement>{
     children: ReactNode
     /** 数据源信息 */
     dataSource: Array<DataRow>
+    /** 内部使用属性 header 头部的高度信息 */
+    headerHeight?: number
+    /** 内部使用属性 是否隐藏滚动条 */
+    innerStyle?: CSSProperties
+    /** 容器的 ref 引用对象 */
+    containerRef?: MutableRefObject<HTMLDivElement>
+    /** 内部的表格元素 */
+    innerRef?: MutableRefObject<HTMLDivElement>
+    /** 表格滚动的时候触发的事件 */
+    onScroll?: (props: GridOnScrollProps) => void;
     /** 行的样式信息 */
     rowStyle?: (rowIndex: number, cell: DataCell) => CSSProperties
 }
 
 /** 表格组件 */
-export default function Table({
+const BaseTable = forwardRef<Grid, BaseTableProps>(({
     children,
     width = 1000,
     height = 400,
     dataSource = [],
+    headerHeight,
+    innerStyle,
+    containerRef = createRef<HTMLDivElement>(),
+    innerRef = createRef<HTMLDivElement>(),
     rowStyle,
+    onScroll,
     ...restProps
-}: TableProps) {
-
+}, ref) => {
     const headerRef = useRef<HTMLDivElement>();
-    const innerRef = useRef<HTMLDivElement>();
-
     const cols: DataColumn[] = useColDataBottom(children)
 
-    /** 正常的列的信息, 排除固定列 */
-    const bodyCols = cols.filter(element => element.fixed === undefined)
+    const bodyCols = cols
 
     let estimatedColumnWidth = 0;
 
@@ -168,10 +162,13 @@ export default function Table({
     return (
         <div
             {...restProps}
+            ref={containerRef}
         >
             <HeaderContainer
+                className='summer-table-header'
                 style={{
-                    width
+                    width,
+                    height: headerHeight,
                 }}
             >
                 <TableHeader
@@ -191,6 +188,7 @@ export default function Table({
                 }}
             >
                 <GridStyled
+                    ref={ref}
                     width={width}
                     height={height}
                     columnCount={bodyCols.length}
@@ -199,29 +197,129 @@ export default function Table({
                     rowHeight={rowHeight}
                     estimatedColumnWidth={estimatedColumnWidth / bodyCols.length}
                     rowCount={dataSource.length}
+                    style={innerStyle}
                     itemData={{
                         rowStyle,
                         dataSource,
                         bodyCols,
                         currentHoverIndex,
-                        cols
+                        cols,
+                        innerRef
                     }}
-                    onScroll={({
-                        scrollTop,
-                        scrollLeft
-                    }) => {
+                    onScroll={(param) => {
                         headerRef.current?.scrollTo({
-                            top: scrollTop,
-                            left: scrollLeft
+                            top: param.scrollTop,
+                            left: param.scrollLeft
                         })
                         hoverRender(innerRef.current, currentHoverIndex.current);
+                        onScroll?.(param)
                     }}
                 >
                     {CellRender}
                 </GridStyled>
             </div>
-       </div>
-    );
+        </div>
+    ); 
+});
+
+const getFixedWidth = (fixedCols: Array<JSX.Element> ) => {
+    let width = 0;
+    fixedCols.forEach(element => {
+        width += element.props.width || 120
+    })
+    return width;
+}
+
+
+export interface TableProps extends Omit<BaseTableProps, 'headerHeight' | 'innerStyle' | 'innerRef'> {
+}
+
+export default function Table ({
+    width,
+    height = 400,
+    children,
+    dataSource,
+    onScroll,
+    rowStyle,
+}: TableProps) {
+
+    const fixedLeftCols: Array<JSX.Element> = []
+    const fixedRightCols: Array<JSX.Element> = []
+
+    if (Array.isArray(children)) {
+        children.forEach(element => {
+            if (isValidElement(element) && element?.props?.fixed === 'left') {  
+                fixedLeftCols.push(element);
+            } else if (isValidElement(element) && element?.props?.fixed === 'right') {
+                fixedRightCols.push(element)
+            }
+        })
+    }
+
+
+    const [fixedRightTableCountHeight, setFixedRightTableCountHeight] = useState<number>(height);
+    const [headerHeight, setHeaderHeight] = useState<number>(0)
+
+    const fixedRightRef = useRef<HTMLDivElement>();
+    const tableRef = useRef<HTMLDivElement>()
+    const ref = useRef<Grid>();
+    
+    useEffect(() => {
+        if (fixedRightCols.length > 0 || fixedLeftCols.length > 0) {
+            setHeaderHeight(tableRef.current.querySelector('.summer-table-header').getBoundingClientRect().height); 
+        }
+    }, [])
+
+    useLayoutEffect(() => {
+        if (fixedRightCols.length > 0 || fixedLeftCols.length > 0) {
+            setFixedRightTableCountHeight(fixedRightRef.current.getBoundingClientRect().height);
+        }
+    }, [headerHeight])
+
+    return (
+        <>
+            <BaseTable
+                width={width}
+                height={height}
+                dataSource={dataSource}
+                onScroll={(param) => {
+                    if (ref.current) {
+                        ref.current.scrollTo({
+                            scrollLeft: 0,
+                            scrollTop: param.scrollTop
+                        })
+                    }
+                    onScroll?.(param);
+                }}
+                rowStyle={rowStyle}
+                containerRef={tableRef} 
+            >
+                {children}
+            </BaseTable>
+            {fixedRightCols.length > 0 ? (
+                <BaseTable
+                    ref={ref}
+                    containerRef={fixedRightRef}
+                    width={getFixedWidth(fixedRightCols)}
+                    height={height - getScrollbarWidth()}
+                    dataSource={dataSource}
+                    headerHeight={headerHeight}
+                    innerStyle={{
+                        overflow: 'hidden'
+                    }}
+                    style={{
+                        position: 'relative',
+                        top: -fixedRightTableCountHeight - getScrollbarWidth(),
+                        right: 2,
+                        float: 'right',
+                        backgroundColor: '#fff',
+                    }}
+                >
+                    {fixedRightCols}
+                </BaseTable>
+            ) : undefined}
+        </>
+    )
 }
 
 export { Column } from './column';

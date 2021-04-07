@@ -167,25 +167,28 @@ function simple () {
     }, [])
 
     return (
-        <Table
-            dataSource={dataSource}
-        >
-            <Column title='姓名' align='center' key='col0'/>
-            <Column title='个人资料'>
-                <Column title='家庭地址信息'>
-                    <Column title='省' key='col1'/>
-                    <Column title='市' key='col2'/>
-                    <Column title='区' key='col3'/>
-                    <Column title='详细地址' key='col4'/>
+        <>
+            <Table
+                dataSource={dataSource}
+            >
+                <Column title='姓名' align='center' key='col0'/>
+                <Column title='个人资料'>
+                    <Column title='家庭地址信息'>
+                        <Column title='省' key='col1'/>
+                        <Column title='市' key='col2'/>
+                        <Column title='区' key='col3'/>
+                        <Column title='详细地址' key='col4'/>
+                    </Column>
+                    <Column title='公司地址'>
+                        <Column title='省' key='col6'/>
+                        <Column title='市' key='col7'/>
+                        <Column title='区' key='col8'/>
+                        <Column title='详细地址' key='col9'/>
+                    </Column>
                 </Column>
-                <Column title='公司地址'>
-                    <Column title='省' key='col6'/>
-                    <Column title='市' key='col7'/>
-                    <Column title='区' key='col8'/>
-                    <Column title='详细地址' key='col9'/>
-                </Column>
-            </Column>
-        </Table>
+            </Table>
+            <div style={{height: 100}} />
+        </>
     )
 }
 ```
@@ -194,7 +197,7 @@ function simple () {
 ```jsx live
 /**
  * title: 固定列
- * desc: 对表格进行列的固定
+ * desc: 对表格进行列的固定, 如果表格头部进行合并了, 那么固定列只能固定第一层
  **/
 function simple () {
 

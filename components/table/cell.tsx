@@ -19,7 +19,7 @@ const CellStyled = styled.div.attrs(props => {
 `
 
 export interface CellProps extends HTMLAttributes<HTMLDivElement> {
-    cell: DataCell
+    cell?: DataCell
 }
 
 /** 当期表格的单元格信息 */
@@ -38,13 +38,13 @@ export const Cell = ({
 
 /** 渲染单元格的事件 */
 export const CellRender = ({ style, rowIndex, columnIndex, data }: GridChildComponentProps) => {
-    console.log('data',data)
     const { dataSource, currentHoverIndex, rowStyle, cols, innerRef } = data;
     const row = dataSource[rowIndex];
-    const cell = row.cells.find(ele => ele.name === cols[columnIndex].key);
+    const cell: DataCell = row.cells.find(ele => ele.name === cols[columnIndex].key);
     const render = cols[columnIndex].render;
 
     const rStyle = rowStyle?.(rowIndex, cell) || {}
+    
     const cellElement = (
         <Cell
             style={{

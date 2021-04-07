@@ -48,6 +48,7 @@ const GroupColumnTitle = styled.div.attrs(props => {
     border-right: 1px solid #ddd;
 `;
 
+
 export interface ColumnProps extends HTMLAttributes<HTMLDivElement>{
     /** 显示的表格 title 信息 */
     title: string
