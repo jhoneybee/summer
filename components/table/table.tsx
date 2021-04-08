@@ -261,9 +261,9 @@ const useFixedColumn = ({
 
 
     const style: CSSProperties = {
-        position: 'relative',
-        top: -tableHeight - getScrollbarWidth(),
+        position: 'absolute',
         float: direction,
+        top: 0,
         backgroundColor: '#fff',
     }
     if (direction === 'right') {
@@ -375,8 +375,8 @@ export default function Table ({
         return (
             <div
                 style={{
-                    overflow: 'hidden',
-                    height: headerHeight + height
+                    height: headerHeight + height,
+                    position: 'relative'
                 }}
             >
                 {tableElement}
