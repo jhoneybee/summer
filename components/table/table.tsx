@@ -234,6 +234,64 @@ const getFixedWidth = (fixedCols: Array<JSX.Element> ) => {
 export interface TableProps extends Omit<BaseTableProps, 'headerHeight' | 'innerStyle' | 'innerRef'> {
 }
 
+type FixedColumnParam = {
+    ref: MutableRefObject<Grid>
+    height: number
+    fixedCols: Array<JSX.Element>
+    headerHeight: number
+    dataSource: Array<DataRow>
+    direction: 'left' | 'right'
+}
+
+const useFixedColumn = ({
+    ref,
+    fixedCols,
+    headerHeight,
+    dataSource,
+    height,
+    direction
+}: FixedColumnParam) => {
+    const [tableHeight, setTableHeight] = useState<number>(0) 
+    const containerRef = useRef<HTMLDivElement>()
+    useLayoutEffect(() => {
+        if (fixedCols.length > 0) {
+            setTableHeight(containerRef.current.getBoundingClientRect().height);
+        }
+    }, [headerHeight])
+
+
+    const style: CSSProperties = {
+        position: 'relative',
+        top: -tableHeight - getScrollbarWidth(),
+        float: direction,
+        backgroundColor: '#fff',
+    }
+    if (direction === 'right') {
+        style.right = 2
+    }
+
+    if (fixedCols.length > 0) {
+        return (
+            <BaseTable
+                ref={ref}
+                containerRef={containerRef}
+                width={getFixedWidth(fixedCols)}
+                height={height}
+                dataSource={dataSource}
+                headerHeight={headerHeight}
+                innerStyle={{
+                    overflow: 'hidden'
+                }}
+                style={style}
+            >
+                {fixedCols}
+            </BaseTable>
+        )
+    }
+
+    return null;
+}
+
 export default function Table ({
     width,
     height = 400,
@@ -256,35 +314,33 @@ export default function Table ({
         })
     }
 
-
-    const [fixedRightTableCountHeight, setFixedRightTableCountHeight] = useState<number>(height);
     const [headerHeight, setHeaderHeight] = useState<number>(0)
 
-    const fixedRightRef = useRef<HTMLDivElement>();
     const tableRef = useRef<HTMLDivElement>()
-    const ref = useRef<Grid>();
-    
+    const leftRef = useRef<Grid>()
+    const rightRef = useRef<Grid>()
+
     useEffect(() => {
         if (fixedRightCols.length > 0 || fixedLeftCols.length > 0) {
             setHeaderHeight(tableRef.current.querySelector('.summer-table-header').getBoundingClientRect().height); 
         }
     }, [])
 
-    useLayoutEffect(() => {
-        if (fixedRightCols.length > 0 || fixedLeftCols.length > 0) {
-            setFixedRightTableCountHeight(fixedRightRef.current.getBoundingClientRect().height);
-        }
-    }, [headerHeight])
-
-    return (
+    const tableElement = (
         <>
             <BaseTable
                 width={width}
                 height={height}
                 dataSource={dataSource}
                 onScroll={(param) => {
-                    if (ref.current) {
-                        ref.current.scrollTo({
+                    if (leftRef.current) {
+                        leftRef.current.scrollTo({
+                            scrollLeft: 0,
+                            scrollTop: param.scrollTop
+                        })
+                    }
+                    if (rightRef.current) {
+                        rightRef.current.scrollTo({
                             scrollLeft: 0,
                             scrollTop: param.scrollTop
                         })
@@ -296,30 +352,38 @@ export default function Table ({
             >
                 {children}
             </BaseTable>
-            {fixedRightCols.length > 0 ? (
-                <BaseTable
-                    ref={ref}
-                    containerRef={fixedRightRef}
-                    width={getFixedWidth(fixedRightCols)}
-                    height={height - getScrollbarWidth()}
-                    dataSource={dataSource}
-                    headerHeight={headerHeight}
-                    innerStyle={{
-                        overflow: 'hidden'
-                    }}
-                    style={{
-                        position: 'relative',
-                        top: -fixedRightTableCountHeight - getScrollbarWidth(),
-                        right: 2,
-                        float: 'right',
-                        backgroundColor: '#fff',
-                    }}
-                >
-                    {fixedRightCols}
-                </BaseTable>
-            ) : undefined}
+            {useFixedColumn({
+                ref: leftRef,
+                height: height  - getScrollbarWidth(),
+                fixedCols: fixedLeftCols,
+                headerHeight,
+                dataSource,
+                direction: 'left'
+            })}
+            {useFixedColumn({
+                ref: rightRef,
+                height: height  - getScrollbarWidth(),
+                fixedCols: fixedRightCols,
+                headerHeight,
+                dataSource,
+                direction: 'right'
+            })}
         </>
     )
+
+    if (fixedLeftCols.length > 0 || fixedRightCols.length > 0) {
+        return (
+            <div
+                style={{
+                    overflow: 'hidden',
+                    height: headerHeight + height
+                }}
+            >
+                {tableElement}
+            </div>
+        )
+    }
+    return tableElement
 }
 
 export { Column } from './column';

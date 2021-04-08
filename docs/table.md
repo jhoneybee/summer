@@ -193,7 +193,6 @@ function simple () {
 }
 ```
 
-
 ```jsx live
 /**
  * title: 固定列
@@ -262,7 +261,7 @@ function simple () {
         <Table
             dataSource={dataSource}
         >
-            <Column title='姓名' align='center' key='col0'/>
+            <Column title='姓名' fixed='left' align='center' key='col0'/>
             <Column title='个人资料'>
                 <Column title='家庭地址信息'>
                     <Column title='省' key='col1'/>
@@ -282,6 +281,9 @@ function simple () {
     )
 }
 ```
+
+
+
 
 ## API 
 
