@@ -10,7 +10,8 @@ import React, {
     useEffect,
     useLayoutEffect,
     MutableRefObject,
-    createRef
+    createRef,
+    cloneElement
 } from 'react';
 import { GridOnScrollProps, VariableSizeGrid as Grid } from 'react-window';
 import styled from 'styled-components';
@@ -19,14 +20,16 @@ import { DataCell, DataRow, DataColumn } from './type';
 import { CellRender } from './cell';
 import { getScrollbarWidth, hoverRender } from './_utils';
 
-const HeaderContainer = styled.div`
+const HeaderContainer = styled.div.attrs(props => {
+})`
     background: #fafafa;
     border-top: 1px solid #ddd;
     border-right: 1px solid #ddd;
     border-left: 1px solid #ddd;
 `
 
-const GridStyled = styled(Grid)`
+const GridStyled = styled(Grid).attrs(props => {
+})`
     border: 1px solid #ddd;
 `
 
@@ -251,9 +254,13 @@ const useFixedColumn = ({
         float: direction,
         top: 0,
         backgroundColor: '#fff',
+        
     }
     if (direction === 'right') {
         style.right = 2
+        style.boxShadow = '-2px 0 5px -2px rgb(136 136 136 / 30%)'
+    } else if (direction === 'left') {
+        style.boxShadow = '2px 0 5px -2px rgb(136 136 136 / 30%)'
     }
 
     let width: number = 0;
@@ -262,21 +269,29 @@ const useFixedColumn = ({
         width += element.width || 120
     })
 
+
     if (fixedCols.length > 0) {
         return (
             <BaseTable
                 ref={ref}
                 containerRef={containerRef}
-                width={width}
+                width={width + 3}
                 height={height}
                 dataSource={dataSource}
                 headerHeight={headerHeight}
                 innerStyle={{
-                    overflow: 'hidden'
+                    overflow: 'hidden',
                 }}
                 style={style}
             >
-                {fixedCols}
+                {fixedCols.map((element, index) => {
+                    if (index === 0) {
+                        return cloneElement(element, {
+                            ...element.props,
+                            width: (element.props.width || 120) + 3
+                        })
+                    }
+                })}
             </BaseTable>
         )
     }
