@@ -8,7 +8,6 @@ import React, {
     isValidElement,
     useState,
     useEffect,
-    useLayoutEffect,
     MutableRefObject,
     createRef,
     cloneElement
@@ -22,6 +21,7 @@ import { getScrollbarWidth, hoverRender } from './_utils';
 
 const HeaderContainer = styled.div.attrs(props => {
 })`
+    display: flex;
     background: #fafafa;
     border-top: 1px solid #ddd;
     border-right: 1px solid #ddd;
@@ -39,19 +39,21 @@ const useColDataBottom = (children: ReactNode) => {
         const getColumnHeaderBottom = (element: JSX.Element[]): DataColumn[] => {
             const dataCols: DataColumn[] = [];
             element.forEach(child => {
-                if (child.props.children) {
-                    if (Array.isArray(child.props.children)) {
-                        dataCols.push(...getColumnHeaderBottom(child.props.children))
+                if (child) {
+                    if (child?.props?.children) {
+                        if (Array.isArray(child.props.children)) {
+                            dataCols.push(...getColumnHeaderBottom(child.props.children))
+                        } else {
+                            dataCols.push(...getColumnHeaderBottom([child.props.children]))
+                        }
                     } else {
-                        dataCols.push(...getColumnHeaderBottom([child.props.children]))
+                        dataCols.push({
+                            key: child.key,
+                            width: child.props.width || 120,
+                            render: child.props.render,
+                            fixed: child.props.fixed
+                        })
                     }
-                } else {
-                    dataCols.push({
-                        key: child.key,
-                        width: child.props.width || 120,
-                        render: child.props.render,
-                        fixed: child.props.fixed
-                    })
                 }
             })
             return dataCols;
@@ -291,6 +293,7 @@ const useFixedColumn = ({
                             width: (element.props.width || 120) + 3
                         })
                     }
+                    return element
                 })}
             </BaseTable>
         )
@@ -308,22 +311,35 @@ export default function Table ({
     rowStyle,
 }: TableProps) {
 
-    const fixedLeftCols: Array<JSX.Element> = []
-    const fixedRightCols: Array<JSX.Element> = []
-    const normalCols: Array<JSX.Element> = []
 
-    // 如果列被分组, 那么就存在固定列失效的问题
-    if (Array.isArray(children)) {
-        children.forEach(element => {
-            if (isValidElement(element) && element?.props?.fixed === 'left') {  
-                fixedLeftCols.push(element);
-            } else if (isValidElement(element) && element?.props?.fixed === 'right') {
-                fixedRightCols.push(element)
-            } else if (isValidElement(element)) {
-                normalCols.push(element)
-            }
-        })
-    }
+    const {
+        fixedLeftCols,
+        fixedRightCols,
+        normalCols
+    } = useMemo(() => {
+        const fixedLeftCols: Array<JSX.Element> = []
+        const fixedRightCols: Array<JSX.Element> = []
+        const normalCols: Array<JSX.Element> = []
+    
+        // 如果列被分组, 那么就存在固定列失效的问题
+        if (Array.isArray(children)) {
+            children.forEach(element => {
+                if (isValidElement(element) && element?.props?.fixed === 'left') {  
+                    fixedLeftCols.push(element);
+                } else if (isValidElement(element) && element?.props?.fixed === 'right') {
+                    fixedRightCols.push(element)
+                } else if (isValidElement(element)) {
+                    normalCols.push(element)
+                }
+            })
+        }
+        return {
+            fixedLeftCols,
+            fixedRightCols,
+            normalCols
+        }
+    }, [children])
+
 
     const [headerHeight, setHeaderHeight] = useState<number>(0)
 
