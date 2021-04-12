@@ -1,5 +1,6 @@
 import React, { ReactNode } from 'react';
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
+
 import Draggable from 'react-draggable';
 import {
     AiOutlineClose
@@ -19,7 +20,19 @@ const RootStyled = styled.div.attrs(props => {
     width: 100%;
     height: 100%;
     z-index: 1000;
+    
 `
+
+const ModalMaskAnimation = keyframes`
+    from {
+        opacity: 0.1;
+    }
+
+    to {
+        opacity: 1;
+    }
+`
+
 
 /** 遮挡框, 也就是弹出框的背景信息 */
 const MaskStyled = styled.div.attrs(props => {
@@ -33,7 +46,9 @@ const MaskStyled = styled.div.attrs(props => {
     height: 100%;
     z-index: 1000;
     background-color: rgba(0,0,0,.45);
+    animation: ${ModalMaskAnimation} .2s;
 `
+
 
 /** 弹出框的主体部分 */
 const ModalStyled = styled.div.attrs(props => {
@@ -45,6 +60,8 @@ const ModalStyled = styled.div.attrs(props => {
     top: 100px;
     margin: 0 auto;
     background-color: #fff;
+    transition: display .5s;
+    animation: ${ModalMaskAnimation} .2s;
     box-shadow: 0 3px 6px -4px rgb(0 0 0 / 12%), 0 6px 16px 0 rgb(0 0 0 / 8%), 0 9px 28px 8px rgb(0 0 0 / 5%);
 `
 
