@@ -187,7 +187,6 @@ function simple () {
                     </Column>
                 </Column>
             </Table>
-            <div style={{height: 100}} />
         </>
     )
 }
@@ -262,7 +261,8 @@ function simple () {
             dataSource={dataSource}
         >
             <Column title='姓名' fixed='left' align='center' key='col0'/>
-            <Column title='个人资料'>
+            <Column title='操作' fixed='right' key='col12' />
+            <Column title='个人资料' >
                 <Column title='家庭地址信息'>
                     <Column title='省' key='col1'/>
                     <Column title='市' key='col2'/>
@@ -276,7 +276,6 @@ function simple () {
                     <Column title='详细地址' key='col9'/>
                 </Column>
             </Column>
-            <Column title='操作' fixed='right' key='col12' />
         </Table>
     )
 }

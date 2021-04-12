@@ -222,15 +222,6 @@ const BaseTable = forwardRef<Grid, BaseTableProps>(({
     ); 
 });
 
-const getFixedWidth = (fixedCols: Array<JSX.Element> ) => {
-    let width = 0;
-    fixedCols.forEach(element => {
-        width += element.props.width || 120
-    })
-    return width;
-}
-
-
 export interface TableProps extends Omit<BaseTableProps, 'headerHeight' | 'innerStyle' | 'innerRef'> {
 }
 
@@ -251,14 +242,9 @@ const useFixedColumn = ({
     height,
     direction
 }: FixedColumnParam) => {
-    const [tableHeight, setTableHeight] = useState<number>(0) 
     const containerRef = useRef<HTMLDivElement>()
-    useLayoutEffect(() => {
-        if (fixedCols.length > 0) {
-            setTableHeight(containerRef.current.getBoundingClientRect().height);
-        }
-    }, [headerHeight])
 
+    const colBottom = useColDataBottom(fixedCols)
 
     const style: CSSProperties = {
         position: 'absolute',
@@ -270,12 +256,18 @@ const useFixedColumn = ({
         style.right = 2
     }
 
+    let width: number = 0;
+
+    colBottom.forEach(element => {
+        width += element.width || 120
+    })
+
     if (fixedCols.length > 0) {
         return (
             <BaseTable
                 ref={ref}
                 containerRef={containerRef}
-                width={getFixedWidth(fixedCols)}
+                width={width}
                 height={height}
                 dataSource={dataSource}
                 headerHeight={headerHeight}
@@ -303,13 +295,17 @@ export default function Table ({
 
     const fixedLeftCols: Array<JSX.Element> = []
     const fixedRightCols: Array<JSX.Element> = []
+    const normalCols: Array<JSX.Element> = []
 
+    // 如果列被分组, 那么就存在固定列失效的问题
     if (Array.isArray(children)) {
         children.forEach(element => {
             if (isValidElement(element) && element?.props?.fixed === 'left') {  
                 fixedLeftCols.push(element);
             } else if (isValidElement(element) && element?.props?.fixed === 'right') {
                 fixedRightCols.push(element)
+            } else if (isValidElement(element)) {
+                normalCols.push(element)
             }
         })
     }
@@ -327,48 +323,30 @@ export default function Table ({
     }, [])
 
     const tableElement = (
-        <>
-            <BaseTable
-                width={width}
-                height={height}
-                dataSource={dataSource}
-                onScroll={(param) => {
-                    if (leftRef.current) {
-                        leftRef.current.scrollTo({
-                            scrollLeft: 0,
-                            scrollTop: param.scrollTop
-                        })
-                    }
-                    if (rightRef.current) {
-                        rightRef.current.scrollTo({
-                            scrollLeft: 0,
-                            scrollTop: param.scrollTop
-                        })
-                    }
-                    onScroll?.(param);
-                }}
-                rowStyle={rowStyle}
-                containerRef={tableRef} 
-            >
-                {children}
-            </BaseTable>
-            {useFixedColumn({
-                ref: leftRef,
-                height: height  - getScrollbarWidth(),
-                fixedCols: fixedLeftCols,
-                headerHeight,
-                dataSource,
-                direction: 'left'
-            })}
-            {useFixedColumn({
-                ref: rightRef,
-                height: height  - getScrollbarWidth(),
-                fixedCols: fixedRightCols,
-                headerHeight,
-                dataSource,
-                direction: 'right'
-            })}
-        </>
+        <BaseTable
+            width={width}
+            height={height}
+            dataSource={dataSource}
+            onScroll={(param) => {
+                if (leftRef.current) {
+                    leftRef.current.scrollTo({
+                        scrollLeft: 0,
+                        scrollTop: param.scrollTop
+                    })
+                }
+                if (rightRef.current) {
+                    rightRef.current.scrollTo({
+                        scrollLeft: 0,
+                        scrollTop: param.scrollTop
+                    })
+                }
+                onScroll?.(param);
+            }}
+            rowStyle={rowStyle}
+            containerRef={tableRef} 
+        >
+            {[...fixedLeftCols, ...normalCols, ...fixedRightCols]}
+        </BaseTable>
     )
 
     if (fixedLeftCols.length > 0 || fixedRightCols.length > 0) {
@@ -380,6 +358,22 @@ export default function Table ({
                 }}
             >
                 {tableElement}
+                {useFixedColumn({
+                    ref: leftRef,
+                    height: height  - getScrollbarWidth(),
+                    fixedCols: fixedLeftCols,
+                    headerHeight,
+                    dataSource,
+                    direction: 'left'
+                })}
+                {useFixedColumn({
+                    ref: rightRef,
+                    height: height  - getScrollbarWidth(),
+                    fixedCols: fixedRightCols,
+                    headerHeight,
+                    dataSource,
+                    direction: 'right'
+                })}
             </div>
         )
     }
