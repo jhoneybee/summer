@@ -1,7 +1,8 @@
 import React, { HTMLAttributes, ReactNode } from 'react';
 import styled from 'styled-components';
 
-import { Align, DataCell, DataRow } from './type';
+
+import { Align, DataCell, EditorType, DataRow } from './type';
 
 /** 表格的列信息 */
 const ColumnStyled = styled.div.attrs(props => {
@@ -26,7 +27,6 @@ const ColumnTitle = styled.div.attrs(props => {
     width: 100%;
 `;
 
-
 /** 分组的表格头部样式 */
 const GroupColumnStyled = styled.div.attrs(props => {
 })`
@@ -48,7 +48,6 @@ const GroupColumnTitle = styled.div.attrs(props => {
     border-right: 1px solid #ddd;
 `;
 
-
 export interface ColumnProps extends HTMLAttributes<HTMLDivElement>{
     /** 显示的表格 title 信息 */
     title: string
@@ -62,6 +61,8 @@ export interface ColumnProps extends HTMLAttributes<HTMLDivElement>{
     fixed?: 'left' | 'right'
     /** 自定义渲染单元格 */
     render?:  (cell: DataCell, row: DataRow, rowIndex: number) => ReactNode
+    /** 编辑器 */
+    editor?: (info: EditorType, end: () => void) => ReactNode
 }
 
 /** 表格列的信息 */

@@ -1,4 +1,4 @@
-import React, { forwardRef, InputHTMLAttributes, ReactNode } from 'react';
+import React, { forwardRef, InputHTMLAttributes, MutableRefObject, ReactNode, useState } from 'react';
 import styled, { css } from 'styled-components';
 
 import { primaryColor, disabled } from './styles/global'
@@ -51,13 +51,12 @@ const ContainerStyles = styled.div.attrs(props => {
     display: inline-flex;
     position: relative;
     align-items: center;
-    border: 1px solid #d9d9d9;
-    :focus {
-        border: ${props => props.disabled ? '1px solid #d9d9d9' : `1px solid ${primaryColor(props)}`}
-    }
+    border: ${props => props.focus ? `1px solid ${primaryColor(props)}` :  '1px solid #d9d9d9' };
+    overflow: hidden;
     :hover {
         border: ${props => props.disabled ? '1px solid #d9d9d9' : `1px solid ${primaryColor(props)}`}
     }
+
 `;
 
 const InputStyled = styled.input.attrs(props => { 
@@ -88,6 +87,7 @@ const InputStyled = styled.input.attrs(props => {
 export interface InputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'prefix' | 'suffix'> {
     prefix?: ReactNode
     suffix?: ReactNode
+    containerRef?: MutableRefObject<HTMLDivElement>
 }
 
 const Input = forwardRef<HTMLInputElement, InputProps>(({
@@ -95,14 +95,22 @@ const Input = forwardRef<HTMLInputElement, InputProps>(({
     suffix,
     style,
     disabled,
+    containerRef,
+    onFocus,
+    onBlur,
     ...restProps
 }, ref) => {
 
+    const [focus, setFocus] = useState<boolean>(false);
+
     let defaultWidth = style?.width || 140;
+
     return (
         <ContainerStyles
-            ref={ref}
+            containerRef={containerRef}
             disabled={disabled}
+            style={style}
+            focus={focus}
         >
             <PrefixStyles
                 disabled={disabled}
@@ -110,10 +118,19 @@ const Input = forwardRef<HTMLInputElement, InputProps>(({
                 {prefix}
             </PrefixStyles>
             <InputStyled
+                ref={ref}
                 defaultWidth={defaultWidth}
                 disabled={disabled}
                 isHavePrefix={prefix ? true : false}
                 {...restProps}
+                onFocus={(e) => {
+                    setFocus(true)
+                    onFocus?.(e)
+                }}
+                onBlur={(e) => {
+                    setFocus(false)
+                    onBlur?.(e)
+                }}
             />
             <SuffixStyles
                 disabled={disabled}

@@ -10,7 +10,7 @@ import React, {
     useEffect,
     MutableRefObject,
     createRef,
-    cloneElement
+    cloneElement,
 } from 'react';
 import { GridOnScrollProps, VariableSizeGrid as Grid } from 'react-window';
 import styled from 'styled-components';
@@ -51,7 +51,8 @@ const useColDataBottom = (children: ReactNode) => {
                             key: child.key,
                             width: child.props.width || 120,
                             render: child.props.render,
-                            fixed: child.props.fixed
+                            fixed: child.props.fixed,
+                            editor: child.props.editor
                         })
                     }
                 }
@@ -111,10 +112,12 @@ export interface BaseTableProps extends Omit<HTMLAttributes<HTMLDivElement>, 'on
     containerRef?: MutableRefObject<HTMLDivElement>
     /** 内部的表格元素 */
     innerRef?: MutableRefObject<HTMLDivElement>
-    /** 表格滚动的时候触发的事件 */
-    onScroll?: (props: GridOnScrollProps) => void;
+    /** 内部使用的 ref 对象 */
+    rootRef?: MutableRefObject<HTMLDivElement>
     /** 行的样式信息 */
     rowStyle?: (rowIndex: number, cell: DataCell) => CSSProperties
+    /** 表格滚动的时候触发的事件 */
+    onScroll?: (props: GridOnScrollProps) => void
 }
 
 /** 表格组件 */
@@ -127,6 +130,7 @@ const BaseTable = forwardRef<Grid, BaseTableProps>(({
     innerStyle,
     containerRef = createRef<HTMLDivElement>(),
     innerRef = createRef<HTMLDivElement>(),
+    rootRef,
     rowStyle,
     onScroll,
     ...restProps
@@ -164,6 +168,7 @@ const BaseTable = forwardRef<Grid, BaseTableProps>(({
 
     const currentHoverIndex = useRef<number>();
 
+    const hoverRef = rootRef?.current === undefined ? containerRef : rootRef;
     return (
         <div
             {...restProps}
@@ -185,49 +190,47 @@ const BaseTable = forwardRef<Grid, BaseTableProps>(({
                     {children}
                 </TableHeader>
             </HeaderContainer>
-            <div
-                onMouseLeave={() => {
-                    innerRef.current.querySelectorAll(`.summer-cell`).forEach((element: HTMLDivElement) => {
-                        element.style.backgroundColor = '';
-                    }) 
+            <GridStyled
+                ref={ref}
+                width={width}
+                height={height}
+                columnCount={bodyCols.length}
+                innerRef={innerRef}
+                columnWidth={(index) => bodyCols[index].width}
+                rowHeight={rowHeight}
+                estimatedColumnWidth={estimatedColumnWidth / bodyCols.length}
+                rowCount={dataSource.length}
+                style={innerStyle}
+                itemData={{
+                    rowStyle,
+                    dataSource,
+                    bodyCols,
+                    currentHoverIndex,
+                    cols,
+                    rootRef: hoverRef,
+                }}
+                onScroll={(param) => {
+                    headerRef.current?.scrollTo({
+                        top: param.scrollTop,
+                        left: param.scrollLeft
+                    })
+                    onScroll?.(param)
+                    hoverRender(hoverRef.current, currentHoverIndex.current);
                 }}
             >
-                <GridStyled
-                    ref={ref}
-                    width={width}
-                    height={height}
-                    columnCount={bodyCols.length}
-                    innerRef={innerRef}
-                    columnWidth={(index) => bodyCols[index].width}
-                    rowHeight={rowHeight}
-                    estimatedColumnWidth={estimatedColumnWidth / bodyCols.length}
-                    rowCount={dataSource.length}
-                    style={innerStyle}
-                    itemData={{
-                        rowStyle,
-                        dataSource,
-                        bodyCols,
-                        currentHoverIndex,
-                        cols,
-                        innerRef
-                    }}
-                    onScroll={(param) => {
-                        headerRef.current?.scrollTo({
-                            top: param.scrollTop,
-                            left: param.scrollLeft
-                        })
-                        hoverRender(innerRef.current, currentHoverIndex.current);
-                        onScroll?.(param)
-                    }}
-                >
-                    {CellRender}
-                </GridStyled>
-            </div>
+                {CellRender}
+            </GridStyled>
         </div>
     ); 
 });
 
-export interface TableProps extends Omit<BaseTableProps, 'headerHeight' | 'innerStyle' | 'innerRef'> {
+export interface TableProps extends Omit<
+    BaseTableProps,
+    'headerHeight' |
+    'innerStyle' |
+    'innerRef' |
+    'onCellClick'
+> {
 }
 
 type FixedColumnParam = {
@@ -237,6 +240,7 @@ type FixedColumnParam = {
     headerHeight: number
     dataSource: Array<DataRow>
     direction: 'left' | 'right'
+    rootRef: MutableRefObject<HTMLDivElement>
 }
 
 const useFixedColumn = ({
@@ -245,10 +249,11 @@ const useFixedColumn = ({
     headerHeight,
     dataSource,
     height,
-    direction
+    direction,
+    rootRef,
 }: FixedColumnParam) => {
-    const containerRef = useRef<HTMLDivElement>()
 
+    const containerRef = useRef<HTMLDivElement>()
     const colBottom = useColDataBottom(fixedCols)
 
     const style: CSSProperties = {
@@ -256,7 +261,6 @@ const useFixedColumn = ({
         float: direction,
         top: 0,
         backgroundColor: '#fff',
-        
     }
     if (direction === 'right') {
         style.right = 2
@@ -271,7 +275,6 @@ const useFixedColumn = ({
         width += element.width || 120
     })
 
-
     if (fixedCols.length > 0) {
         return (
             <BaseTable
@@ -281,6 +284,7 @@ const useFixedColumn = ({
                 height={height}
                 dataSource={dataSource}
                 headerHeight={headerHeight}
+                rootRef={rootRef}
                 innerStyle={{
                     overflow: 'hidden',
                 }}
@@ -298,7 +302,6 @@ const useFixedColumn = ({
             </BaseTable>
         )
     }
-
     return null;
 }
 
@@ -310,7 +313,17 @@ export default function Table ({
     onScroll,
     rowStyle,
 }: TableProps) {
+     
+    const [headerHeight, setHeaderHeight] = useState<number>(0)
 
+    /** 可编辑的单元格 */
+    const cellDom = useRef<HTMLDivElement>()
+    /** 根元素的 dom 组件 */
+    const rootDivRef = useRef<HTMLDivElement>()
+    /** table 的容器组件 */
+    const tableRef = useRef<HTMLDivElement>()
+    /** 表格 body 的节点信息 */
+    const innerRef = useRef<HTMLDivElement>();
 
     const {
         fixedLeftCols,
@@ -340,10 +353,6 @@ export default function Table ({
         }
     }, [children])
 
-
-    const [headerHeight, setHeaderHeight] = useState<number>(0)
-
-    const tableRef = useRef<HTMLDivElement>()
     const leftRef = useRef<Grid>()
     const rightRef = useRef<Grid>()
 
@@ -357,7 +366,9 @@ export default function Table ({
         <BaseTable
             width={width}
             height={height}
+            rootRef={rootDivRef}
             dataSource={dataSource}
+            innerRef={innerRef}
             onScroll={(param) => {
                 if (leftRef.current) {
                     leftRef.current.scrollTo({
@@ -380,9 +391,12 @@ export default function Table ({
         </BaseTable>
     )
 
+
+
     if (fixedLeftCols.length > 0 || fixedRightCols.length > 0) {
         return (
             <div
+                ref={rootDivRef}
                 style={{
                     height: headerHeight + height,
                     position: 'relative'
@@ -391,24 +405,35 @@ export default function Table ({
                 {tableElement}
                 {useFixedColumn({
                     ref: leftRef,
-                    height: height  - getScrollbarWidth(),
+                    height: height - getScrollbarWidth(),
                     fixedCols: fixedLeftCols,
                     headerHeight,
                     dataSource,
-                    direction: 'left'
+                    rootRef: rootDivRef,
+                    direction: 'left',
                 })}
                 {useFixedColumn({
                     ref: rightRef,
-                    height: height  - getScrollbarWidth(),
+                    height: height - getScrollbarWidth(),
                     fixedCols: fixedRightCols,
                     headerHeight,
                     dataSource,
-                    direction: 'right'
+                    rootRef: rootDivRef,
+                    direction: 'right',
                 })}
             </div>
         )
     }
-    return tableElement
+    return (
+        <div
+            ref={rootDivRef}
+            style={{
+                position: 'relative'
+            }}
+        >
+            {tableElement}
+        </div>
+    )
 }
 
 export { Column } from './column';
