@@ -1,9 +1,13 @@
-import React, { cloneElement, HTMLAttributes, ReactNode, useEffect, useRef, useState } from "react";
+import React, { cloneElement, forwardRef, HTMLAttributes, useEffect, useRef, useState } from "react";
 import { GridChildComponentProps } from "react-window";
 import styled from 'styled-components';
 
 import { DataCell, DataColumn } from "./type";
 import { hoverRender } from './_utils';
+import { writeText } from '../clipboard';
+
+import { primaryColor } from '../styles/global'
+
 
 /** 单元格样式 */
 const CellStyled = styled.div.attrs(props => {
@@ -17,6 +21,9 @@ const CellStyled = styled.div.attrs(props => {
     border-bottom: 1px solid #ddd;
     line-height: 35px;
     user-select: none;
+    :focus {
+        border: ${props => `1px solid ${primaryColor(props)}`};
+    }
 `
 
 export interface CellProps extends HTMLAttributes<HTMLDivElement> {
@@ -24,16 +31,17 @@ export interface CellProps extends HTMLAttributes<HTMLDivElement> {
 }
 
 /** 当期表格的单元格信息 */
-export const Cell = ({
+export const Cell = forwardRef<HTMLDivElement, CellProps>(({
     cell,
     ...restProps
-}: CellProps) => {
+}: CellProps, ref) => {
     return (
         <CellStyled
+            ref={ref}
             {...restProps}
         />
     );
-}
+})
 
 /** 渲染单元格的事件 */
 export const CellRender = ({ style, rowIndex, columnIndex, data }: GridChildComponentProps) => {
@@ -57,6 +65,7 @@ export const CellRender = ({ style, rowIndex, columnIndex, data }: GridChildComp
 
     /** 编辑器的 dom */
     const editorRef = useRef<HTMLInputElement>()
+    const cellRef = useRef<HTMLDivElement>();
 
     useEffect(() => {
         if (isEditor) {
@@ -68,16 +77,28 @@ export const CellRender = ({ style, rowIndex, columnIndex, data }: GridChildComp
         console.log(value)
     }, [value])
 
+
+    const keyDown = (e: React.KeyboardEvent<HTMLElement>) => {
+        if (e.key === 'c' && e.ctrlKey) {
+            writeText(cellRef.current.innerText);
+            cellRef.current.focus();
+        }
+    }
+
     if (col.render) {
         const renderDom = col.render(cell, row, rowIndex)
-        const { style: renderStyle, ...restProps } = renderDom.props
+        const { style: renderStyle, onKeyDown, ...restProps } = renderDom.props
         return cloneElement(renderDom, {
             className: `summer-row-${rowIndex} summer-cell`,
             style: {
                 ...(renderStyle || {}),
                 ...style
             },
-            ...restProps
+            onKeyDown: (e :React.KeyboardEvent<HTMLElement>) => {
+                onKeyDown?.(e);
+                keyDown(e);
+            },
+            ...restProps,
         })
     }
 
@@ -109,6 +130,7 @@ export const CellRender = ({ style, rowIndex, columnIndex, data }: GridChildComp
 
     return (
         <Cell
+            ref={cellRef}
             style={{
                 ...rStyle,
                 ...style
@@ -120,6 +142,8 @@ export const CellRender = ({ style, rowIndex, columnIndex, data }: GridChildComp
                     setIsEditor(true)
                 }
             }}
+            tabIndex={-1}
+            onKeyDown={keyDown}
             onMouseEnter={(e) => {
                 currentHoverIndex.current = rowIndex;
                 hoverRender(rootRef.current,rowIndex);
