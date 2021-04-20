@@ -1,8 +1,9 @@
 import React, { cloneElement, forwardRef, HTMLAttributes, useEffect, useRef, useState } from "react";
 import { GridChildComponentProps } from "react-window";
 import styled from 'styled-components';
+import produce from 'immer';
 
-import { DataCell, DataColumn } from "./type";
+import { DataCell, DataColumn, DataRow } from "./type";
 import { hoverRender } from './_utils';
 import { writeText } from '../clipboard';
 
@@ -44,13 +45,15 @@ export const Cell = forwardRef<HTMLDivElement, CellProps>(({
 })
 
 /** 渲染单元格的事件 */
-export const CellRender = ({ style, rowIndex, columnIndex, data }: GridChildComponentProps) => {
+export const CellRender = ({ style, rowIndex, columnIndex, data, isScrolling }: GridChildComponentProps) => {
+
     const { 
         dataSource,
         currentHoverIndex,
         rowStyle,
         cols,
         rootRef,
+        onChange,
     } = data;
     const row = dataSource[rowIndex];
     const cell: DataCell = row.cells.find(ele => ele.name === cols[columnIndex].key);
@@ -74,8 +77,13 @@ export const CellRender = ({ style, rowIndex, columnIndex, data }: GridChildComp
     }, [isEditor])
 
     useEffect(() => {
-        console.log(value)
+        const newDataSource = produce(dataSource, (changeDataSource: Array<DataRow>) => {
+            const currentCell = changeDataSource[rowIndex].cells.find(ele => ele.name === cols[columnIndex].key)
+            currentCell.value = value
+        })
+        onChange?.(newDataSource)
     }, [value])
+
 
 
     const keyDown = (e: React.KeyboardEvent<HTMLElement>) => {
@@ -133,7 +141,7 @@ export const CellRender = ({ style, rowIndex, columnIndex, data }: GridChildComp
             ref={cellRef}
             style={{
                 ...rStyle,
-                ...style
+                ...style,
             }}
             className={`summer-row-${rowIndex} summer-cell`}
             onDoubleClick={() => {

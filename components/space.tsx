@@ -1,4 +1,4 @@
-import React, { HTMLAttributes, isValidElement, ReactNode } from 'react';
+import React, { HTMLAttributes, isValidElement } from 'react';
 import styled from 'styled-components';
 
 

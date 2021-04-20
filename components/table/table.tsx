@@ -95,7 +95,7 @@ const TableHeader = forwardRef<HTMLDivElement, TableHeaderProps>(({
 })
 
 /** 表格的配置信息 */
-export interface BaseTableProps extends Omit<HTMLAttributes<HTMLDivElement>, 'onScroll'>{
+export interface BaseTableProps extends Omit<HTMLAttributes<HTMLDivElement>, 'onScroll' | 'onChange'>{
     /** 宽度 */
     width: number;
     /** 高度 */
@@ -118,6 +118,8 @@ export interface BaseTableProps extends Omit<HTMLAttributes<HTMLDivElement>, 'on
     rowStyle?: (rowIndex: number, cell: DataCell) => CSSProperties
     /** 表格滚动的时候触发的事件 */
     onScroll?: (props: GridOnScrollProps) => void
+    /** 用户变改数据的时候触发的事件 */
+    onChange?: (dataSource: Array<DataRow>) => void
 }
 
 /** 表格组件 */
@@ -133,6 +135,7 @@ const BaseTable = forwardRef<Grid, BaseTableProps>(({
     rootRef,
     rowStyle,
     onScroll,
+    onChange,
     ...restProps
 }, ref) => {
     const headerRef = useRef<HTMLDivElement>();
@@ -196,7 +199,7 @@ const BaseTable = forwardRef<Grid, BaseTableProps>(({
                 height={height}
                 columnCount={bodyCols.length}
                 innerRef={innerRef}
-                columnWidth={(index) => bodyCols[index].width}
+                columnWidth={(index: number) => bodyCols[index].width}
                 rowHeight={rowHeight}
                 estimatedColumnWidth={estimatedColumnWidth / bodyCols.length}
                 rowCount={dataSource.length}
@@ -208,6 +211,7 @@ const BaseTable = forwardRef<Grid, BaseTableProps>(({
                     currentHoverIndex,
                     cols,
                     rootRef: hoverRef,
+                    onChange,
                 }}
                 onScroll={(param) => {
                     headerRef.current?.scrollTo({
@@ -241,6 +245,7 @@ type FixedColumnParam = {
     dataSource: Array<DataRow>
     direction: 'left' | 'right'
     rootRef: MutableRefObject<HTMLDivElement>
+    onChange?: (dataSource: Array<DataRow>) => void
 }
 
 const useFixedColumn = ({
@@ -312,6 +317,7 @@ export default function Table ({
     dataSource,
     onScroll,
     rowStyle,
+    onChange
 }: TableProps) {
      
     const [headerHeight, setHeaderHeight] = useState<number>(0)
@@ -369,6 +375,7 @@ export default function Table ({
             rootRef={rootDivRef}
             dataSource={dataSource}
             innerRef={innerRef}
+            onChange={onChange}
             onScroll={(param) => {
                 if (leftRef.current) {
                     leftRef.current.scrollTo({
@@ -376,6 +383,7 @@ export default function Table ({
                         scrollTop: param.scrollTop
                     })
                 }
+
                 if (rightRef.current) {
                     rightRef.current.scrollTo({
                         scrollLeft: 0,
@@ -390,8 +398,6 @@ export default function Table ({
             {[...fixedLeftCols, ...normalCols, ...fixedRightCols]}
         </BaseTable>
     )
-
-
 
     if (fixedLeftCols.length > 0 || fixedRightCols.length > 0) {
         return (
@@ -411,6 +417,7 @@ export default function Table ({
                     dataSource,
                     rootRef: rootDivRef,
                     direction: 'left',
+                    onChange
                 })}
                 {useFixedColumn({
                     ref: rightRef,
@@ -420,6 +427,7 @@ export default function Table ({
                     dataSource,
                     rootRef: rootDivRef,
                     direction: 'right',
+                    onChange
                 })}
             </div>
         )

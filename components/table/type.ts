@@ -8,16 +8,12 @@ export type Align = 'left' | 'right' | 'center';
 export type DataCell = {
     /** 单元格的对其方式 */
     align?: Align
+
     /** 值信息 */
     value?: string | number | boolean
+
     /** 表示匹配到 col 的 key*/
     name?: string
-    /** 合并列的信息 */
-    colSpan?: number
-    /** 表格行的信息合并 */
-    rowSpan?: number
-    /** 表格内容的行高 */
-    rowHeight?: number
 }
 
 /**

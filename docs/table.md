@@ -81,6 +81,7 @@ function simple () {
                 }
                 return {};
             }}
+            onChange={setDataSource}
         >
             <Column title='col0' width={120} key='col0'/>
             <Column title='col1' width={120} key='col1'/>
