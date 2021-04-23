@@ -172,6 +172,7 @@ const BaseTable = forwardRef<Grid, BaseTableProps>(({
     const currentHoverIndex = useRef<number>();
 
     const hoverRef = rootRef?.current === undefined ? containerRef : rootRef;
+
     return (
         <div
             {...restProps}
@@ -203,7 +204,10 @@ const BaseTable = forwardRef<Grid, BaseTableProps>(({
                 rowHeight={rowHeight}
                 estimatedColumnWidth={estimatedColumnWidth / bodyCols.length}
                 rowCount={dataSource.length}
-                style={innerStyle}
+                style={{
+                    willChange: 'unset',
+                    ...(innerStyle || {})
+                }}
                 itemData={{
                     rowStyle,
                     dataSource,
