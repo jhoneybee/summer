@@ -53,10 +53,10 @@ export const CellRender = ({ style, rowIndex, columnIndex, data, isScrolling }: 
         rowStyle,
         cols,
         rootRef,
-        onChange,
+        onChange
     } = data;
     const row = dataSource[rowIndex];
-    const cell: DataCell = row.cells.find(ele => ele.name === cols[columnIndex].key);
+    const cell: DataCell = row.cells.find((ele: DataCell) => ele.name === cols[columnIndex].name) || {};
     const col: DataColumn = cols[columnIndex];
 
     /** 是否编辑状态 */
@@ -78,18 +78,22 @@ export const CellRender = ({ style, rowIndex, columnIndex, data, isScrolling }: 
 
     useEffect(() => {
         const newDataSource = produce(dataSource, (changeDataSource: Array<DataRow>) => {
-            const currentCell = changeDataSource[rowIndex].cells.find(ele => ele.name === cols[columnIndex].key)
-            currentCell.value = value
+            const currentCell = changeDataSource[rowIndex].cells.find(ele => ele.name === cols[columnIndex].name)
+            if (currentCell) {
+                currentCell.value = value
+            }
         })
         onChange?.(newDataSource)
     }, [value])
 
 
-
+    // 快捷键
     const keyDown = (e: React.KeyboardEvent<HTMLElement>) => {
         if (e.key === 'c' && e.ctrlKey) {
             writeText(cellRef.current.innerText);
-            cellRef.current.focus();
+            setTimeout(() => {
+                cellRef.current.focus();
+            }, 20)
         }
     }
 

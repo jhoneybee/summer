@@ -17,58 +17,43 @@ function simple () {
 
     useEffect(() => {
         const data = []
-        for (let i=0; i< 10000; i += 1) {
-            data.push({
-                    cells: [{
-                        value: `col-${i}`,
-                        name: 'col0',
-                    },{
-                        value: `col-${i}`,
-                        name: 'col1',
-                    },{
-                        value: `col-${i}`,
-                        name: 'col2',
-                    },{
-                        value: `col-${i}`,
-                        name: 'col3',
-                    },{
-                        value: `col-${i}`,
-                        name: 'col4',
-                    },{
-                        value: `col-${i}`,
-                        name: 'col5',
-                    },{
-                        value: `col-${i}`,
-                        name: 'col6',
-                    },{
-                        value: `col-${i}`,
-                        name: 'col7',
-                    },{
-                        value: `col-${i}`,
-                        name: 'col8',
-                    },{
-                        value: `col-${i}`,
-                        name: 'col9',
-                    },{
-                        value: `col-${i}`,
-                        name: 'col10',
-                    },{
-                        value: `col-${i}`,
-                        name: 'col11',
-                    },{
-                        value: `col-${i}`,
-                        name: 'col12',
-                    },{
-                        value: `col-${i}`,
-                        name: 'col13',
-                    },{
-                        value: `col-${i}`,
-                        name: 'col14',
-                    }]
+        for (let row=0; row< 1000; row += 1) {
+            const cells = []
+
+            for (let col = 0; col< 1000; col++) {
+                cells.push({
+                    value: `col-${row}-${col}`,
+                    name: `col${col}`
                 })
+            }
+            data.push({
+                cells
+            })
         }
         setDataSource(data);
     }, [])
+
+    const columns = []
+
+    for (let i=0; i< 100; i++) {
+        columns.push((
+            <Column
+                key={`col${i}`}
+                name={`col${i}`}
+                title={`col${i}`}
+                width={120}    
+                editor={({ value, onChange }, end) => (
+                    <Input
+                        value={value}
+                        onBlur={() => { end() }}
+                        onChange={e => {
+                            onChange(e.target.value);
+                        }}
+                    />
+                )}
+            />
+        ))
+    }
 
     return (
         <Table
@@ -83,31 +68,7 @@ function simple () {
             }}
             onChange={setDataSource}
         >
-            <Column title='col0' width={120} key='col0'/>
-            <Column title='col1' width={120} key='col1'/>
-            <Column title='col2' width={120} key='col2'/>
-            <Column title='col3' width={120} key='col3'/>
-            <Column title='col4' width={120} key='col4'/>
-            <Column title='col5' width={120} key='col5'/>
-            <Column title='col6' width={120} key='col6'
-                editor={({ value, onChange }, end) => (
-                    <Input
-                        value={value}
-                        onBlur={() => { end() }}
-                        onChange={e => {
-                            onChange(e.target.value);
-                        }}
-                    />
-                )}
-            />
-            <Column title='col7' width={120} key='col7'/>
-            <Column title='col8' width={120} key='col8'/>
-            <Column title='col9' width={120} key='col9'/>
-            <Column title='col10' width={120} key='col10'/>
-            <Column title='col11' width={120} key='col11'/>
-            <Column title='col12' width={120} key='col12'/>
-            <Column title='col13' width={120} key='col13'/>
-            <Column style={{ color: 'red' }} title='col14' width={120} key='col14'/>
+            {columns}
         </Table>
     )
 }
@@ -182,19 +143,19 @@ function simple () {
             <Table
                 dataSource={dataSource}
             >
-                <Column title='姓名' align='center' key='col0'/>
-                <Column title='个人资料'>
-                    <Column title='家庭地址信息'>
-                        <Column title='省' key='col1'/>
-                        <Column title='市' key='col2'/>
-                        <Column title='区' key='col3'/>
-                        <Column title='详细地址' key='col4'/>
+                <Column title='姓名' align='center' key='col0' name='col0'/>
+                <Column title='个人资料' key='info'>
+                    <Column title='家庭地址信息' key='home-info'>
+                        <Column title='省' key='col1' name='col1'/>
+                        <Column title='市' key='col2' name='col2'/>
+                        <Column title='区' key='col3' name='col3'/>
+                        <Column title='详细地址' key='col4' name='col4'/>
                     </Column>
-                    <Column title='公司地址'>
-                        <Column title='省' key='col6'/>
-                        <Column title='市' key='col7'/>
-                        <Column title='区' key='col8'/>
-                        <Column title='详细地址' key='col9'/>
+                    <Column title='公司地址' key='job-info'>
+                        <Column title='省' key='col6' name='col6'/>
+                        <Column title='市' key='col7' name='col7'/>
+                        <Column title='区' key='col8' name='col8'/>
+                        <Column title='详细地址' key='col9' name='col9'/>
                     </Column>
                 </Column>
             </Table>
@@ -271,22 +232,22 @@ function simple () {
         <Table
             dataSource={dataSource}
         >
-            <Column title='姓名' fixed='left' align='center' key='col0'/>
-             <Column title='个人资料'>
-                <Column title='家庭地址信息'>
-                    <Column title='省' key='col1'/>
-                    <Column title='市' key='col2'/>
-                    <Column title='区' key='col3'/>
-                    <Column title='详细地址' key='col4'/>
+            <Column title='姓名' fixed='left' align='center' name='col0' key='col0'/>
+            <Column title='个人资料' key='info'>
+                <Column title='家庭地址信息' key='home-info'>
+                    <Column title='省' key='col1' name='col1'/>
+                    <Column title='市' key='col2' name='col2'/>
+                    <Column title='区' key='col3' name='col3'/>
+                    <Column title='详细地址' key='col4' name='col4'/>
                 </Column>
-                <Column title='公司地址'>
-                    <Column title='省' key='col6'/>
-                    <Column title='市' key='col7'/>
-                    <Column title='区' key='col8'/>
-                    <Column title='详细地址' key='col9'/>
+                <Column title='公司地址' key='job-info'>
+                    <Column title='省' key='col6' name='col6'/>
+                    <Column title='市' key='col7' name='col7'/>
+                    <Column title='区' key='col8' name='col8'/>
+                    <Column title='详细地址' key='col9' name='col9'/>
                 </Column>
             </Column>
-             <Column title='操作' fixed='right' key='col12' />
+            <Column title='操作' fixed='right' key='col12' name='col12' />
         </Table>
     )
 }

@@ -68,8 +68,7 @@ export const DropDownMenuItem = ({
     onClick,
     ...restProps
 }: DropDownMenuItemProps) => {
-
-    const { dispatch } = useContext(Context);
+    // const { dispatch } = useContext(Context);
     return (
         <MenuItemStyled
             {...restProps}

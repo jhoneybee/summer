@@ -14,6 +14,7 @@ import React, {
 } from 'react';
 import { GridOnScrollProps, VariableSizeGrid as Grid } from 'react-window';
 import styled from 'styled-components';
+import { produce } from 'immer'
 
 import { DataCell, DataRow, DataColumn } from './type';
 import { CellRender } from './cell';
@@ -48,7 +49,7 @@ const useColDataBottom = (children: ReactNode) => {
                         }
                     } else {
                         dataCols.push({
-                            key: child.key,
+                            name: child.props.name,
                             width: child.props.width || 120,
                             render: child.props.render,
                             fixed: child.props.fixed,
@@ -77,11 +78,56 @@ const TableHeaderStyled = styled.div`
 `
 
 interface TableHeaderProps extends HTMLAttributes<HTMLDivElement>{
+    onResize: (width: number, name: string) => void
+}
+
+const useHeaderColMap = (children: ReactNode, props: any) => {
+    const cols: ReactNode[] = useMemo(() => {
+        const recursionCols = (element: JSX.Element[]): ReactNode[] => {
+            const dataCols: ReactNode[] = [];
+            element.forEach(child => {
+                if (child) {
+                    if (child?.props?.children) {
+                        if (Array.isArray(child.props.children)) {
+                            const childNode = [...recursionCols(child.props.children)]
+                            dataCols.push(cloneElement(child, {
+                                key: child.key,
+                                ...child.props,
+                                children: childNode,
+                                ...props,
+                            }))
+                        } else {
+                            const childNode = [...recursionCols([child.props.children])]
+                            dataCols.push(cloneElement(child, {
+                                key: child.key,
+                                ...child.props,
+                                children: childNode,
+                                ...props,
+                            }))
+                        }
+                    } else {
+                        dataCols.push(cloneElement(child, {
+                            key: child.key,
+                            ...child.props,
+                            ...props
+                        }))
+                    }
+                }
+            })
+            return dataCols;
+        }
+        if (Array.isArray(children) ) {
+            return recursionCols(children as JSX.Element[])
+        }
+        return recursionCols([children] as JSX.Element[]);
+    }, [children])
+    return cols;
 }
 
 /** 表格的头部信息 */
 const TableHeader = forwardRef<HTMLDivElement, TableHeaderProps>(({
     children,
+    onResize,
     ...restProps
 }: TableHeaderProps, ref) => {
     return (
@@ -89,7 +135,9 @@ const TableHeader = forwardRef<HTMLDivElement, TableHeaderProps>(({
             ref={ref}
             {...restProps}
         >
-            {children}
+            {useHeaderColMap(children, {
+                onResize
+            })}
         </TableHeaderStyled>
     )
 })
@@ -138,10 +186,11 @@ const BaseTable = forwardRef<Grid, BaseTableProps>(({
     onChange,
     ...restProps
 }, ref) => {
-    const headerRef = useRef<HTMLDivElement>();
-    const cols: DataColumn[] = useColDataBottom(children)
 
-    const bodyCols = cols
+    const [cols, setCols] = useState(useColDataBottom(children)) 
+    
+    const gridRef = useRef<Grid>();
+    const headerRef = useRef<HTMLDivElement>();
 
     let estimatedColumnWidth = 0;
 
@@ -168,7 +217,6 @@ const BaseTable = forwardRef<Grid, BaseTableProps>(({
         return width;
     }, [dataSource])
 
-
     const currentHoverIndex = useRef<number>();
 
     const hoverRef = rootRef?.current === undefined ? containerRef : rootRef;
@@ -187,6 +235,18 @@ const BaseTable = forwardRef<Grid, BaseTableProps>(({
             >
                 <TableHeader
                     ref={headerRef}
+                    onResize={(width, name) => {
+                        const newCols = produce(cols, changeCols => {
+                            const resizeCol = changeCols.find(element => element.name === name);
+                            if (resizeCol) {
+                                resizeCol.width += width
+                            }
+                        })
+
+                        setCols(newCols)
+                        const index = cols.findIndex(element => element.name === name)
+                        gridRef.current.resetAfterColumnIndex(index)
+                    }}
                     style={{
                         width: tableHeaderWidth - 2,
                     }}
@@ -195,14 +255,21 @@ const BaseTable = forwardRef<Grid, BaseTableProps>(({
                 </TableHeader>
             </HeaderContainer>
             <GridStyled
-                ref={ref}
+                ref={(grid) => {
+                    if (ref && typeof(ref) === 'function') {
+                        ref(grid)
+                    } else if (ref && typeof(ref) === 'object') {
+                        ref.current = grid
+                    }
+                    gridRef.current = grid;
+                }}
                 width={width}
                 height={height}
-                columnCount={bodyCols.length}
+                columnCount={cols.length}
                 innerRef={innerRef}
-                columnWidth={(index: number) => bodyCols[index].width}
+                columnWidth={(index: number) => cols[index].width}
                 rowHeight={rowHeight}
-                estimatedColumnWidth={estimatedColumnWidth / bodyCols.length}
+                estimatedColumnWidth={estimatedColumnWidth / cols.length}
                 rowCount={dataSource.length}
                 style={{
                     willChange: 'unset',
@@ -211,9 +278,8 @@ const BaseTable = forwardRef<Grid, BaseTableProps>(({
                 itemData={{
                     rowStyle,
                     dataSource,
-                    bodyCols,
-                    currentHoverIndex,
                     cols,
+                    currentHoverIndex,
                     rootRef: hoverRef,
                     onChange,
                 }}

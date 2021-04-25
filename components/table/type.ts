@@ -35,8 +35,8 @@ export type EditorType = {
  * 列的数据结构
  */
 export type DataColumn = {
-    /** 唯一的 key */
-    key: string | number
+    /** 对应的name */
+    name: string | number
     /** 列的宽度 */
     width?: number
     /** 列的readner 事件 */

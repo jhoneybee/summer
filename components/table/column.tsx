@@ -1,19 +1,19 @@
 import React, { HTMLAttributes, ReactNode } from 'react';
 import styled from 'styled-components';
 
+import { Resizable } from 're-resizable';
 
 import { Align, DataCell, EditorType, DataRow } from './type';
 
 /** 表格的列信息 */
-const ColumnStyled = styled.div.attrs(props => {
-})`
+const ColumnStyled = styled(Resizable)`
     display: inline-flex;
-    width: ${props => props.width};
     background: #fafafa;
     white-space: nowrap;
     align-items: center;
     flex-shrink:0;
     border-right: 1px solid #ddd;
+    height: 100%;
     box-sizing: border-box;
 `
 
@@ -55,6 +55,8 @@ export interface ColumnProps extends HTMLAttributes<HTMLDivElement>{
     align?: Align
     /** 表格的宽度信息 */
     width?: number
+    /** 组件名称 */
+    name: string
     /** 头下的子节点信息 */
     children?: ReactNode
     /** 固定列值为固定列的方向 */
@@ -63,6 +65,8 @@ export interface ColumnProps extends HTMLAttributes<HTMLDivElement>{
     render?:  (cell: DataCell, row: DataRow, rowIndex: number) => ReactNode
     /** 编辑器 */
     editor?: (info: EditorType, end: () => void) => ReactNode
+    /** 改变列大小触发的事件 */
+    onResize?: (width: number, name: string) => void
 }
 
 /** 表格列的信息 */
@@ -72,8 +76,11 @@ export const Column = ({
     children,
     width = 120,
     fixed,
+    name,
+    onResize,
     ...restProps
 }: ColumnProps) => {
+
     if (children) {
         return (
             <GroupColumnStyled
@@ -88,10 +95,19 @@ export const Column = ({
             </GroupColumnStyled>
         )
     } 
+
     return (
         <ColumnStyled
-            {...restProps}
-            width={`${width}px`}
+            defaultSize={{
+                width,
+                height: 'auto'
+            }}
+            enable={{
+                right: true
+            }}
+            onResize={(event, direction, elementRef, delta) => {
+                onResize?.(delta.width, name)
+            }}
         >
             <ColumnTitle
                 align={align || 'left'}
