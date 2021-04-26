@@ -389,8 +389,6 @@ export default function Table ({
      
     const [headerHeight, setHeaderHeight] = useState<number>(0)
 
-    /** 可编辑的单元格 */
-    const cellDom = useRef<HTMLDivElement>()
     /** 根元素的 dom 组件 */
     const rootDivRef = useRef<HTMLDivElement>()
     /** table 的容器组件 */

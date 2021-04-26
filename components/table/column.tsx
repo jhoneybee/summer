@@ -100,6 +100,12 @@ export const Column = ({
         )
     } 
 
+    let resizable = true;
+
+    if (fixed) {
+        resizable = false;
+    }
+
     return (
         <ColumnStyled
             defaultSize={{
@@ -107,7 +113,7 @@ export const Column = ({
                 height: 'auto'
             }}
             enable={{
-                right: true
+                right: resizable
             }}
             onResize={(event, direction, elementRef, delta) => {
                 onResize?.(realWidth.current + delta.width, name)
