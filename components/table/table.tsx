@@ -11,6 +11,7 @@ import React, {
     MutableRefObject,
     createRef,
     cloneElement,
+    useLayoutEffect,
 } from 'react';
 import { GridOnScrollProps, VariableSizeGrid as Grid } from 'react-window';
 import styled from 'styled-components';
@@ -136,7 +137,7 @@ const TableHeader = forwardRef<HTMLDivElement, TableHeaderProps>(({
             {...restProps}
         >
             {useHeaderColMap(children, {
-                onResize
+                onResize,
             })}
         </TableHeaderStyled>
     )
@@ -187,7 +188,7 @@ const BaseTable = forwardRef<Grid, BaseTableProps>(({
     ...restProps
 }, ref) => {
 
-    const [cols, setCols] = useState(useColDataBottom(children)) 
+    const cols = useColDataBottom(children)
     
     const gridRef = useRef<Grid>();
     const headerRef = useRef<HTMLDivElement>();
@@ -236,15 +237,11 @@ const BaseTable = forwardRef<Grid, BaseTableProps>(({
                 <TableHeader
                     ref={headerRef}
                     onResize={(width, name) => {
-                        const newCols = produce(cols, changeCols => {
-                            const resizeCol = changeCols.find(element => element.name === name);
-                            if (resizeCol) {
-                                resizeCol.width += width
-                            }
-                        })
-
-                        setCols(newCols)
                         const index = cols.findIndex(element => element.name === name)
+                        const resizeCol = cols[index];
+                        if (resizeCol) {
+                            resizeCol.width = width
+                        }
                         gridRef.current.resetAfterColumnIndex(index)
                     }}
                     style={{

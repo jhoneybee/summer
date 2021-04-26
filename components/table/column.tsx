@@ -1,4 +1,4 @@
-import React, { HTMLAttributes, ReactNode } from 'react';
+import React, { HTMLAttributes, ReactNode, useRef } from 'react';
 import styled from 'styled-components';
 
 import { Resizable } from 're-resizable';
@@ -67,6 +67,7 @@ export interface ColumnProps extends HTMLAttributes<HTMLDivElement>{
     editor?: (info: EditorType, end: () => void) => ReactNode
     /** 改变列大小触发的事件 */
     onResize?: (width: number, name: string) => void
+    onResizeStop?: (width: number, name: string) => void
 }
 
 /** 表格列的信息 */
@@ -78,8 +79,11 @@ export const Column = ({
     fixed,
     name,
     onResize,
+    onResizeStop,
     ...restProps
 }: ColumnProps) => {
+
+    const realWidth = useRef<number>(width)
 
     if (children) {
         return (
@@ -106,7 +110,10 @@ export const Column = ({
                 right: true
             }}
             onResize={(event, direction, elementRef, delta) => {
-                onResize?.(delta.width, name)
+                onResize?.(realWidth.current + delta.width, name)
+            }}
+            onResizeStop={(event, direction, elementRef, delta) => {
+                realWidth.current += delta.width
             }}
         >
             <ColumnTitle
