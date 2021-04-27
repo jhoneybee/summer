@@ -174,8 +174,8 @@ export interface BaseTableProps extends Omit<HTMLAttributes<HTMLDivElement>, 'on
 /** 表格组件 */
 const BaseTable = forwardRef<Grid, BaseTableProps>(({
     children,
-    width = 1000,
-    height = 400,
+    width,
+    height,
     dataSource = [],
     headerHeight,
     innerStyle,
@@ -307,6 +307,7 @@ export interface TableProps extends Omit<
 type FixedColumnParam = {
     ref: MutableRefObject<Grid>
     height: number
+    left: number
     fixedCols: Array<JSX.Element>
     headerHeight: number
     dataSource: Array<DataRow>
@@ -317,6 +318,7 @@ type FixedColumnParam = {
 
 const useFixedColumn = ({
     ref,
+    left,
     fixedCols,
     headerHeight,
     dataSource,
@@ -334,12 +336,7 @@ const useFixedColumn = ({
         top: 0,
         backgroundColor: '#fff',
     }
-    if (direction === 'right') {
-        style.right = 2
-        style.boxShadow = '-2px 0 5px -2px rgb(136 136 136 / 30%)'
-    } else if (direction === 'left') {
-        style.boxShadow = '2px 0 5px -2px rgb(136 136 136 / 30%)'
-    }
+
 
     let width: number = 0;
 
@@ -347,6 +344,16 @@ const useFixedColumn = ({
         width += element.width || 120
     })
 
+    if (direction === 'right') {
+        // -2 表示滚动条的偏移
+        style.left = left - width - 3;
+        style.boxShadow = '-2px 0 5px -2px rgb(136 136 136 / 30%)'
+    } else if (direction === 'left') {
+        style.left = 0;
+        style.boxShadow = '2px 0 5px -2px rgb(136 136 136 / 30%)'
+    }
+   
+    
     if (fixedCols.length > 0) {
         return (
             <BaseTable
@@ -378,7 +385,7 @@ const useFixedColumn = ({
 }
 
 export default function Table ({
-    width,
+    width = 1000,
     height = 400,
     children,
     dataSource,
@@ -482,6 +489,7 @@ export default function Table ({
                     dataSource,
                     rootRef: rootDivRef,
                     direction: 'left',
+                    left: 0,
                     onChange
                 })}
                 {useFixedColumn({
@@ -490,6 +498,7 @@ export default function Table ({
                     fixedCols: fixedRightCols,
                     headerHeight,
                     dataSource,
+                    left: width - getScrollbarWidth(),
                     rootRef: rootDivRef,
                     direction: 'right',
                     onChange
