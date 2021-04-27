@@ -28,9 +28,9 @@ slug: /button
 function simple() {
     return (
         <Space>
-            <Button type="primary"> primary 类型 </Button>
-            <Button type="default"> default 类型 </Button>
-            <Button type="text"> text 类型 </Button>
+            <Button type="primary" key="primary" > primary 类型 </Button>
+            <Button type="default" key="default"> default 类型 </Button>
+            <Button type="text" key="text"> text 类型 </Button>
         </Space>
     )
 }

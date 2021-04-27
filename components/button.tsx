@@ -112,7 +112,6 @@ const StyledButton = styled.button.attrs((props) => {
     vertical-align: middle;
     padding: 4px 15px;
     height: 32px;
-    transition: box-shadow 200ms, color 200ms;
     font-weight: 500;
     font-size: .875rem;
     box-shadow: ${boxShadow};
