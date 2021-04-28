@@ -11,28 +11,32 @@ import React, {
     MutableRefObject,
     createRef,
     cloneElement,
-    useLayoutEffect,
 } from 'react';
 import { GridOnScrollProps, VariableSizeGrid as Grid } from 'react-window';
 import styled from 'styled-components';
-import { produce } from 'immer'
+
 
 import { DataCell, DataRow, DataColumn } from './type';
 import { CellRender } from './cell';
-import { getScrollbarWidth, hoverRender } from './_utils';
+import { hoverRender } from './_utils';
 
-const HeaderContainer = styled.div.attrs(props => {
-})`
-    display: flex;
-    background: #fafafa;
-    border-top: 1px solid #ddd;
-    border-right: 1px solid #ddd;
-    border-left: 1px solid #ddd;
-`
 
 const GridStyled = styled(Grid).attrs(props => {
 })`
     border: 1px solid #ddd;
+`
+
+const TableHeaderStyled = styled.div`
+    display: flex;
+    white-space: nowrap;
+    background: #fafafa;
+    font-weight: 500;
+    flex-shrink: 0;
+    overflow: hidden;
+    border-top: 1px solid #ddd;
+    border-right: 1px solid #ddd;
+    border-left: 1px solid #ddd;
+
 `
 
 /** 获取真实的列信息, 排除分组头部 */
@@ -68,15 +72,6 @@ const useColDataBottom = (children: ReactNode) => {
     }, [children])
     return cols;
 }
-
-const TableHeaderStyled = styled.div`
-    overflow-x: hidden;
-    white-space: nowrap;
-    background: #fafafa;
-    font-weight: 500;
-    display: flex;
-    flex-shrink: 0;
-`
 
 interface TableHeaderProps extends HTMLAttributes<HTMLDivElement>{
     onResize: (width: number, name: string) => void
@@ -163,6 +158,8 @@ export interface BaseTableProps extends Omit<HTMLAttributes<HTMLDivElement>, 'on
     innerRef?: MutableRefObject<HTMLDivElement>
     /** 内部使用的 ref 对象 */
     rootRef?: MutableRefObject<HTMLDivElement>
+    /** 内部元素 */
+    innerElement?: ReactNode
     /** 行的样式信息 */
     rowStyle?: (rowIndex: number, cell: DataCell) => CSSProperties
     /** 表格滚动的时候触发的事件 */
@@ -171,11 +168,13 @@ export interface BaseTableProps extends Omit<HTMLAttributes<HTMLDivElement>, 'on
     onChange?: (dataSource: Array<DataRow>) => void
 }
 
+
 /** 表格组件 */
 const BaseTable = forwardRef<Grid, BaseTableProps>(({
     children,
     width,
     height,
+    style = {},
     dataSource = [],
     headerHeight,
     innerStyle,
@@ -185,38 +184,28 @@ const BaseTable = forwardRef<Grid, BaseTableProps>(({
     rowStyle,
     onScroll,
     onChange,
+    innerElement,
     ...restProps
 }, ref) => {
 
     const cols = useColDataBottom(children)
-    
     const gridRef = useRef<Grid>();
     const headerRef = useRef<HTMLDivElement>();
-
-    let estimatedColumnWidth = 0;
-
-    cols.forEach(({
-        width,
-    }) => {
-        estimatedColumnWidth +=  width;
-    })
+    const horizontalScroll = useRef<HTMLDivElement>();
 
     const rowHeight = (index: number) => {
         return 35;
     }
 
-    /** 修复在有滚动条的情况下会产生滚动条的偏差, 导致 Header 和 Body 不对应的问题 */
-    const tableHeaderWidth = useMemo(() => {
-        let estimatedRowHeight = 0;
-        dataSource.forEach((value, index) => {
-            estimatedRowHeight += rowHeight(index)
-        });
-
-        if (estimatedRowHeight > height) {
-            return width - getScrollbarWidth()
-        }
-        return width;
-    }, [dataSource])
+    const estimatedColumnWidth = useMemo(() => {
+        let countWidth = 0;
+        cols.forEach(({
+            width,
+        }) => {
+            countWidth +=  width;
+        })
+        return countWidth;
+    }, [children])
 
     const currentHoverIndex = useRef<number>();
 
@@ -225,32 +214,30 @@ const BaseTable = forwardRef<Grid, BaseTableProps>(({
     return (
         <div
             {...restProps}
+            style={{
+                position: 'relative',
+                ...style
+            }}
             ref={containerRef}
         >
-            <HeaderContainer
-                className='summer-table-header'
+            <TableHeader
+                ref={headerRef}
                 style={{
                     width,
                     height: headerHeight,
                 }}
+                className='summer-table-header'
+                onResize={(width, name) => {
+                    const index = cols.findIndex(element => element.name === name)
+                    const resizeCol = cols[index];
+                    if (resizeCol) {
+                        resizeCol.width = width
+                    }
+                    gridRef.current.resetAfterColumnIndex(index)
+                }}
             >
-                <TableHeader
-                    ref={headerRef}
-                    onResize={(width, name) => {
-                        const index = cols.findIndex(element => element.name === name)
-                        const resizeCol = cols[index];
-                        if (resizeCol) {
-                            resizeCol.width = width
-                        }
-                        gridRef.current.resetAfterColumnIndex(index)
-                    }}
-                    style={{
-                        width: tableHeaderWidth - 2,
-                    }}
-                >
-                    {children}
-                </TableHeader>
-            </HeaderContainer>
+                {children}
+            </TableHeader>
             <GridStyled
                 ref={(grid) => {
                     if (ref && typeof(ref) === 'function') {
@@ -291,6 +278,7 @@ const BaseTable = forwardRef<Grid, BaseTableProps>(({
             >
                 {CellRender}
             </GridStyled>
+            {innerElement}
         </div>
     ); 
 });
@@ -307,7 +295,6 @@ export interface TableProps extends Omit<
 type FixedColumnParam = {
     ref: MutableRefObject<Grid>
     height: number
-    left: number
     fixedCols: Array<JSX.Element>
     headerHeight: number
     dataSource: Array<DataRow>
@@ -318,7 +305,6 @@ type FixedColumnParam = {
 
 const useFixedColumn = ({
     ref,
-    left,
     fixedCols,
     headerHeight,
     dataSource,
@@ -332,7 +318,6 @@ const useFixedColumn = ({
 
     const style: CSSProperties = {
         position: 'absolute',
-        float: direction,
         top: 0,
         backgroundColor: '#fff',
     }
@@ -346,7 +331,7 @@ const useFixedColumn = ({
 
     if (direction === 'right') {
         // -2 表示滚动条的偏移
-        style.left = left - width - 3;
+        style.right = 3;
         style.boxShadow = '-2px 0 5px -2px rgb(136 136 136 / 30%)'
     } else if (direction === 'left') {
         style.left = 0;
@@ -383,6 +368,7 @@ const useFixedColumn = ({
     }
     return null;
 }
+
 
 export default function Table ({
     width = 1000,
@@ -440,6 +426,35 @@ export default function Table ({
         }
     }, [])
 
+    let innerElement;
+
+    if (fixedLeftCols.length > 0 || fixedRightCols.length > 0) {
+        innerElement = (
+            <>
+                {useFixedColumn({
+                    ref: leftRef,
+                    height: height,
+                    fixedCols: fixedLeftCols,
+                    headerHeight,
+                    dataSource,
+                    rootRef: rootDivRef,
+                    direction: 'left',
+                    onChange
+                })}
+                {useFixedColumn({
+                    ref: rightRef,
+                    height: height,
+                    fixedCols: fixedRightCols,
+                    headerHeight,
+                    dataSource,
+                    rootRef: rootDivRef,
+                    direction: 'right',
+                    onChange
+                })}
+            </>
+        )
+    }
+
     const tableElement = (
         <BaseTable
             width={width}
@@ -465,57 +480,14 @@ export default function Table ({
                 onScroll?.(param);
             }}
             rowStyle={rowStyle}
-            containerRef={tableRef} 
+            containerRef={tableRef}
+            innerElement={innerElement}
         >
             {[...fixedLeftCols, ...normalCols, ...fixedRightCols]}
         </BaseTable>
     )
 
-    if (fixedLeftCols.length > 0 || fixedRightCols.length > 0) {
-        return (
-            <div
-                ref={rootDivRef}
-                style={{
-                    height: headerHeight + height,
-                    position: 'relative'
-                }}
-            >
-                {tableElement}
-                {useFixedColumn({
-                    ref: leftRef,
-                    height: height - getScrollbarWidth(),
-                    fixedCols: fixedLeftCols,
-                    headerHeight,
-                    dataSource,
-                    rootRef: rootDivRef,
-                    direction: 'left',
-                    left: 0,
-                    onChange
-                })}
-                {useFixedColumn({
-                    ref: rightRef,
-                    height: height - getScrollbarWidth(),
-                    fixedCols: fixedRightCols,
-                    headerHeight,
-                    dataSource,
-                    left: width - getScrollbarWidth(),
-                    rootRef: rootDivRef,
-                    direction: 'right',
-                    onChange
-                })}
-            </div>
-        )
-    }
-    return (
-        <div
-            ref={rootDivRef}
-            style={{
-                position: 'relative'
-            }}
-        >
-            {tableElement}
-        </div>
-    )
+    return tableElement;
 }
 
 export { Column } from './column';
