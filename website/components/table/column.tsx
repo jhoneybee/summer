@@ -36,6 +36,7 @@ const GroupColumnStyled = styled.div.attrs(props => {
     background: #fafafa;
     padding: 0px;
     white-space: nowrap;
+    box-sizing: border-box;
 `
 
 const GroupColumnTitle = styled.div.attrs(props => {

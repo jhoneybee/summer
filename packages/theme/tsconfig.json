@@ -1,0 +1,7 @@
+{
+	"extends": "@summer/config/tsconfig/tsconfig.json",
+	"include": [
+		"src/**/*"
+	],
+	"exclude": ["node_modules", "build"]
+}

@@ -18,12 +18,21 @@ import styled from 'styled-components';
 
 import { DataCell, DataRow, DataColumn } from './type';
 import { CellRender } from './cell';
-import { hoverRender } from './_utils';
+import { hoverRender, getScrollbarWidth } from './_utils';
 
 
 const GridStyled = styled(Grid).attrs(props => {
 })`
     border: 1px solid #ddd;
+`
+
+const HeaderContainer = styled.div`
+    display: flex;
+    background: #fafafa;
+    border-top: 1px solid #ddd;
+    border-right: 1px solid #ddd;
+    border-left: 1px solid #ddd;
+    overflow: hidden;
 `
 
 const TableHeaderStyled = styled.div`
@@ -33,10 +42,6 @@ const TableHeaderStyled = styled.div`
     font-weight: 500;
     flex-shrink: 0;
     overflow: hidden;
-    border-top: 1px solid #ddd;
-    border-right: 1px solid #ddd;
-    border-left: 1px solid #ddd;
-
 `
 
 /** 获取真实的列信息, 排除分组头部 */
@@ -216,28 +221,35 @@ const BaseTable = forwardRef<Grid, BaseTableProps>(({
             {...restProps}
             style={{
                 position: 'relative',
-                ...style
+                ...style,
+                width,
             }}
             ref={containerRef}
         >
-            <TableHeader
-                ref={headerRef}
+            <HeaderContainer
                 style={{
-                    width,
-                    height: headerHeight,
-                }}
-                className='summer-table-header'
-                onResize={(width, name) => {
-                    const index = cols.findIndex(element => element.name === name)
-                    const resizeCol = cols[index];
-                    if (resizeCol) {
-                        resizeCol.width = width
-                    }
-                    gridRef.current.resetAfterColumnIndex(index)
+                    width
                 }}
             >
-                {children}
-            </TableHeader>
+                <TableHeader
+                    style={{
+                        width: width - getScrollbarWidth(),
+                        height: headerHeight,
+                    }}
+                    ref={headerRef}
+                    className='summer-table-header'
+                    onResize={(width, name) => {
+                        const index = cols.findIndex(element => element.name === name)
+                        const resizeCol = cols[index];
+                        if (resizeCol) {
+                            resizeCol.width = width
+                        }
+                        gridRef.current.resetAfterColumnIndex(index)
+                    }}
+                >
+                    {children}
+                </TableHeader>
+            </HeaderContainer>
             <GridStyled
                 ref={(grid) => {
                     if (ref && typeof(ref) === 'function') {
@@ -331,7 +343,7 @@ const useFixedColumn = ({
 
     if (direction === 'right') {
         // -2 表示滚动条的偏移
-        style.right = 3;
+        style.right = getScrollbarWidth() - 0.5;
         style.boxShadow = '-2px 0 5px -2px rgb(136 136 136 / 30%)'
     } else if (direction === 'left') {
         style.left = 0;
@@ -345,7 +357,7 @@ const useFixedColumn = ({
                 ref={ref}
                 containerRef={containerRef}
                 width={width + 3}
-                height={height}
+                height={height - getScrollbarWidth()}
                 dataSource={dataSource}
                 headerHeight={headerHeight}
                 rootRef={rootRef}

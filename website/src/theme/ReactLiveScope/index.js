@@ -8,7 +8,7 @@
 import React from 'react';
 import { AiOutlineUser } from "react-icons/ai";
 
-import Button from '../../../components/button'
+import { Button } from '@summer/button'
 import DropDown, { DropDownMenu, DropDownMenuItem } from '../../../components/dropdown';
 import Input from '../../../components/input';
 import Select, { SelectOption } from '../../../components/select';
