@@ -1,0 +1,68 @@
+{
+  "name": "summer-site",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "docusaurus": "docusaurus",
+    "start": "docusaurus start --host 0.0.0.0",
+    "build": "docusaurus build",
+    "swizzle": "docusaurus swizzle",
+    "deploy": "docusaurus deploy",
+    "serve": "docusaurus serve",
+    "clear": "docusaurus clear",
+    "watchPackages": "ts-node ./.script/watchPackages.ts",
+    "test": "jest --coverage"
+  },
+  "dependencies": {
+    "date-fns": "^2.19.0",
+    "immer": "^8.0.1",
+    "lodash": "^4.17.21",
+    "re-resizable": "^6.9.0",
+    "react": "^17.0.1",
+    "react-dnd": "^14.0.1",
+    "react-dnd-html5-backend": "^14.0.0",
+    "react-dom": "^17.0.1",
+    "react-draggable": "^4.4.3",
+    "react-icons": "^4.2.0",
+    "react-window": "^1.8.6",
+    "styled-components": "^5.2.1",
+    "@summer/button": "*"
+  },
+  "devDependencies": {
+    "@docusaurus/core": "^2.0.0-alpha.73",
+    "@docusaurus/module-type-aliases": "^2.0.0-alpha.70",
+    "@docusaurus/preset-classic": "^2.0.0-alpha.70",
+    "@mdx-js/react": "^1.6.21",
+    "@testing-library/react": "^11.2.5",
+    "@tsconfig/docusaurus": "^1.0.2",
+    "@types/jest": "^26.0.20",
+    "@types/lodash": "^4.14.168",
+    "@types/react": "^17.0.2",
+    "@types/react-dom": "^17.0.1",
+    "@types/react-helmet": "^6.1.0",
+    "@types/react-resizable": "^1.7.2",
+    "@types/react-router-dom": "^5.1.7",
+    "@types/react-window": "^1.8.2",
+    "@types/styled-components": "^5.1.7",
+    "chokidar": "^3.5.1",
+    "clsx": "^1.1.1",
+    "concurrently": "^6.0.2",
+    "docusaurus-theme-live-codeblock": "^2.0.0-alpha.70.2",
+    "jest": "^26.6.3",
+    "ts-jest": "^26.5.2",
+    "ts-node": "^9.1.1",
+    "typescript": "^4.1.5"
+  },
+  "browserslist": {
+    "production": [
+      ">0.5%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}
