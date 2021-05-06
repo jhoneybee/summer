@@ -23,64 +23,13 @@ function simple () {
     return (
         <DropDown
             width={120}
-            overlay={(
-                <DropDownMenu>
-                    <DropDownMenuItem
-                        key="0"
-                        disabled
-                    >
-                        跳转到Google
-                    </DropDownMenuItem>
-                    <DropDownMenuItem key="1">
-                        跳转到百度
-                    </DropDownMenuItem>
-                    <DropDownMenuItem key="2">
-                        跳转到首页
-                    </DropDownMenuItem>
-                </DropDownMenu>
-            )}
+            visible
         >
             <Button type="text"> 点击显示... </Button>
         </DropDown>
     )
 }
 ```
-
-```jsx live
-/**
- * title: 跟随滚动条
- * desc: 跟谁滚动条的滚动进行位置的变化
- **/
-function simple () {
-    return (
-        <div style={{height: 200, overflow: 'auto'}}>
-            <div style={{height: 150}}/>
-            <DropDown
-                trigger="hover"
-                width={120}
-                overlay={(
-                    <DropDownMenu>
-                        <DropDownMenuItem key="0" disabled>
-                            跳转到Google
-                        </DropDownMenuItem>
-                        <DropDownMenuItem key="1">
-                            跳转到百度
-                        </DropDownMenuItem>
-                        <DropDownMenuItem key="2">
-                            跳转到首页
-                        </DropDownMenuItem>
-                    </DropDownMenu>
-                )}
-            >
-                <Button> 测试查看 </Button>
-            </DropDown>
-            <div style={{height: 2000}}/>
-        </div>
-    )
-}
-```
-
-
 
 ## API 
 

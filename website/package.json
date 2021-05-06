@@ -1,5 +1,5 @@
 {
-  "name": "summer-site",
+  "name": "@summer/site",
   "version": "0.0.0",
   "private": true,
   "scripts": {
@@ -26,12 +26,15 @@
     "react-icons": "^4.2.0",
     "react-window": "^1.8.6",
     "styled-components": "^5.2.1",
-    "@summer/button": "*"
+    "@summer/button": "*",
+    "@summer/dropdown": "*",
+    "@summer/input": "*"
   },
   "devDependencies": {
-    "@docusaurus/core": "^2.0.0-alpha.73",
-    "@docusaurus/module-type-aliases": "^2.0.0-alpha.70",
-    "@docusaurus/preset-classic": "^2.0.0-alpha.70",
+    "@docusaurus/core": "^2.0.0-alpha.75",
+    "@docusaurus/module-type-aliases": "^2.0.0-alpha.75",
+    "@docusaurus/preset-classic": "^2.0.0-alpha.75",
+    "@summer/docusaurus-theme-live-codeblock": "^2.0.0-alpha.70.2",
     "@mdx-js/react": "^1.6.21",
     "@testing-library/react": "^11.2.5",
     "@tsconfig/docusaurus": "^1.0.2",
@@ -46,8 +49,6 @@
     "@types/styled-components": "^5.1.7",
     "chokidar": "^3.5.1",
     "clsx": "^1.1.1",
-    "concurrently": "^6.0.2",
-    "docusaurus-theme-live-codeblock": "^2.0.0-alpha.70.2",
     "jest": "^26.6.3",
     "ts-jest": "^26.5.2",
     "ts-node": "^9.1.1",

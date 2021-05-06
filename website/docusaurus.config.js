@@ -1,14 +1,14 @@
 module.exports = {
     title: 'Summer UI',
     tagline: '立志打造企业级产品组件库，创造高效愉悦的工作体验',
-    url: 'https://your-docusaurus-test-site.com',
+    url: 'https://github.com/jhoneybee/summer',
     baseUrl: '/',
     onBrokenLinks: 'throw',
     onBrokenMarkdownLinks: 'warn',
     favicon: 'img/favicon.ico',
     organizationName: 'Free Kits',
     projectName: 'summer-ui',
-    themes: ['docusaurus-theme-live-codeblock'],
+    themes: ['@summer/docusaurus-theme-live-codeblock'],
     themeConfig: {
         navbar: {
             title: 'Summer UI',
@@ -25,7 +25,7 @@ module.exports = {
                 },
                 { to: 'blog', label: '博客信息', position: 'left' },
                 {
-                    href: 'https://github.com/facebook/docusaurus',
+                    href: 'https://github.com/jhoneybee/summer',
                     label: 'GitHub',
                     position: 'right',
                 },

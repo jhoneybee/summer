@@ -2,7 +2,7 @@
   "name": "summer",
   "private": "true",
   "scripts": {
-    "start": "yarn workspace summer-site start"
+    "start": "yarn workspace @summer/site start"
   },
   "license": "MIT",
   "workspaces": [
