@@ -9,8 +9,10 @@ import React from 'react';
 import { AiOutlineUser } from "react-icons/ai";
 
 import { Button } from '@summer/button'
-import DropDown, { DropDownMenu, DropDownMenuItem } from '../../../components/dropdown';
-import Input from '../../../components/input';
+// import DropDown, { DropDownMenu, DropDownMenuItem } from '../../../components/dropdown';
+
+import { DropDown } from '@summer/dropdown'
+import { Input } from '@summer/input';
 import Select, { SelectOption } from '../../../components/select';
 import Password from '../../../components/password';
 import Message, { info, error } from '../../../components/message';
@@ -28,8 +30,6 @@ const ReactLiveScope = {
     ...React,
     Button,
     DropDown,
-    DropDownMenu,
-    DropDownMenuItem,
     Input,
     Select,
     SelectOption,
