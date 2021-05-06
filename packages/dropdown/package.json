@@ -1,5 +1,5 @@
 {
-    "name": "@summer/button",
+    "name": "@summer/dropdown",
     "version": "1.0.0",
     "license": "MIT",
     "author": "jhonebee <zhangjin0908@hotmail.com>",
@@ -10,15 +10,15 @@
     },
     "peerDependencies": {
         "react": "^16.8.4 || ^17.0.0",
-        "react-dom": "^16.8.4 || ^17.0.0",
-        "styled-components": "^5.2.1"
+        "react-dom": "^16.8.4 || ^17.0.0"
     },
     "dependencies": {
-        "@summer/theme": "*"
+        "date-fns": "^2.19.0"
     },
     "devDependencies": {
         "typescript": "^4.2.4",
         "@rollup/plugin-typescript": "^8.2.1",
-        "rollup": "^2.46.0"
+        "rollup": "^2.46.0",
+        "@summer/config": "*"
     }
 }

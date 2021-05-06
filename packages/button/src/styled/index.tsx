@@ -1,4 +1,3 @@
-import { HTMLAttributes } from 'react';
 import styled, { css } from 'styled-components';
 
 import { DefaultTheme, disable } from '@summer/theme';
