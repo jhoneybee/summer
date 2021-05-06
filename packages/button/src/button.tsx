@@ -1,8 +1,6 @@
 import React, { forwardRef, HTMLAttributes, useState } from 'react';
-import { StyledButton } from './styled/button';
+import { StyledButtonPrimary, StyledButtonDefault } from './styled';
 
-const ohterTypes = ['text'];
-const mappingType: Array<'a'> = ['a'];
   
 // 按钮的属性信息
 export interface ButtonProps extends Omit<
@@ -18,7 +16,7 @@ export interface ButtonProps extends Omit<
     // 要跳转的地址
     href?: string
     // 按钮类型
-    type?: 'primary' | 'text' | 'default';
+    type?: 'primary' | 'default'
     // 点击事件
     onClick?: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void | Promise<void>
 }
@@ -26,47 +24,25 @@ export interface ButtonProps extends Omit<
 export const Button = forwardRef(({
     block = false,
     danger = false,
-    disabled = false,
+    disabled: pDisabled = false,
     href,
     type = 'default',
     onClick,
     children,
     ...restProps
 }: ButtonProps, ref) => {
-    const [isDisabled, setDisabled] = useState(disabled);
-    const otherIndex = ohterTypes.indexOf(type);
-    if (href) {
-        let realHref = href;
-        let target = '_self';
-        if (href.includes('->')) {
-            realHref = href.split('->')[1];
-            target = href.split('->')[0];
-        }
-        return (
-            <StyledButton
-                {...restProps}
-                ref={ref}
-                as="a"
-                block={block}
-                btype={type}
-                target={target}
-                href={realHref}
-                danger={danger}
-            >
-                {children}
-            </StyledButton>
-        )
+    let ButtonStyled = StyledButtonDefault
+    if (type === 'primary') {
+        ButtonStyled = StyledButtonPrimary
     }
+
+    const [disabled, setDisabled] = useState<boolean>(pDisabled)
+
     return (
-        <StyledButton
+        <ButtonStyled
             {...restProps}
-            ref={ref}
-            as={mappingType[otherIndex]}
-            block={block}
-            btype={type}
-            disabled={isDisabled}
-            danger={danger}
-            onClick={(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+            disabled={disabled}
+            onClick={(e) => {
                 setDisabled(true);
                 const result = onClick?.(e);
                 if (result && result.then) {
@@ -79,6 +55,6 @@ export const Button = forwardRef(({
             }}
         >
             {children}
-        </StyledButton>
-    );
+        </ButtonStyled>
+    )
 })
