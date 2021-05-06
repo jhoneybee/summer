@@ -28,7 +28,8 @@
     "styled-components": "^5.2.1",
     "@summer/button": "*",
     "@summer/dropdown": "*",
-    "@summer/input": "*"
+    "@summer/input": "*",
+    "@summer/table": "*"
   },
   "devDependencies": {
     "@docusaurus/core": "^2.0.0-alpha.75",

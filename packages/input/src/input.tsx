@@ -21,7 +21,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(({
 
     const [focus, setFocus] = useState<boolean>(false);
 
-    let defaultWidth = style?.width || 140;
+    const defaultWidth = style?.width || 140;
 
     return (
         <ContainerStyles

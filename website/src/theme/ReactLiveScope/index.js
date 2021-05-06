@@ -9,10 +9,10 @@ import React from 'react';
 import { AiOutlineUser } from "react-icons/ai";
 
 import { Button } from '@summer/button'
-// import DropDown, { DropDownMenu, DropDownMenuItem } from '../../../components/dropdown';
-
 import { DropDown } from '@summer/dropdown'
 import { Input } from '@summer/input';
+import { Table, Column } from '@summer/table'
+
 import Select, { SelectOption } from '../../../components/select';
 import Password from '../../../components/password';
 import Message, { info, error } from '../../../components/message';
@@ -23,7 +23,6 @@ import Tabs, { TabPane } from '../../../components/tabs';
 import Tree, { TreeNode, processDragDropTreeNode } from '../../../components/tree';
 import Modal from '../../../components/modal';
 import Space from '../../../components/space';
-import Table, { Column } from '../../../components/table/table';
 
 const ReactLiveScope = {
     React,
