@@ -16,7 +16,7 @@ export type ThemeType = {
  * 默认主题信息
  */
 export const DefaultTheme: ThemeType  = {
-    colorPrimary: '#1890ff',
+    colorPrimary: '#6002ee',
     colorDanger: '#ff4d4f',
     colorDefault: '#fff'
 }
