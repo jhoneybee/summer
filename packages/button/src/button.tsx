@@ -21,7 +21,7 @@ export interface ButtonProps extends Omit<
     onClick?: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void | Promise<void>
 }
 
-export const Button = forwardRef(({
+export const Button = forwardRef<HTMLButtonElement, ButtonProps>(({
     block = false,
     danger = false,
     disabled: pDisabled = false,
@@ -30,16 +30,16 @@ export const Button = forwardRef(({
     onClick,
     children,
     ...restProps
-}: ButtonProps, ref) => {
+}, ref) => {
     let ButtonStyled = StyledButtonDefault
     if (type === 'primary') {
         ButtonStyled = StyledButtonPrimary
     }
 
     const [disabled, setDisabled] = useState<boolean>(pDisabled)
-
     return (
         <ButtonStyled
+            ref={ref}
             {...restProps}
             disabled={disabled}
             onClick={(e) => {

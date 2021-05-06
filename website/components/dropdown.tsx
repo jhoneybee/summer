@@ -61,7 +61,6 @@ const MenuItemStyled = styled.li.attrs(props => {
 
 export interface DropDownMenuItemProps extends HTMLAttributes<HTMLLIElement>{
     disabled: boolean
-    onC
 }
 
 export const DropDownMenuItem = ({
