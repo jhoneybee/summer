@@ -29,7 +29,9 @@
     "@summer/button": "*",
     "@summer/dropdown": "*",
     "@summer/input": "*",
-    "@summer/table": "*"
+    "@summer/table": "*",
+    "@summer/checkbox": "*",
+    "@summer/space": "*"
   },
   "devDependencies": {
     "@docusaurus/core": "^2.0.0-alpha.75",

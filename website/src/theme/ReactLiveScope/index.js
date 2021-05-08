@@ -12,17 +12,19 @@ import { Button } from '@summer/button'
 import { DropDown } from '@summer/dropdown'
 import { Input } from '@summer/input';
 import { Table, Column } from '@summer/table'
+import { Checkbox } from '@summer/checkbox';
+import { Space } from '@summer/space';
+
 
 import Select, { SelectOption } from '../../../components/select';
 import Password from '../../../components/password';
 import Message, { info, error } from '../../../components/message';
-import Checkbox from '../../../components/checkbox';
+
 import DatePicker, { DatePickerPanel } from '../../../components/date-picker';
 import RadioGroup, { Radio } from '../../../components/radio';
 import Tabs, { TabPane } from '../../../components/tabs';
 import Tree, { TreeNode, processDragDropTreeNode } from '../../../components/tree';
 import Modal from '../../../components/modal';
-import Space from '../../../components/space';
 
 const ReactLiveScope = {
     React,

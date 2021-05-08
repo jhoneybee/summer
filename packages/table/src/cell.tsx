@@ -30,8 +30,6 @@ CellStyled.defaultProps = {
     theme: DefaultTheme
 }
 
-
-
 export interface CellProps extends HTMLAttributes<HTMLDivElement> {
     cell?: DataCell
 }
