@@ -25,6 +25,7 @@ const ColumnTitle = styled.div.attrs(props => {
     line-height: 35px;
     padding: 0 8px;
     width: 100%;
+    box-sizing: border-box;
 `;
 
 /** 分组的表格头部样式 */
@@ -47,6 +48,7 @@ const GroupColumnTitle = styled.div.attrs(props => {
     padding: 0 8px;
     border-bottom: 1px solid #ddd;
     border-right: 1px solid #ddd;
+    box-sizing: border-box;
 `;
 
 export interface ColumnProps extends HTMLAttributes<HTMLDivElement>{
