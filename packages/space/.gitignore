@@ -1,0 +1,14 @@
+# Dependencies
+/node_modules
+
+# Production
+/dist
+
+.rollup.cache
+
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# jest-test
+coverage
