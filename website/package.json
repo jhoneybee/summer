@@ -31,7 +31,8 @@
     "@summer/input": "*",
     "@summer/table": "*",
     "@summer/checkbox": "*",
-    "@summer/space": "*"
+    "@summer/space": "*",
+    "@summer/message": "*"
   },
   "devDependencies": {
     "@docusaurus/core": "^2.0.0-alpha.75",
