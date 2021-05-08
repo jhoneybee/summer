@@ -14,12 +14,10 @@ import { Input } from '@summer/input';
 import { Table, Column } from '@summer/table'
 import { Checkbox } from '@summer/checkbox';
 import { Space } from '@summer/space';
-import Message, { info, error } from '../../../components/message';
+import Message, { info, error } from '@summer/message';
 
 import Select, { SelectOption } from '../../../components/select';
-import Password from '../../../components/password';
-import Message, { info, error } from '../../../components/message';
-
+import Password from '../../../components/password'
 import DatePicker, { DatePickerPanel } from '../../../components/date-picker';
 import RadioGroup, { Radio } from '../../../components/radio';
 import Tabs, { TabPane } from '../../../components/tabs';
