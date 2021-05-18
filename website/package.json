@@ -32,7 +32,8 @@
     "@summer/table": "*",
     "@summer/checkbox": "*",
     "@summer/space": "*",
-    "@summer/message": "*"
+    "@summer/message": "*",
+    "@summer/datepicker": "*"
   },
   "devDependencies": {
     "@docusaurus/core": "^2.0.0-alpha.75",
