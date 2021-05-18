@@ -1,10 +1,11 @@
-import React, { cloneElement, forwardRef, HTMLAttributes, ReactNode, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import React, { cloneElement, forwardRef, HTMLAttributes, ReactNode, useLayoutEffect, useRef, useState } from 'react';
 import { DropDownStyled } from './styled'
 
-interface DropDownProps extends HTMLAttributes<HTMLDivElement> {
-    children: JSX.Element,
-    overlay?: ReactNode,
+interface DropDownProps extends Omit<HTMLAttributes<HTMLDivElement>, 'onChange'> {
+    children: JSX.Element
+    overlay?: ReactNode
     visible?: boolean
+    onChange?: (changeVisible: boolean) => void
 }
 
 export const DropDown = forwardRef<HTMLDivElement, DropDownProps>(({
@@ -47,7 +48,7 @@ export const DropDown = forwardRef<HTMLDivElement, DropDownProps>(({
                 ref={ref}
                 style={{
                     ...style,
-                    visibility: visible ? 'visible' : 'hidden',
+                    display: visible ? 'unset' : 'none',
                     width,
                 }}
             >

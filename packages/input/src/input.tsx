@@ -5,7 +5,7 @@ import { SuffixStyles, PrefixStyles, ContainerStyles, InputStyled} from './style
 export interface InputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'prefix' | 'suffix'> {
     prefix?: ReactNode
     suffix?: ReactNode
-    containerRef?: MutableRefObject<HTMLDivElement>
+    containerRef?: MutableRefObject<HTMLDivElement | undefined>
 }
 
 export const Input = forwardRef<HTMLInputElement, InputProps>(({
@@ -25,7 +25,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(({
 
     return (
         <ContainerStyles
-            containerRef={containerRef}
+            ref={containerRef}
             disabled={disabled}
             style={style}
             focus={focus}
@@ -36,7 +36,6 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(({
                 {prefix}
             </PrefixStyles>
             <InputStyled
-                ref={ref}
                 defaultWidth={defaultWidth}
                 disabled={disabled}
                 isHavePrefix={prefix ? true : false}
