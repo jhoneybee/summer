@@ -36,7 +36,8 @@
     "@summer/datepicker": "*",
     "@summer/password": "*",
     "@summer/radio": "*",
-    "@summer/tree": "*"
+    "@summer/tree": "*",
+    "@summer/tabs": "*"
   },
   "devDependencies": {
     "@docusaurus/core": "^2.0.0-alpha.75",
