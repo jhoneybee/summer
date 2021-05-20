@@ -18,11 +18,10 @@ import Message, { info, error } from '@summer/message';
 import DatePicker, { DatePickerPanel } from '@summer/datepicker';
 import { Password } from '@summer/password';
 import RadioGroup, { Radio } from '@summer/radio';
-
+import Tree, { TreeNode, processDragDropTreeNode } from '@summer/tree';
 
 import Select, { SelectOption } from '../../../components/select';
 import Tabs, { TabPane } from '../../../components/tabs';
-import Tree, { TreeNode, processDragDropTreeNode } from '../../../components/tree';
 import Modal from '../../../components/modal';
 
 const ReactLiveScope = {

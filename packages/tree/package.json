@@ -1,0 +1,31 @@
+{
+    "name": "@summer/tree",
+    "version": "1.0.0",
+    "license": "MIT",
+    "author": "jhonebee <zhangjin0908@hotmail.com>",
+    "main": "src/index.ts",
+    "repository": "https://github.com/jhoneybee/summer.git",
+    "scripts": {
+        "build": "rollup --config rollup.config.js"
+    },
+    "peerDependencies": {
+        "react": "^17.0.0",
+        "react-dom": "^17.0.0"
+    },
+    "dependencies": {
+        "styled-components": "~5.3.0",
+        "react-draggable": "^4.4.3",
+        "react-icons": "^4.2.0",
+        "react-window": "^1.8.6",
+        "immer": "^8.0.1",
+        "react-dnd-html5-backend": "^14.0.0",
+        "@summer/dropdown": "*",
+        "@summer/checkbox": "*"
+    },
+    "devDependencies": {
+        "typescript": "~4.2.4",
+        "@rollup/plugin-typescript": "~8.2.1",
+        "rollup": "~2.46.0",
+        "@summer/config": "*"
+    }
+}
