@@ -34,7 +34,8 @@
     "@summer/space": "*",
     "@summer/message": "*",
     "@summer/datepicker": "*",
-    "@summer/password": "*"
+    "@summer/password": "*",
+    "@summer/radio": "*"
   },
   "devDependencies": {
     "@docusaurus/core": "^2.0.0-alpha.75",

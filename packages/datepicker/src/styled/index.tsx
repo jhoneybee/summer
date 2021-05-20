@@ -1,7 +1,5 @@
 
-import styled, { css } from 'styled-components';
-
-import { DefaultTheme, disable } from '@summer/theme';
+import styled from 'styled-components';
 
 export const DatePickerHeaderStyled = styled.div`
     display: flex;
