@@ -17,8 +17,9 @@ import { Space } from '@summer/space';
 import Message, { info, error } from '@summer/message';
 import DatePicker, { DatePickerPanel } from '@summer/datepicker';
 import { Password } from '@summer/password';
+import RadioGroup, { Radio } from '@summer/radio';
 
-import RadioGroup, { Radio } from '../../../components/radio';
+
 import Select, { SelectOption } from '../../../components/select';
 import Tabs, { TabPane } from '../../../components/tabs';
 import Tree, { TreeNode, processDragDropTreeNode } from '../../../components/tree';
