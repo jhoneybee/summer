@@ -1,5 +1,5 @@
 {
-    "name": "@summer/tree",
+    "name": "@summer/select",
     "version": "1.0.0",
     "license": "MIT",
     "author": "jhonebee <zhangjin0908@hotmail.com>",
@@ -14,14 +14,10 @@
     },
     "dependencies": {
         "styled-components": "~5.3.0",
-        "react-draggable": "^4.4.3",
-        "react-icons": "^4.2.0",
-        "react-window": "^1.8.6",
-        "immer": "^8.0.1",
-        "react-dnd": "^14.0.1",
-        "react-dnd-html5-backend": "^14.0.0",
-        "@summer/dropdown": "*",
-        "@summer/checkbox": "*"
+        "react-window": "~1.8.6",
+        "@summer/theme": "*",
+        "@summer/input": "*",
+        "@summer/dropdown": "*"
     },
     "devDependencies": {
         "typescript": "~4.2.4",

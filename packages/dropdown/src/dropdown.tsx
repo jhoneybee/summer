@@ -33,14 +33,6 @@ export const DropDown = forwardRef<HTMLDivElement, DropDownProps>(({
         }
     })
 
-    const [width, setWidth] = useState<number>(0);
-
-    useLayoutEffect(() => {
-        if (childrenRef.current) {
-            setWidth(childrenRef.current.getBoundingClientRect().width)
-        }
-    }, [])
-
     return (
         <>
             {dom}
@@ -49,7 +41,6 @@ export const DropDown = forwardRef<HTMLDivElement, DropDownProps>(({
                 style={{
                     ...style,
                     display: visible ? 'unset' : 'none',
-                    width,
                 }}
             >
                 {overlay}

@@ -21,9 +21,7 @@ import RadioGroup, { Radio } from '@summer/radio';
 import Tree, { TreeNode, processDragDropTreeNode } from '@summer/tree';
 import Tabs, { TabPane } from '@summer/tabs';
 import Modal from '@summer/modal';
-
-
-import Select, { SelectOption } from '../../../components/select';
+import Select, { SelectOption } from '@summer/select';
 
 
 const ReactLiveScope = {

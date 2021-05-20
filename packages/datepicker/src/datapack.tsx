@@ -276,7 +276,7 @@ export default function DatePicker ({
     } 
 
 
-    const input = useRef<HTMLInputElement>();
+    const input = useRef<HTMLDivElement>();
 
     
     const [top, setTop] = useState<number>(0)

@@ -1,0 +1,11 @@
+{
+	"extends": "@summer/config/tsconfig/tsconfig.json",
+	"include": [
+		"src/**/*"
+	],
+	"compilerOptions": {
+		"outDir": "dist",
+		"sourceMap": true
+	},
+	"exclude": ["node_modules", "build"],
+}
