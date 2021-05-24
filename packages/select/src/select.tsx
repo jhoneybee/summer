@@ -51,15 +51,13 @@ const Select = ({
         itemCount = children.length
     }
 
-    const [select, setSelect] = useState<SelectData>();
-
-    useEffect(() => {
+    const propsValue = useMemo(() => {
         const result: SelectData = {
             key: '',
             title: ''
         }
         if (Array.isArray(children)) {
-            const findResult = children.some((element) => {
+            children.some((element) => {
                 if (element.key === value) {
                     result.key = element.key + ''
                     result.title = element.props.title
@@ -67,13 +65,10 @@ const Select = ({
                 }
                 return false
             })
-            if (findResult) {
-                setSelect(result)
-            }
         }
+        return result;
     }, [children])
 
-    
     const [top, setTop] = useState<number>(0)
     const [width, setWidth] = useState<number>(0);
 
@@ -120,10 +115,6 @@ const Select = ({
                                     e.preventDefault();
                                     const key = element.key + ''
                                     onChange?.(key, element.props.title)
-                                    setSelect({
-                                        key,
-                                        title: element.props.title
-                                    });
                                     setVisible(false)
                                 }
                             })
@@ -133,7 +124,7 @@ const Select = ({
                 visible={visible}
             >
                 <Input
-                    value={select?.title}
+                    value={propsValue.title}
                     disabled={disabled}
                     containerRef={input}
                     onFocus={() => {

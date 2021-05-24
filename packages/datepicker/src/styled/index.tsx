@@ -116,13 +116,14 @@ export const BodyCellStyled = styled.div.attrs(() => {
     text-align: center;
     line-height: 36px;
     color: ${props => props.isCurrentMonth ? 'unset': 'rgba(0,0,0, .4)'};
+    :hover {
+        background: #f5f5f5;
+    }
     
 `
 
 export const CellTextStyled = styled.span.attrs(props => {
 })`
-    width: 24px;
-    height: 24px;
     line-height: 24px;
     border: ${props => {
         if (props.isToday) {
@@ -133,9 +134,6 @@ export const CellTextStyled = styled.span.attrs(props => {
     padding: 4px;
     user-select: none;
     border-radius: 2px;
-    :hover {
-        background: #f5f5f5;
-    }
 `
 
 export const DatePickerPanelStyled = styled.div`
