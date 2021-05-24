@@ -27,6 +27,9 @@ export const CheckboxStyled = styled.input`
         top: 1px;
         transform: rotate(45deg);
     }
+    :focus {
+        border: ${props => `1px solid ${props.theme.colorPrimary}`};
+    }
     :disabled {
         ${disable}
     }
@@ -41,4 +44,5 @@ export const ContentStyled = styled.span`
     position: relative;
     align-items: center;
     cursor: default;
+
 `
