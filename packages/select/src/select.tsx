@@ -23,13 +23,13 @@ export const SelectOption = ({
 }
 
 type SelectData = {
-    key: string
+    key: string | null
     title: string
 }
 
 interface SelectProps extends Omit<InputProps, 'children' | 'onChange'>  {
     children?: JSX.Element[]
-    onChange?: (value: string, title: string) => void
+    onChange?: (data: SelectData) => void
 }
 
 
@@ -67,7 +67,7 @@ const Select = ({
             })
         }
         return result;
-    }, [children])
+    }, [children, value])
 
     const [top, setTop] = useState<number>(0)
     const [width, setWidth] = useState<number>(0);
@@ -114,7 +114,10 @@ const Select = ({
                                 onMouseDown: (e: React.MouseEvent<HTMLInputElement, MouseEvent>) => {
                                     e.preventDefault();
                                     const key = element.key + ''
-                                    onChange?.(key, element.props.title)
+                                    onChange?.({
+                                        key,
+                                        title: element.props.title
+                                    })
                                     setVisible(false)
                                 }
                             })
@@ -137,6 +140,12 @@ const Select = ({
                         setVisible(false)
                     }}
                     suffix={<AiOutlineDown />}
+                    onChange={(event) => {
+                        onChange?.({
+                            key: null,
+                            title: event.target.value
+                        })
+                    }}
                     {...restProps}
                 />
             </DropDown>
