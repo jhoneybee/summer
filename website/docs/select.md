@@ -23,9 +23,10 @@ function simple () {
             <Select
                 style={{ marginRight: 10}}
                 value={value}
+                key="0"
                 readOnly={false}
-                onChange={({ value }) => {
-                    setValue(value);
+                onChange={({ key }) => {
+                    setValue(key);
                 }}
             >
                 <SelectOption key="1" title="设置为可编辑属性" />
@@ -33,9 +34,10 @@ function simple () {
                 <SelectOption key="3" title="选项三" />
             </Select>
             <Select
+                key="1"
                 value={value1}
-                onChange={({ value }) => {
-                    setValue1(value);
+                onChange={({ key }) => {
+                    setValue1(key);
                 }}
             >
                 <SelectOption key="1" title="默认为只读属性" />
@@ -46,9 +48,10 @@ function simple () {
             <Select
                 value={value2}
                 disabled
-                onChange={({ value }) => {
-                    setValue2(value);
+                onChange={({ key }) => {
+                    setValue2(key);
                 }}
+                key="2"
             >
                 <SelectOption key="1" title="设置为禁用属性" />
                 <SelectOption key="2" title="选项二" />
@@ -72,23 +75,22 @@ function simple () {
     useEffect(() => {
         const options = [];
         for(let i=0; i < 100000 ; i += 1) {
-            options.push(<SelectOption key={i} title={`${i} 条选择项目`} ></SelectOption>);
+            options.push(<SelectOption key={`${i}`} title={`${i} 条选择项目`} ></SelectOption>);
         }
         setOptions(options);
     }, [])
     return (
-        <>
-            <Select
-                style={{ marginRight: 10}}
-                value={value}
-                onChange={({ value, label }) => {
-                    console.log(`label: ${value}, value: ${value}`)
-                    setValue(value);
-                }}
-            >
-                {options}
-            </Select>
-        </>
+        <Select
+            style={{ marginRight: 10}}
+            value={value}
+            onChange={(data) => {
+                const { key, title } = data
+                console.log(`key: ${key}, title: ${title}`)
+                setValue(key);
+            }}
+        >
+            {options}
+        </Select>
 
     )
 }
