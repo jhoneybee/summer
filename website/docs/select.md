@@ -28,9 +28,9 @@ function simple () {
                     setValue(value);
                 }}
             >
-                <SelectOption key="1" value="1"> 设置为可编辑属性 </SelectOption>
-                <SelectOption key="2" value="2"> 选项二 </SelectOption>
-                <SelectOption key="3" value="3"> 选项三 </SelectOption>
+                <SelectOption key="1" title="设置为可编辑属性" />
+                <SelectOption key="2" title="选项二" />
+                <SelectOption key="3" title="选项三" />
             </Select>
             <Select
                 value={value1}
@@ -38,9 +38,9 @@ function simple () {
                     setValue1(value);
                 }}
             >
-                <SelectOption key="1" value="1"> 默认为只读属性 </SelectOption>
-                <SelectOption key="2" value="2"> 选项二 </SelectOption>
-                <SelectOption key="3" value="3"> 选项三 </SelectOption>
+                <SelectOption key="1" title="默认为只读属性" />
+                <SelectOption key="2" title="选项二" />
+                <SelectOption key="3" title="选项三" />
             </Select>
 
             <Select
@@ -50,9 +50,9 @@ function simple () {
                     setValue2(value);
                 }}
             >
-                <SelectOption key="1" value="1"> 设置为禁用属性 </SelectOption>
-                <SelectOption key="2" value="2"> 选项二 </SelectOption>
-                <SelectOption key="3" value="3"> 选项三 </SelectOption>
+                <SelectOption key="1" title="设置为禁用属性" />
+                <SelectOption key="2" title="选项二" />
+                <SelectOption key="3" title="选项三" />
             </Select>
         </Space>
 
@@ -67,12 +67,12 @@ function simple () {
  **/
 
 function simple () {
-    const [value, setValue] = useState("0");
+    const [value, setValue] = useState('0');
     const [options, setOptions] = useState([])
     useEffect(() => {
         const options = [];
         for(let i=0; i < 100000 ; i += 1) {
-            options.push(<SelectOption key={i} label={`${i} 条选择项目`} />);
+            options.push(<SelectOption key={i} title={`${i} 条选择项目`} ></SelectOption>);
         }
         setOptions(options);
     }, [])
@@ -103,7 +103,7 @@ function simple () {
 | 属性       | 说明                     | 类型                   | 默认值
 |-----      |------                   |------                 |------------
 |value      |当前选中的值               | `string` \| `number`  |  `''`
-|readOnly   |设置为只读属性              | `boolean`             | `true`
+|readOnly   |设置为只读属性              | `boolean`             | `false`
 |allowClear |是否支持清除                | `boolean`             | `true`
 |disabled   |是否禁用状态               |`boolean`              |`false`
 |onChange   |用户选中数据的时候触发的事件  | `(selectOptionClickType: SelectOptionClickType) => void` | -

@@ -217,7 +217,6 @@ const BaseTable = forwardRef<Grid, BaseTableProps>(({
     const hoverRef = rootRef?.current === undefined ? containerRef : rootRef;
 
     const getVisibleWidth = () => {
-        console.log('getScrollbarWidth()', getScrollbarWidth())
         return width - getScrollbarWidth()
     }
 

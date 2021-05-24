@@ -1,29 +1,45 @@
-import React, { Attributes, cloneElement, HTMLAttributes, isValidElement, useEffect, useRef, useState } from 'react'
+import React, { cloneElement, HTMLAttributes, isValidElement, useEffect, useMemo, useRef, useState } from 'react'
 import { AiOutlineDown, AiOutlineCloseCircle } from 'react-icons/ai';
 
 import { FixedSizeList as List } from 'react-window'
 import { Input, InputProps } from '@summer/input';
 import { DropDown } from '@summer/dropdown';
 
+import { SelectOptionStyled } from './styled';
 
 interface SelectOptionProps extends HTMLAttributes<HTMLDivElement> {
-    value: string | number
+    title: string
 }
 
+
 export const SelectOption = ({
+    title,
+    children,
     ...restProps
 } : SelectOptionProps) => {
     return (
-        <div {...restProps} />
+        <SelectOptionStyled {...restProps} >{children? children : title}</SelectOptionStyled>
     )
 }
 
-interface SelectProps extends Omit<InputProps, 'children'>  {
-    children?: JSX.Element[]
+type SelectData = {
+    key: string
+    title: string
 }
 
+interface SelectProps extends Omit<InputProps, 'children' | 'onChange'>  {
+    children?: JSX.Element[]
+    onChange?: (value: string, title: string) => void
+}
+
+
+
 const Select = ({
-    children
+    disabled,
+    children,
+    value,
+    onChange,
+    ...restProps
 }: SelectProps) => {
     const [visible, setVisible] = useState<boolean>(false)
     
@@ -35,6 +51,29 @@ const Select = ({
         itemCount = children.length
     }
 
+    const [select, setSelect] = useState<SelectData>();
+
+    useEffect(() => {
+        const result: SelectData = {
+            key: '',
+            title: ''
+        }
+        if (Array.isArray(children)) {
+            const findResult = children.some((element) => {
+                if (element.key === value) {
+                    result.key = element.key + ''
+                    result.title = element.props.title
+                    return true
+                }
+                return false
+            })
+            if (findResult) {
+                setSelect(result)
+            }
+        }
+    }, [children])
+
+    
     const [top, setTop] = useState<number>(0)
     const [width, setWidth] = useState<number>(0);
 
@@ -61,6 +100,9 @@ const Select = ({
                 }}
                 overlay={(
                     <List
+                        style={{
+                            marginTop: 5
+                        }}
                         width={width}
                         height={200}
                         itemCount={itemCount}
@@ -73,6 +115,16 @@ const Select = ({
                                 style: {
                                     ...style,
                                     ...(element.props.style || {})
+                                },
+                                onMouseDown: (e: React.MouseEvent<HTMLInputElement, MouseEvent>) => {
+                                    e.preventDefault();
+                                    const key = element.key + ''
+                                    onChange?.(key, element.props.title)
+                                    setSelect({
+                                        key,
+                                        title: element.props.title
+                                    });
+                                    setVisible(false)
                                 }
                             })
                         }}
@@ -81,18 +133,24 @@ const Select = ({
                 visible={visible}
             >
                 <Input
+                    value={select?.title}
+                    disabled={disabled}
                     containerRef={input}
                     onFocus={() => {
+                        setVisible(true)
+                    }}
+                    onClick={() => {
                         setVisible(true)
                     }}
                     onBlur={() => {
                         setVisible(false)
                     }}
+                    suffix={<AiOutlineDown />}
+                    {...restProps}
                 />
             </DropDown>
         </div>
     )
 }
-
 
 export default Select;
