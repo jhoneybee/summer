@@ -18,7 +18,6 @@ export interface ButtonProps extends Omit<
 }
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(({
-    block = false,
     danger = false,
     disabled: pDisabled = false,
     type = 'default',
