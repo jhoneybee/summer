@@ -157,6 +157,7 @@ const DatePickerBody = ({
                         if (event.button === 0) {
                             cellClick(event)
                         }
+                        event.preventDefault()
                     }}
                 >
                     <CellTextStyled
@@ -204,6 +205,9 @@ export const DatePickerPanel = ({
     return (
         <DatePickerPanelStyled
             {...restProps}
+            onMouseDown={(event) => {
+                event.preventDefault()
+            }}
         >
             <DatePickerHeader
                 value={preValue}
@@ -234,15 +238,13 @@ export interface DatePickerProps extends Omit<InputHTMLAttributes<HTMLInputEleme
     onChange?: (changeValue: Date | undefined) => void
 }
 
-
-
 /**
  * 日期选择框
  */
 export default function DatePicker ({
     value,
     format: datePickerFormat = 'yyyy-MM-dd', 
-    readOnly = true,
+    readOnly = false,
     allowClear = true,
     disabled = false,
     onFocus,
@@ -251,30 +253,16 @@ export default function DatePicker ({
     onChange
 }: DatePickerProps) {
 
-    const [unValue, setUnValue] = useState<Date>();
-
     const [state, dispatch] = useReducer(datePickerReducer, {
         visible: false,
     })
     const [hover, setHover] = useState<boolean>(false);
 
+    useEffect(() => {}, [])
+
     const getRealValue = () => {
-        const realValue = value === undefined ? unValue : value;
-        return realValue instanceof Date ? format(realValue, datePickerFormat) : '' 
+        return value instanceof Date ? format(value, datePickerFormat) : '' 
     } 
-
-    const getRealValueData = () => {
-        return value === undefined ? unValue : value;
-    }
-
-    const changeValue = (changeValue: Date | undefined) => {
-        if (value === undefined) {
-            setUnValue(changeValue);
-        } else {
-            onChange?.(changeValue);
-        }
-    } 
-
 
     const input = useRef<HTMLDivElement>();
 
@@ -308,13 +296,13 @@ export default function DatePicker ({
                     }}
                     overlay={
                         <DatePickerPanel
-                            value={getRealValueData()!}
+                            value={value!}
                             onChange={(cValue: Date) => {
                                 dispatch({
                                     type: 'setVisible',
                                     payload: false
                                 })
-                                changeValue(cValue);
+                                onChange?.(cValue);
                             }}
                         />
                     }
@@ -323,9 +311,6 @@ export default function DatePicker ({
                             type: 'setVisible',
                             payload: changeVisible
                         })
-                    }}
-                    onMouseDown={(event: { preventDefault: () => void; }) => {
-                        event.preventDefault();
                     }}
                     visible={state.visible}
                 >
@@ -341,7 +326,7 @@ export default function DatePicker ({
                                         setHover(false);
                                     }}
                                     onClick={() => {
-                                        changeValue(undefined);
+                                        onChange?.(undefined);
                                     }}
                                 
                                 />
