@@ -24,10 +24,10 @@ export const DropDown = forwardRef<HTMLDivElement, DropDownProps>(({
             const restProps = children.props
             if (refDom instanceof HTMLElement) {
                 childrenRef.current = refDom;
-                if (restProps.ref instanceof Function) {
-                    restProps.ref?.(childrenRef.current);
-                }else if(restProps.ref){
-                    restProps.ref.current = childrenRef.current;
+                if (restProps.innerRef instanceof Function) {
+                    restProps.innerRef?.(childrenRef.current);
+                }else if(restProps.innerRef){
+                    restProps.innerRef.current = childrenRef.current;
                 }
             }
         }

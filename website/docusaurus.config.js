@@ -34,7 +34,7 @@ module.exports = {
         footer: {
             style: 'dark',
             links: [],
-            copyright: `Copyright © ${new Date().getFullYear()} Project, Inc. Built with Free Kits.`,
+            copyright: `Copyright © ${new Date().getFullYear()} Project, Inc. Built with zhangj.`,
         },
     },
     presets: [

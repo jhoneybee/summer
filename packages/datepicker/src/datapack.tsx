@@ -284,6 +284,39 @@ export default function DatePicker ({
         }
     }, [])
 
+    const [isHoverIcon, setIsHoverIcon] = useState<boolean>(false)
+
+    const getSuffix = () => {
+        if (isHoverIcon) {
+            return (
+                <AiOutlineCloseCircle
+                    onClick={() => {
+                        onChange?.(undefined)
+                        setIsHoverIcon(false)
+                    }}
+                    onMouseLeave={() => {
+                        setIsHoverIcon(false)
+                    }}
+                />
+            )
+        }
+        return (
+            <AiOutlineCalendar
+                onClick={() => {
+                    dispatch({
+                        type: 'setVisible',
+                        payload: true
+                    })
+                }}
+                onMouseEnter={() => {
+                    if (input.current?.value) {
+                        setIsHoverIcon(true)
+                    }
+                }}
+            />
+        )
+    }
+
     return (
         <Context.Provider
             value={{
@@ -309,6 +342,10 @@ export default function DatePicker ({
                                     type: 'setVisible',
                                     payload: false
                                 })
+                                console.log(input)
+                                if (input.current) {
+                                    input.current.value = format(cValue, datePickerFormat)
+                                }
                                 onChange?.(cValue);
                             }}
                         />
@@ -324,23 +361,7 @@ export default function DatePicker ({
                     <Input
                         innerRef={input}
                         containerRef={inputContainerRef}
-                        suffix={
-                            hover && getRealValue() && allowClear ? (
-                                <AiOutlineCloseCircle
-                                    onMouseEnter={() => {
-                                        setHover(true);
-                                    }}
-                                    onMouseLeave={() => {
-                                        setHover(false);
-                                    }}
-                                    onClick={() => {
-                                        onChange?.(undefined);
-                                    }}
-                                
-                                />
-                            ) : <AiOutlineCalendar />
-                        }
-                        
+                        suffix={getSuffix()}
                         defaultValue={getRealValue()}
                         readOnly={readOnly}
                         disabled={disabled}
@@ -376,7 +397,6 @@ export default function DatePicker ({
                                     onChange?.(parseData);
                                 }
                             }
-
                             dispatch({
                                 type: 'setVisible',
                                 payload: false
