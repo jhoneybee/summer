@@ -11,61 +11,35 @@ const hoverColor = css`
     color: rgba(0,0,0,.85);
 `
 
-export const SuffixStyles = styled.i.attrs(props => {
+export const IconStyles = styled.span.attrs(props => {
 })`
-    z-index: 1;
-    position: absolute;
-    right: 14px;
-    top:  20%;
-    width: 12px;
-    height: 12px;
+    display: flex;
+    align-items: center;
     :hover {
         cursor: pointer;
         ${hoverColor}
     }
-    :disabled {
-        ${disable}
-    }
-    ${color}
+    ${color};
+    margin: 0px 4px;
     background-color: unset;
+
 `
-
-SuffixStyles.defaultProps = {
-    theme: DefaultTheme
-}
-
-export const PrefixStyles = styled.i.attrs(props => {
-})`
-    z-index: 1;
-    position: absolute;
-    margin-left: 5px;
-    margin-top: 3px;
-    :hover {
-        cursor: pointer;
-        ${hoverColor}
-    }
-    :disabled {
-        ${disable}
-    }
-
-    background-color: unset;
-    ${color}
-    color: rgba(0,0,0,.4);
-`;
-
-PrefixStyles.defaultProps = {
-    theme: DefaultTheme
-}
 
 export const ContainerStyles = styled.div.attrs(props => {
 })`
     display: inline-flex;
     position: relative;
     align-items: center;
+    justify-items: center;
+    width: 200px;
     border: ${props => props.focus ? `1px solid ${props.theme.colorPrimary}` :  '1px solid #d9d9d9' };
     overflow: hidden;
+    box-sizing: border-box;
     :hover {
         border: ${props => props.disabled ? '1px solid #d9d9d9' : `1px solid ${props.theme.colorPrimary}`}
+    }
+    &[disabled] {
+        ${disable}
     }
 
 `;
@@ -80,12 +54,9 @@ export const InputStyled = styled.input.attrs(props => {
     font-size: 14px;
     line-height: 1.5715;
     border: unset;
-    padding: 4px 11px;
+    padding: 4px 0px;
+    width: 100%;
     transition: border 600ms;
-    padding-left: ${props => props.isHavePrefix ? '25px': '12px'};
-    width: ${props => {
-        return `${props.defaultWidth + 25}px`;
-    }};
     cursor: ${props => {
         if (props.readOnly) {
             return props.readOnly ? 'pointer': 'auto'

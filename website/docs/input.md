@@ -18,10 +18,11 @@ slug: /input
 function simple () {
     return (
         <>
-            <Input prefix={<AiOutlineUser />}/>
+            <Input key="0" prefix={<AiOutlineUser />} suffix={<AiOutlineSetting />}/>
             <br/>
             <br/>
             <Input
+                key="1"
                 placeholder="空白时显示的文本信息"
                 onChange={(e) => {
                     console.log(e.target.value);
