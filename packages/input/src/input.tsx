@@ -1,27 +1,27 @@
 import React, { forwardRef, InputHTMLAttributes, MutableRefObject, ReactNode, useState } from 'react';
 
-import { SuffixStyles, PrefixStyles, ContainerStyles, InputStyled} from './styled'
+import { IconStyles, ContainerStyles, InputStyled} from './styled'
 
 export interface InputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'prefix' | 'suffix'> {
     prefix?: ReactNode
     suffix?: ReactNode
     containerRef?: MutableRefObject<HTMLDivElement | undefined>
+    innerRef?: MutableRefObject<HTMLInputElement | undefined>
 }
 
-export const Input = forwardRef<HTMLInputElement, InputProps>(({
+export const Input = ({
     prefix,
     suffix,
     style,
     disabled,
     containerRef,
+    innerRef,
     onFocus,
     onBlur,
     ...restProps
-}, ref) => {
+}: InputProps) => {
 
     const [focus, setFocus] = useState<boolean>(false);
-
-    const defaultWidth = style?.width || 140;
 
     return (
         <ContainerStyles
@@ -30,15 +30,12 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(({
             style={style}
             focus={focus}
         >
-            <PrefixStyles
-                disabled={disabled}
-            >
+            <IconStyles>
                 {prefix}
-            </PrefixStyles>
+            </IconStyles>
             <InputStyled
-                defaultWidth={defaultWidth}
+                ref={innerRef}
                 disabled={disabled}
-                isHavePrefix={prefix ? true : false}
                 {...restProps}
                 onFocus={(e: any) => {
                     setFocus(true)
@@ -49,11 +46,9 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(({
                     onBlur?.(e)
                 }}
             />
-            <SuffixStyles
-                disabled={disabled}
-            >
+            <IconStyles>
                 {suffix}
-            </SuffixStyles>
+            </IconStyles>
         </ContainerStyles>
     )
-})
+}

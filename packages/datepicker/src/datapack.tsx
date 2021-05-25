@@ -19,6 +19,7 @@ import {
     addYears,
     addMonths,
     getMonth,
+    parse
 } from 'date-fns';
 import { AiOutlineCalendar, AiOutlineCloseCircle } from 'react-icons/ai';
 
@@ -89,6 +90,13 @@ interface DatePickerHeader {
     onChange?: (changeValue: Date) => void;
 }
 
+
+/**
+ * 判断是否是有效的日期类型
+ */
+function isValidDate(date: Date) {
+    return date instanceof Date && !isNaN(date.getTime());
+}
 
 /**
  * 日期选择框的头部信息
@@ -264,16 +272,15 @@ export default function DatePicker ({
         return value instanceof Date ? format(value, datePickerFormat) : '' 
     } 
 
-    const input = useRef<HTMLDivElement>();
+    const inputContainerRef = useRef<HTMLDivElement>();
+    const input = useRef<HTMLInputElement>();
 
-    
     const [top, setTop] = useState<number>(0)
 
-
     useEffect(() => {
-        if (input.current) {
-            const { height } = input.current.getBoundingClientRect();
-            setTop(height + 2)
+        if (inputContainerRef.current) {
+            const { height } = inputContainerRef.current.getBoundingClientRect();
+            setTop(height + 4)
         }
     }, [])
 
@@ -315,7 +322,8 @@ export default function DatePicker ({
                     visible={state.visible}
                 >
                     <Input
-                        containerRef={input}
+                        innerRef={input}
+                        containerRef={inputContainerRef}
                         suffix={
                             hover && getRealValue() && allowClear ? (
                                 <AiOutlineCloseCircle
@@ -332,7 +340,8 @@ export default function DatePicker ({
                                 />
                             ) : <AiOutlineCalendar />
                         }
-                        value={getRealValue()}
+                        
+                        defaultValue={getRealValue()}
                         readOnly={readOnly}
                         disabled={disabled}
                         onFocus={(event: React.FocusEvent<HTMLInputElement>) => {
@@ -359,6 +368,15 @@ export default function DatePicker ({
                             onClick?.(event);
                         }}
                         onBlur={(event: React.FocusEvent<HTMLInputElement>) => {
+                            if (input.current) {
+                                const parseData = parse(input.current.value, datePickerFormat, new Date())
+                                if (!isValidDate(parseData)) {
+                                    input.current.value = getRealValue();
+                                } else {
+                                    onChange?.(parseData);
+                                }
+                            }
+
                             dispatch({
                                 type: 'setVisible',
                                 payload: false

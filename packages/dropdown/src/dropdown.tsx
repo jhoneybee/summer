@@ -20,7 +20,7 @@ export const DropDown = forwardRef<HTMLDivElement, DropDownProps>(({
     const dom = cloneElement(children, {
         ...children.props,
         key: children.props.key,
-        ref: (refDom: HTMLElement) => {
+        innerRef: (refDom: HTMLElement) => {
             const restProps = children.props
             if (refDom instanceof HTMLElement) {
                 childrenRef.current = refDom;

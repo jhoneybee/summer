@@ -18,6 +18,7 @@ function simple () {
     return (
         <Space>
             <Button
+                key="0"
                 onClick={() => {
                     info('这是一个info信息', 10 * 1000);
                 }}
@@ -26,6 +27,7 @@ function simple () {
             </Button>
 
             <Button
+                key="1"
                 onClick={() => {
                     error('这是一个error信息');
                 }}

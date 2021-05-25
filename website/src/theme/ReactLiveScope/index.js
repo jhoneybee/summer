@@ -6,7 +6,7 @@
  */
 
 import React from 'react';
-import { AiOutlineUser } from "react-icons/ai";
+import { AiOutlineUser, AiOutlineSetting } from "react-icons/ai";
 
 import { Button } from '@summer/button'
 import { DropDown } from '@summer/dropdown'
@@ -38,6 +38,7 @@ const ReactLiveScope = {
     error,
     Checkbox,
     AiOutlineUser,
+    AiOutlineSetting,
     DatePicker,
     DatePickerPanel,
     RadioGroup,

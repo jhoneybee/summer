@@ -23,12 +23,13 @@ export const SelectOption = ({
 }
 
 type SelectData = {
-    key: string | null
-    title: string
+    key?: string
+    title?: string
 }
 
-interface SelectProps extends Omit<InputProps, 'children' | 'onChange'>  {
+interface SelectProps extends Omit<InputProps, 'children' | 'onChange' | 'value'>  {
     children?: JSX.Element[]
+    value?: string | number
     onChange?: (data: SelectData) => void
 }
 
@@ -77,11 +78,41 @@ const Select = ({
     useEffect(() => {
         if (input.current) {
             const { height, width } = input.current.getBoundingClientRect();
-            setTop(height + 2)
+            setTop(height + 4)
             setWidth(width);
         }
     }, [])
 
+
+    const [isHoverIcon, setIsHoverIcon] = useState<boolean>(false)
+
+    const getSuffix = () => {
+        if (isHoverIcon) {
+            return (
+                <AiOutlineCloseCircle
+                    onClick={() => {
+                        onChange?.({})
+                        setIsHoverIcon(false)
+                    }}
+                    onMouseLeave={() => {
+                        setIsHoverIcon(false)
+                    }}
+                />
+            )
+        }
+        return (
+            <AiOutlineDown
+                onClick={() => {
+                    setVisible(true)
+                }}
+                onMouseEnter={() => {
+                    if (value) {
+                        setIsHoverIcon(true)
+                    }
+                }}
+            />
+        )
+    }
     return (
         <div
             style={{
@@ -96,7 +127,8 @@ const Select = ({
                 overlay={(
                     <List
                         style={{
-                            marginTop: 5
+                            marginTop: 5,
+                            willChange: 'unset',
                         }}
                         width={width}
                         height={200}
@@ -139,10 +171,9 @@ const Select = ({
                     onBlur={() => {
                         setVisible(false)
                     }}
-                    suffix={<AiOutlineDown />}
+                    suffix={getSuffix()}
                     onChange={(event) => {
                         onChange?.({
-                            key: null,
                             title: event.target.value
                         })
                     }}

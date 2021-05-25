@@ -20,8 +20,8 @@ function simple () {
                     console.log(changeValue);
                 }}
             >
-                <Radio value='man'>男人</Radio>
-                <Radio value='woman'>女人</Radio>
+                <Radio key="man" value='man'>男人</Radio>
+                <Radio key="woman" value='woman'>女人</Radio>
             </RadioGroup>
         </Space>
     )
