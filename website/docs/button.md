@@ -27,6 +27,21 @@ function simple() {
 
 ```jsx live
 /**
+ * title: 带图标的按钮
+ * desc: 按钮上有图标信息
+ **/
+function simple() {
+    return (
+        <Space>
+            <Button key="primary" icon={<AiOutlineUser />} > 添加人员信息 </Button>
+        </Space>
+    )
+}
+```
+
+
+```jsx live
+/**
  * title: 长任务
  * desc: 当按钮执行很长的任务的时候,会自动变灰,等待任务执行完成后,才可以执行下一次的请求
  **/

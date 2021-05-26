@@ -41,7 +41,6 @@ export const MaskStyled = styled.div.attrs(props => {
     height: 100%;
     z-index: 1000;
     background-color: rgba(0,0,0,.45);
-    animation: ${ModalMaskAnimation} .2s;
 `
 
 
@@ -56,7 +55,6 @@ export const ModalStyled = styled.div.attrs(props => {
     margin: 0 auto;
     background-color: #fff;
     transition: display .5s;
-    animation: ${ModalMaskAnimation} .2s;
     box-shadow: 0 3px 6px -4px rgb(0 0 0 / 12%), 0 6px 16px 0 rgb(0 0 0 / 8%), 0 9px 28px 8px rgb(0 0 0 / 5%);
 `
 
