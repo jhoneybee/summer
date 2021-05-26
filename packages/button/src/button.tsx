@@ -1,5 +1,5 @@
-import React, { forwardRef, HTMLAttributes, useState } from 'react';
-import { StyledButtonPrimary, StyledButtonDefault } from './styled';
+import React, { createRef, forwardRef, HTMLAttributes, MutableRefObject, ReactNode } from 'react';
+import { StyledButtonPrimary, StyledButtonDefault, IconStyled } from './styled';
 
   
 // 按钮的属性信息
@@ -11,44 +11,51 @@ export interface ButtonProps extends Omit<
     danger?: boolean
     // 设置按钮是否失效
     disabled?: boolean
+    // 按钮的图标
+    icon?: ReactNode
     // 按钮类型
     type?: 'primary' | 'default'
     // 点击事件
     onClick?: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void | Promise<void>
+    innerRef?: MutableRefObject<HTMLButtonElement | null>
 }
 
-export const Button = forwardRef<HTMLButtonElement, ButtonProps>(({
+export const Button = ({
     danger = false,
-    disabled: pDisabled = false,
+    disabled,
     type = 'default',
     onClick,
     children,
+    icon,
+    innerRef,
     ...restProps
-}, ref) => {
+}: ButtonProps) => {
     let ButtonStyled = StyledButtonDefault
     if (type === 'primary') {
         ButtonStyled = StyledButtonPrimary
     }
 
-    const [disabled, setDisabled] = useState<boolean>(pDisabled)
+    const renderIcon = () => {
+        if (icon) {
+            return (
+                <IconStyled>
+                    {icon}
+                </IconStyled>
+            )
+        }
+        return null;
+    }
+
     return (
         <ButtonStyled
             {...restProps}
-            ref={ref}
+            ref={innerRef}
             disabled={disabled}
             onClick={(e) => {
-                setDisabled(true);
-                const result = onClick?.(e);
-                if (result && result.then) {
-                    result.then(() => {
-                        setDisabled(false);
-                    })
-                }else {
-                    setDisabled(false);
-                } 
+                onClick?.(e)
             }}
         >
-            {children}
+            {renderIcon()}&nbsp;{children}
         </ButtonStyled>
     )
-})
+}

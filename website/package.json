@@ -32,9 +32,9 @@
     "@summer/select": "*"
   },
   "devDependencies": {
-    "@docusaurus/core": "^2.0.0-alpha.75",
-    "@docusaurus/module-type-aliases": "^2.0.0-alpha.75",
-    "@docusaurus/preset-classic": "^2.0.0-alpha.75",
+    "@docusaurus/core": "^2.0.0-beta.0",
+    "@docusaurus/module-type-aliases": "^2.0.0-beta.0",
+    "@docusaurus/preset-classic": "^2.0.0-beta.0",
     "@summer/docusaurus-theme-live-codeblock": "^2.0.0-alpha.70.2",
     "@mdx-js/react": "^1.6.21",
     "@testing-library/react": "^11.2.5",

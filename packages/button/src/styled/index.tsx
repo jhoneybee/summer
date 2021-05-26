@@ -71,3 +71,7 @@ StyledButtonDefault.defaultProps = {
     theme: DefaultTheme
 }
 
+
+export const IconStyled = styled.span`
+    vertical-align: middle;
+`
