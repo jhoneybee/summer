@@ -2,15 +2,20 @@
   "name": "@jhoneybee/theme",
   "version": "1.0.0",
   "license": "MIT",
-  "main": "src/index.ts",
+  "main": "dist/index.js",
+  "repository": "https://github.com/jhoneybee/summer.git",
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com/jhoneybee"
+  },
+  "scripts": {
+    "build": "tsc"
+  },
   "dependencies": {
     "csstype": "^3.0.8",
     "styled-components": "^5.2.1"
   },
   "devDependencies": {
     "typescript": "^4.2.4",
-    "@rollup/plugin-typescript": "^8.2.1",
-    "rollup": "^2.46.0",
     "@jhoneybee/config": "*"
-}
+  }
 }
