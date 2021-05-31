@@ -1,5 +1,5 @@
 {
-    "name": "@summer/modal",
+    "name": "@jhonebee/modal",
     "version": "1.0.0",
     "license": "MIT",
     "author": "jhonebee <zhangjin0908@hotmail.com>",
@@ -16,14 +16,14 @@
         "styled-components": "~5.3.0",
         "react-draggable": "^4.4.3",
         "react-icons": "^4.2.0",
-        "@summer/theme": "*",
-        "@summer/button": "*",
-        "@summer/space": "*"
+        "@jhonebee/theme": "*",
+        "@jhonebee/button": "*",
+        "@jhonebee/space": "*"
     },
     "devDependencies": {
         "typescript": "~4.2.4",
         "@rollup/plugin-typescript": "~8.2.1",
         "rollup": "~2.46.0",
-        "@summer/config": "*"
+        "@jhonebee/config": "*"
     }
 }

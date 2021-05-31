@@ -3,8 +3,8 @@ import React, { ReactNode } from 'react';
 import Draggable from 'react-draggable';
 
 
-import { Button } from '@summer/button';
-import { Space } from '@summer/space';
+import { Button } from '@jhonebee/button';
+import { Space } from '@jhonebee/space';
 
 
 import {

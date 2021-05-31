@@ -2,8 +2,8 @@ import React, { cloneElement, forwardRef, HTMLAttributes, useEffect, useRef, use
 import { GridChildComponentProps } from "react-window";
 import styled from 'styled-components';
 import produce from 'immer';
-import { writeText } from '@summer/clipboard';
-import { DefaultTheme } from '@summer/theme';
+import { writeText } from '@jhonebee/clipboard';
+import { DefaultTheme } from '@jhonebee/theme';
 
 import { DataCell, DataColumn, DataRow } from "./type";
 import { hoverRender } from './_utils';
@@ -129,7 +129,7 @@ export const CellRender = ({ style, rowIndex, columnIndex, data, isScrolling }: 
         const { style: editorStyle, ...restProps } = editor!.props
         return cloneElement(editor!, {
             ...restProps,
-            ref: editorRef,
+            innerRef: editorRef,
             style: {
                 ...(editorStyle || {}),
                 ...style,

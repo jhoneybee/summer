@@ -23,8 +23,8 @@ import {
 } from 'date-fns';
 import { AiOutlineCalendar, AiOutlineCloseCircle } from 'react-icons/ai';
 
-import { Input } from '@summer/input';
-import { DropDown } from '@summer/dropdown';
+import { Input } from '@jhonebee/input';
+import { DropDown } from '@jhonebee/dropdown';
 
 import {
     DatePickerHeaderStyled,
