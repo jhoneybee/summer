@@ -1,5 +1,5 @@
 {
-    "name": "@summer/tree",
+    "name": "@jhonebee/tree",
     "version": "1.0.0",
     "license": "MIT",
     "author": "jhonebee <zhangjin0908@hotmail.com>",
@@ -20,13 +20,13 @@
         "immer": "^8.0.1",
         "react-dnd": "^14.0.1",
         "react-dnd-html5-backend": "^14.0.0",
-        "@summer/dropdown": "*",
-        "@summer/checkbox": "*"
+        "@jhonebee/dropdown": "*",
+        "@jhonebee/checkbox": "*"
     },
     "devDependencies": {
         "typescript": "~4.2.4",
         "@rollup/plugin-typescript": "~8.2.1",
         "rollup": "~2.46.0",
-        "@summer/config": "*"
+        "@jhonebee/config": "*"
     }
 }

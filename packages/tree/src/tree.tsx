@@ -14,8 +14,8 @@ import { AiFillCaretRight, AiFillCaretDown } from 'react-icons/ai';
 import { DndProvider, useDrag, useDrop } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 
-import { DropDown } from '@summer/dropdown';
-import { Checkbox } from '@summer/checkbox';
+import { DropDown } from '@jhonebee/dropdown';
+import { Checkbox } from '@jhonebee/checkbox';
 
 
 import { Loading, IconStyled, TreeNodeStyled } from './styled'

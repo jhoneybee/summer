@@ -1,5 +1,5 @@
 {
-	"extends": "@summer/config/tsconfig/tsconfig.json",
+	"extends": "@jhonebee/config/tsconfig/tsconfig.json",
 	"include": [
 		"src/**/*"
 	],

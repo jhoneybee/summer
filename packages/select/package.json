@@ -1,5 +1,5 @@
 {
-    "name": "@summer/select",
+    "name": "@jhonebee/select",
     "version": "1.0.0",
     "license": "MIT",
     "author": "jhonebee <zhangjin0908@hotmail.com>",
@@ -15,14 +15,14 @@
     "dependencies": {
         "styled-components": "~5.3.0",
         "react-window": "~1.8.6",
-        "@summer/theme": "*",
-        "@summer/input": "*",
-        "@summer/dropdown": "*"
+        "@jhonebee/theme": "*",
+        "@jhonebee/input": "*",
+        "@jhonebee/dropdown": "*"
     },
     "devDependencies": {
         "typescript": "~4.2.4",
         "@rollup/plugin-typescript": "~8.2.1",
         "rollup": "~2.46.0",
-        "@summer/config": "*"
+        "@jhonebee/config": "*"
     }
 }

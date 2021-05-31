@@ -2,8 +2,8 @@ import React, { cloneElement, HTMLAttributes, isValidElement, useEffect, useMemo
 import { AiOutlineDown, AiOutlineCloseCircle } from 'react-icons/ai';
 
 import { FixedSizeList as List } from 'react-window'
-import { Input, InputProps } from '@summer/input';
-import { DropDown } from '@summer/dropdown';
+import { Input, InputProps } from '@jhonebee/input';
+import { DropDown } from '@jhonebee/dropdown';
 
 import { SelectOptionStyled } from './styled';
 

@@ -1,5 +1,5 @@
 {
-    "name": "@summer/datepicker",
+    "name": "@jhonebee/datepicker",
     "version": "1.0.0",
     "license": "MIT",
     "author": "jhonebee <zhangjin0908@hotmail.com>",
@@ -14,13 +14,13 @@
     },
     "dependencies": {
         "date-fns": "^2.19.0",
-        "@summer/input": "*",
-        "@summer/dropdown": "*"
+        "@jhonebee/input": "*",
+        "@jhonebee/dropdown": "*"
     },
     "devDependencies": {
         "typescript": "^4.2.4",
         "@rollup/plugin-typescript": "^8.2.1",
         "rollup": "^2.46.0",
-        "@summer/config": "*"
+        "@jhonebee/config": "*"
     }
 }
