@@ -16,7 +16,7 @@
 	  "moduleResolution": "node", // Resolve modules using Node.js style
 	  "isolatedModules": false, // Unconditionally emit imports for unresolved files
 	  "resolveJsonModule": true, // Include modules imported with .json extension
-	  "noEmit": true, // Do not emit output (meaning do not compile code, only perform type checking)
+	  "noEmit": false, // Do not emit output (meaning do not compile code, only perform type checking)
 	  "jsx": "react", // Support JSX in .tsx files
 	  "sourceMap": false, // Generate corrresponding .map file
 	  "declaration": true, // Generate corresponding .d.ts file
@@ -24,5 +24,7 @@
 	  "noUnusedParameters": false, // Report errors on unused parameters
 	  "incremental": true, // Enable incremental compilation by reading/writing information from prior compilations to a file on disk
 	  "noFallthroughCasesInSwitch": true, // Report errors for fallthrough cases in switch statement
+	  "outDir": "dist",
 	}
+
   }

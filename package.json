@@ -2,13 +2,13 @@
   "name": "summer",
   "private": "true",
   "scripts": {
-    "start": "yarn workspace @jhonebee/site start"
+    "start": "yarn workspace @jhoneybee/site start"
   },
   "license": "MIT",
   "workspaces": [
     "packages/*",
     "website"
   ],
-  "author": "jhonebee <zhangjin0908@hotmail.com>",
+  "author": "jhoneybee <zhangjin0908@hotmail.com>",
   "repository": "https://github.com/jhoneybee/summer.git"
 }

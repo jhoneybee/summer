@@ -1,5 +1,5 @@
 {
-	"extends": "@jhonebee/config/tsconfig/tsconfig.json",
+	"extends": "@jhoneybee/config/tsconfig/tsconfig.json",
 	"include": [
 		"src/**/*"
 	],

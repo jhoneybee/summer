@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { DefaultTheme, disable } from '@jhonebee/theme';
+import { DefaultTheme, disable } from '@jhoneybee/theme';
 
 export const CheckboxStyled = styled.input`
     appearance: none;

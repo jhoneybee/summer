@@ -8,20 +8,20 @@
 import React from 'react';
 import { AiOutlineUser, AiOutlineSetting } from "react-icons/ai";
 
-import { Button } from '@jhonebee/button'
-import { DropDown } from '@jhonebee/dropdown'
-import { Input } from '@jhonebee/input';
-import { Table, Column } from '@jhonebee/table'
-import { Checkbox } from '@jhonebee/checkbox';
-import { Space } from '@jhonebee/space';
-import Message, { info, error } from '@jhonebee/message';
-import DatePicker, { DatePickerPanel } from '@jhonebee/datepicker';
-import { Password } from '@jhonebee/password';
-import RadioGroup, { Radio } from '@jhonebee/radio';
-import Tree, { TreeNode, processDragDropTreeNode } from '@jhonebee/tree';
-import Tabs, { TabPane } from '@jhonebee/tabs';
-import Modal from '@jhonebee/modal';
-import Select, { SelectOption } from '@jhonebee/select';
+import { Button } from '@jhoneybee/button'
+import { DropDown } from '@jhoneybee/dropdown'
+import { Input } from '@jhoneybee/input';
+import { Table, Column } from '@jhoneybee/table'
+import { Checkbox } from '@jhoneybee/checkbox';
+import { Space } from '@jhoneybee/space';
+import Message, { info, error } from '@jhoneybee/message';
+import DatePicker, { DatePickerPanel } from '@jhoneybee/datepicker';
+import { Password } from '@jhoneybee/password';
+import RadioGroup, { Radio } from '@jhoneybee/radio';
+import Tree, { TreeNode, processDragDropTreeNode } from '@jhoneybee/tree';
+import Tabs, { TabPane } from '@jhoneybee/tabs';
+import Modal from '@jhoneybee/modal';
+import Select, { SelectOption } from '@jhoneybee/select';
 
 
 const ReactLiveScope = {
