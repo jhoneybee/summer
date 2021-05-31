@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { AiOutlineEyeInvisible, AiOutlineEye } from 'react-icons/ai';
 
-import { Input, InputProps } from '@jhonebee/input';
+import { Input, InputProps } from '@jhoneybee/input';
 
 export interface PasswordProps extends InputProps{
 }
