@@ -1,6 +1,6 @@
 import styled, { css } from 'styled-components';
 
-import { DefaultTheme, disable } from '@jhonebee/theme';
+import { DefaultTheme, disable } from '@jhoneybee/theme';
 
 const btn = css`
     background-image: none;

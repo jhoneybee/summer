@@ -7,7 +7,6 @@ export interface PasswordProps extends InputProps{
 }
 
 export default function Password ({
-    style,
     ...restProps
 }: PasswordProps) {
     const [hideValue, setHideValue] = useState<boolean>(true);

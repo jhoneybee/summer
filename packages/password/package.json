@@ -3,13 +3,13 @@
     "version": "1.0.0",
     "license": "MIT",
     "author": "jhoneybee <zhangjin0908@hotmail.com>",
-    "main": "src/index.ts",
+    "main": "dist/index.js",
     "repository": "https://github.com/jhoneybee/summer.git",
     "publishConfig": {
         "registry": "https://npm.pkg.github.com/jhoneybee"
     },
     "scripts": {
-        "build": "rollup --config rollup.config.js"
+        "build": "tsc"
     },
     "peerDependencies": {
         "react": "^17.0.0",
@@ -21,8 +21,6 @@
     },
     "devDependencies": {
         "typescript": "~4.2.4",
-        "@rollup/plugin-typescript": "~8.2.1",
-        "rollup": "~2.46.0",
         "@jhoneybee/config": "*"
     }
 }

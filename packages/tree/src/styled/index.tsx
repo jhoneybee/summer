@@ -1,6 +1,6 @@
 import styled, { keyframes } from 'styled-components';
 import { AiOutlineLoading } from 'react-icons/ai'
-import { DefaultTheme } from '@jhonebee/theme';
+import { DefaultTheme } from '@jhoneybee/theme';
 
 const rotate = keyframes`
   from {

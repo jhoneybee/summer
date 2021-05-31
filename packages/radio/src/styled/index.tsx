@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import { DefaultTheme } from '@jhonebee/theme';
+import { DefaultTheme } from '@jhoneybee/theme';
 
 export const RadioStyled = styled.input.attrs(props => {
 })`

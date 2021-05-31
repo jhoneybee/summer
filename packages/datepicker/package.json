@@ -1,12 +1,12 @@
 {
-    "name": "@jhonebee/datepicker",
+    "name": "@jhoneybee/datepicker",
     "version": "1.0.0",
     "license": "MIT",
-    "author": "jhonebee <zhangjin0908@hotmail.com>",
+    "author": "jhoneybee <zhangjin0908@hotmail.com>",
     "main": "src/index.ts",
     "repository": "https://github.com/jhoneybee/summer.git",
     "scripts": {
-        "build": "rollup --config rollup.config.js"
+        "build": "tsx"
     },
     "peerDependencies": {
         "react": "^17.0.0",
@@ -14,13 +14,11 @@
     },
     "dependencies": {
         "date-fns": "^2.19.0",
-        "@jhonebee/input": "*",
-        "@jhonebee/dropdown": "*"
+        "@jhoneybee/input": "*",
+        "@jhoneybee/dropdown": "*"
     },
     "devDependencies": {
         "typescript": "^4.2.4",
-        "@rollup/plugin-typescript": "^8.2.1",
-        "rollup": "^2.46.0",
-        "@jhonebee/config": "*"
+        "@jhoneybee/config": "*"
     }
 }

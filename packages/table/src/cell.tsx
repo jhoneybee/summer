@@ -2,8 +2,8 @@ import React, { cloneElement, forwardRef, HTMLAttributes, useEffect, useRef, use
 import { GridChildComponentProps } from "react-window";
 import styled from 'styled-components';
 import produce from 'immer';
-import { writeText } from '@jhonebee/clipboard';
-import { DefaultTheme } from '@jhonebee/theme';
+import { writeText } from '@jhoneybee/clipboard';
+import { DefaultTheme } from '@jhoneybee/theme';
 
 import { DataCell, DataColumn, DataRow } from "./type";
 import { hoverRender } from './_utils';
