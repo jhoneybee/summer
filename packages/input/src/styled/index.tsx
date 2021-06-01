@@ -59,9 +59,9 @@ export const InputStyled = styled.input.attrs(props => {
     transition: border 600ms;
     cursor: ${props => {
         if (props.readOnly) {
-            return props.readOnly ? 'pointer': 'auto'
+            return props.readOnly ? 'pointer': 'text'
         }
-        return 'unset';
+        return 'text';
     }};
 
     ::placeholder {

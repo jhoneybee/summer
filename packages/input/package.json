@@ -1,6 +1,6 @@
 {
     "name": "@jhoneybee/input",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "license": "MIT",
     "author": "jhoneybee <zhangjin0908@hotmail.com>",
     "main": "dist/index.js",
@@ -9,7 +9,8 @@
         "registry": "https://npm.pkg.github.com/jhoneybee"
     },
     "scripts": {
-        "build": "tsc"
+        "build": "tsc",
+        "prepublishOnly": "yarn build"
     },
     "peerDependencies": {
         "react": "^17.0.0",
